@@ -99,6 +99,43 @@ class LoanType(models.Model):
         company_dependent=True,
     )
 
+    @api.depends(
+        "direction",
+    )
+    def _compute_allowed_additional_item(self):
+        LoanAdditionalItem = self.env["loan.additional_item"]
+        for record in self:
+            result = []
+            if record.direction == "out":
+                criteria = [
+                    ("loan_out_ok", "=", True),
+                ]
+            elif record.direction == "in":
+                criteria = [
+                    ("loan_in_ok", "=", True),
+                ]
+            else:
+                criteria = False
+
+            if criteria:
+                result = LoanAdditionalItem.search(criteria).ids
+
+            record.allowed_additional_item_ids = result
+
+    allowed_additional_item_ids = fields.Many2many(
+        string="Allowed Additional Items",
+        comodel_name="loan.additional_item",
+        compute="_compute_allowed_additional_item",
+    )
+
+    additional_item_ids = fields.Many2many(
+        string="Additional Items",
+        comodel_name="loan.additional_item",
+        relation="rel_loan_type_2_additional_item",
+        column1="type_id",
+        column2="additional_item_id",
+    )
+
     @api.model
     def _compute_interest(
         self, loan_amount, interest, period, first_payment_date, interest_method

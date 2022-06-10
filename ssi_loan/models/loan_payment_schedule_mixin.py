@@ -11,12 +11,22 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
     _name = "loan.payment_schedule_mixin"
     _description = "Loan Payment Schedule Mixin"
 
-    @api.depends("principle_amount", "interest_amount")
+    @api.depends("principle_amount", "interest_amount", "additional_amount")
     def _compute_installment(self):
         for payment in self:
             payment.installment_amount = (
-                payment.principle_amount + payment.interest_amount
+                payment.principle_amount
+                + payment.interest_amount
+                + payment.additional_amount
             )
+
+    @api.depends("additional_item_ids", "additional_item_ids.amount")
+    def _compute_additional_amount(self):
+        for record in self:
+            result = 0.0
+            for additional in record.additional_item_ids:
+                result += additional.amount
+            record.additional_amount = result
 
     @api.depends(
         "principle_move_line_id",
@@ -90,6 +100,13 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         required=True,
         copy=False,
     )
+    additional_amount = fields.Float(
+        string="Additional Amount",
+        compute="_compute_additional_amount",
+        store=True,
+        copy=False,
+        compute_sudo=True,
+    )
     installment_amount = fields.Float(
         string="Installment Amount",
         compute="_compute_installment",
@@ -150,6 +167,11 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         comodel_name="account.move",
         copy=False,
     )
+    additional_item_ids = fields.One2many(
+        string="Additional Items",
+        comodel_name="loan.payment_schedule_additional_item_mixin",
+        inverse_name="schedule_id",
+    )
     state = fields.Selection(
         string="State",
         selection=[
@@ -167,10 +189,22 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
     def action_realize_interest(self):
         for schedule in self.sudo():
             schedule._create_interest_realization_move()
+            schedule._create_additional_item_move()
 
     def action_unrealize_interest(self):
         for schedule in self.sudo():
             schedule._delete_interest_realization_move()
+            schedule._delete_additional_item_move()
+
+    def _create_additional_item_move(self):
+        self.ensure_one()
+        for additional_item in self.additional_item_ids:
+            additional_item.action_create_accounting_entry()
+
+    def _delete_additional_item_move(self):
+        self.ensure_one()
+        for additional_item in self.additional_item_ids:
+            additional_item.action_delete_accounting_entry()
 
     def _delete_interest_realization_move(self):
         self.ensure_one()

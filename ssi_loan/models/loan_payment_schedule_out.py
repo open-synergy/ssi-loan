@@ -35,3 +35,6 @@ class LoanPaymentScheduleOut(models.Model):
         related="loan_id.state",
         store=True,
     )
+    additional_item_ids = fields.One2many(
+        comodel_name="loan.payment_schedule_out_additional_item",
+    )

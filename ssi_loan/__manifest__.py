@@ -3,7 +3,7 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 {
     "name": "Loan",
-    "version": "14.0.1.0.0",
+    "version": "14.0.1.1.0",
     "website": "https://simetri-sinergi.id",
     "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",
     "license": "LGPL-3",
@@ -33,6 +33,7 @@
         "menu.xml",
         "views/res_config_settings_views.xml",
         "views/loan_type_views.xml",
+        "views/loan_additional_item_views.xml",
         "views/loan_mixin_views.xml",
         "views/loan_out_views.xml",
         "views/loan_in_views.xml",

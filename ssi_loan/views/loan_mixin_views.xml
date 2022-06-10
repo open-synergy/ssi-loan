@@ -74,12 +74,7 @@
                                 attrs="{'invisible':[('state','!=','draft')]}"
                                 icon="fa-calculator"
                             />
-                        <field
-                                name="payment_schedule_ids"
-                                colspan="4"
-                                nolabel="1"
-                                readonly="1"
-                            >
+                        <field name="payment_schedule_ids" colspan="4" nolabel="1">
                             <tree string="Payment Schedules">
                                 <field name="schedule_date" />
                                 <field
@@ -91,6 +86,7 @@
                                         sum="Total Interest Amount"
                                     />
                                 <field name="interest_move_line_id" invisible="1" />
+                                <field name="additional_amount" />
                                 <field
                                         name="installment_amount"
                                         sum="Total Installment Amount"
@@ -116,12 +112,13 @@
                                         name="old_principle_move_line_id"
                                         invisible="1"
                                     />
+
                             </tree>
                             <form string="Payment Schedule">
                                 <header>
                                 </header>
                                 <group name="group_main" colspan="4" col="2">
-                                    <field name="loan_id" />
+                                    <field name="loan_id" invisible="1" />
                                     <field name="state" invisible="1" />
                                     <field name="schedule_date" />
                                     <field
@@ -163,6 +160,40 @@
                                             <field name="interest_payment_state" />
                                             <field name="interest_move_id" />
                                             <field name="interest_move_line_id" />
+                                        </group>
+                                    </page>
+                                    <page
+                                            name="additional_item"
+                                            string="Additional Items"
+                                        >
+                                        <group
+                                                name="additional_item_1"
+                                                colspan="4"
+                                                col="2"
+                                            >
+                                            <field
+                                                    name="additional_item_ids"
+                                                    colspan="2"
+                                                    nolabel="1"
+                                                >
+                                                <tree editable="top">
+                                                    <field
+                                                            name="sequence"
+                                                            widget="handle"
+                                                        />
+                                                    <field name="additional_item_id" />
+                                                    <field name="amount" />
+                                                    <field name="journal_id" />
+                                                    <field
+                                                            name="reconcilliation_account_id"
+                                                        />
+                                                    <field
+                                                            name="contra_reconcilliation_account_id"
+                                                        />
+                                                    <field name="state" />
+                                                </tree>
+                                            </field>
+                                            <field name="additional_amount" />
                                         </group>
                                     </page>
                                 </notebook>

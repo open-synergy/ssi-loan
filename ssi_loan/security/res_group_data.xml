@@ -13,6 +13,15 @@
         />
 </record>
 
+<record id="loan_additional_item_group" model="res.groups">
+    <field name="name">Loan Additional Item</field>
+    <field name="category_id" ref="ssi_loan.loan_configurator_module_category" />
+    <field
+            name="users"
+            eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"
+        />
+</record>
+
 <!-- Workflow: Loan Out -->
 <record id="loan_out_viewer_group" model="res.groups">
     <field name="name">Viewer</field>
