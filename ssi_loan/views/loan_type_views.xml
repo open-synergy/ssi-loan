@@ -80,6 +80,21 @@
                         </group>
                     </group>
                 </page>
+                <page name="additonal_item" string="Additional Item">
+                    <group name="additonal_item_1" colspan="4" col="2">
+                        <field
+                                name="allowed_additional_item_ids"
+                                widget="many2many_tags"
+                                invisible="1"
+                            />
+                        <field
+                                name="additional_item_ids"
+                                domain="[('id','in',allowed_additional_item_ids)]"
+                                nolabel="1"
+                                colspan="2"
+                            />
+                    </group>
+                </page>
             </xpath>
         </data>
     </field>

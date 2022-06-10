@@ -218,6 +218,11 @@ class LoanMixin(models.AbstractModel):
         inverse_name="loan_id",
         copy=False,
         readonly=True,
+        states={
+            "draft": [
+                ("readonly", False),
+            ],
+        },
     )
 
     @api.depends(
