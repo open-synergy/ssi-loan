@@ -378,6 +378,8 @@ class LoanMixin(models.AbstractModel):
                 self._prepare_rounding_move_line(move, amount)
             )
 
+        move.action_post()
+
         return move.id, move_line_header.id
 
     def _prepare_realization_move(self):
