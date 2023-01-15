@@ -201,6 +201,15 @@
                         </field>
                     </group>
                 </page>
+                <page name="collateral" string="Collaterals">
+                    <field name="collateral_ids">
+                        <tree editable="top">
+                            <field name="sequence" widget="handle" />
+                            <field name="type_id" />
+                            <field name="name" />
+                        </tree>
+                    </field>
+                </page>
                 <page name="accounting" string="Accounting">
                     <group name="accounting_1" colspan="4" col="2">
                         <field name="move_realization_id" />

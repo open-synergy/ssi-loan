@@ -276,6 +276,18 @@ class LoanMixin(models.AbstractModel):
         compute="_compute_paid",
         store=True,
     )
+    collateral_ids = fields.One2many(
+        string="Collaterals",
+        comodel_name="loan.collateral_mixin",
+        inverse_name="loan_id",
+        copy=False,
+        readonly=True,
+        states={
+            "draft": [
+                ("readonly", False),
+            ],
+        },
+    )
 
     state = fields.Selection(
         string="State",
