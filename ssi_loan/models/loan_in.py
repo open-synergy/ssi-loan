@@ -22,3 +22,6 @@ class LoanIn(models.Model):
     payment_schedule_ids = fields.One2many(
         comodel_name="loan.payment_schedule_in",
     )
+    collateral_ids = fields.One2many(
+        comodel_name="loan_in.collateral",
+    )
