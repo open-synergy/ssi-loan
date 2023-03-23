@@ -16,6 +16,12 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         ondelete="cascade",
         copy=False,
     )
+    currency_id = fields.Many2one(
+        string="Currency",
+        comodel_name="res.currency",
+        related="schedule_id.loan_id.currency_id",
+        store=True,
+    )
     sequence = fields.Integer(
         string="Sequence",
         default=5,
@@ -27,9 +33,10 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         ondelete="restrict",
         required=True,
     )
-    amount = fields.Float(
+    amount = fields.Monetary(
         string="Amount",
         required=True,
+        currency_field="currency_id",
     )
     journal_id = fields.Many2one(
         string="Journal",
@@ -197,7 +204,16 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         )
 
     def _prepare_ml(
-        self, move, name, account, debit, credit, partner, date_maturity=False
+        self,
+        move,
+        name,
+        account,
+        debit,
+        credit,
+        currency,
+        amount_currency,
+        partner,
+        date_maturity=False,
     ):
         self.ensure_one()
         res = {
@@ -206,33 +222,83 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
             "account_id": account.id,
             "credit": credit,
             "debit": debit,
+            "currency_id": currency.id,
+            "amount_currency": amount_currency,
             "date_maturity": date_maturity or False,
             "partner_id": partner and partner.id or False,
         }
         return res
 
-    def _prepare_reconcilliation_ml(self, move):
+    def _get_reconcilliation_ml_amount(self):
         self.ensure_one()
         direction = self.schedule_id.loan_id.type_id.direction
-        return self._prepare_ml(
-            move,
-            self.additional_item_id.name,
-            self.reconcilliation_account_id,
-            direction == "out" and self.amount or 0.0,
-            direction == "in" and self.amount or 0.0,
-            self.schedule_id.loan_id.partner_id,
-            self.schedule_id.schedule_date,
+        schedule = self.schedule_id
+        loan = self.loan_id
+        debit = credit = 0.0
+        amount = self.currency_id._convert(
+            from_amount=self.amount,
+            to_currency=loan.company_currency_id,
+            company=loan.company_id,
+            date=schedule.schedule_date,
         )
+
+        if direction == "out":
+            debit = amount
+            amount_currency = self.amount
+        elif direction == "in":
+            credit = amount
+            amount_currency = -1.0 * self.amount
+
+        return debit, credit, amount_currency
+
+    def _prepare_reconcilliation_ml(self, move):
+        self.ensure_one()
+        debit, credit, amount_currency = self._get_reconcilliation_ml_amount()
+        return self._prepare_ml(
+            move=move,
+            name=self.additional_item_id.name,
+            account=self.reconcilliation_account_id,
+            debit=debit,
+            credit=credit,
+            currency=self.currency_id,
+            amount_currency=amount_currency,
+            partner=self.schedule_id.loan_id.partner_id,
+            date_maturity=self.schedule_id.schedule_date,
+        )
+
+    def _get_contra_reconcilliation_ml_amount(self):
+        self.ensure_one()
+        direction = self.schedule_id.loan_id.type_id.direction
+        schedule = self.schedule_id
+        loan = self.loan_id
+        debit = credit = 0.0
+        amount = self.currency_id._convert(
+            from_amount=self.amount,
+            to_currency=loan.company_currency_id,
+            company=loan.company_id,
+            date=schedule.schedule_date,
+        )
+
+        if direction == "in":
+            debit = amount
+            amount_currency = self.amount
+        elif direction == "out":
+            credit = amount
+            amount_currency = -1.0 * self.amount
+
+        return debit, credit, amount_currency
 
     def _prepare_contra_reconcilliation_ml(self, move):
         self.ensure_one()
-        direction = self.schedule_id.loan_id.type_id.direction
+        debit, credit, amount_currency = self._get_contra_reconcilliation_ml_amount()
         return self._prepare_ml(
-            move,
-            self.additional_item_id.name,
-            self.contra_reconcilliation_account_id,
-            direction == "in" and self.amount or 0.0,
-            direction == "out" and self.amount or 0.0,
-            self.schedule_id.loan_id.partner_id,
-            False,
+            move=move,
+            name=self.additional_item_id.name,
+            account=self.contra_reconcilliation_account_id,
+            debit=debit,
+            credit=credit,
+            currency=self.currency_id,
+            amount_currency=amount_currency,
+            partner=self.schedule_id.loan_id.partner_id,
+            date_maturity=False,
         )

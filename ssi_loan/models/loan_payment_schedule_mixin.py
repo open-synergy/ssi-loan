@@ -82,37 +82,41 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
     currency_id = fields.Many2one(
         string="Currency",
         comodel_name="res.currency",
-        readonly=True,
-        copy=False,
+        related="loan_id.currency_id",
+        store=True,
     )
     schedule_date = fields.Date(
         string="Schedule Date",
         required=True,
         copy=False,
     )
-    principle_amount = fields.Float(
+    principle_amount = fields.Monetary(
         string="Principle Amount",
         required=True,
         copy=False,
+        currency_field="currency_id",
     )
-    interest_amount = fields.Float(
+    interest_amount = fields.Monetary(
         string="Interest Amount",
         required=True,
         copy=False,
+        currency_field="currency_id",
     )
-    additional_amount = fields.Float(
+    additional_amount = fields.Monetary(
         string="Additional Amount",
         compute="_compute_additional_amount",
         store=True,
         copy=False,
         compute_sudo=True,
+        currency_field="currency_id",
     )
-    installment_amount = fields.Float(
+    installment_amount = fields.Monetary(
         string="Installment Amount",
         compute="_compute_installment",
         store=True,
         copy=False,
         compute_sudo=True,
+        currency_field="currency_id",
     )
     principle_payment_state = fields.Selection(
         string="Principle Payment State",
@@ -218,6 +222,7 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
             "journal_id": self._get_interest_journal().id,
             "date": self.schedule_date,
             "ref": loan.name,
+            "currency_id": self.currency_id.id,
         }
         return res
 
@@ -249,13 +254,19 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
             self._prepare_interest_income_move_line(move)
         )
 
+        move.action_post()
+
     def _prepare_interest_realization_move_line(self, move):
         self.ensure_one()
         loan = self.loan_id
         loan_type = loan.type_id
         name = _("%s %s interest receivable") % (loan.name, self.schedule_date)
 
-        debit, credit = self._get_interest_realization_move_line_amount()
+        (
+            debit,
+            credit,
+            amount_currency,
+        ) = self._get_interest_realization_move_line_amount()
 
         res = {
             "move_id": move.id,
@@ -265,6 +276,8 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
             "credit": credit,
             "date_maturity": self.schedule_date,
             "partner_id": loan.partner_id.id,
+            "currency_id": self.currency_id.id,
+            "amount_currency": amount_currency,
         }
         return res
 
@@ -272,17 +285,26 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         self.ensure_one()
         debit = credit = 0.0
         loan = self.loan_id
+        interest_amount = self.currency_id._convert(
+            from_amount=self.interest_amount,
+            to_currency=loan.company_currency_id,
+            company=loan.company_id,
+            date=self.schedule_date,
+        )
+
         if loan.direction == "in":
-            credit = self.interest_amount
+            credit = interest_amount
+            amount_currency = -1.0 * self.interest_amount
         else:
-            debit = self.interest_amount
-        return debit, credit
+            debit = interest_amount
+            amount_currency = self.interest_amount
+        return debit, credit, amount_currency
 
     def _prepare_interest_income_move_line(self, move):
         self.ensure_one()
         loan = self.loan_id
         name = _("%s %s interest income") % (loan.name, self.schedule_date)
-        debit, credit = self._get_interest_move_line_amount()
+        debit, credit, amount_currency = self._get_interest_move_line_amount()
         res = {
             "move_id": move.id,
             "name": name,
@@ -291,6 +313,8 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
             "debit": debit,
             "date_maturity": self.schedule_date,
             "partner_id": self.loan_id.partner_id.id,
+            "currency_id": self.currency_id.id,
+            "amount_currency": amount_currency,
         }
         return res
 
@@ -298,11 +322,20 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         self.ensure_one()
         debit = credit = 0.0
         loan = self.loan_id
+        interest_amount = self.currency_id._convert(
+            from_amount=self.interest_amount,
+            to_currency=loan.company_currency_id,
+            company=loan.company_id,
+            date=self.schedule_date,
+        )
+
         if loan.direction == "out":
-            credit = self.interest_amount
+            credit = interest_amount
+            amount_currency = -1.0 * self.interest_amount
         else:
-            debit = self.interest_amount
-        return debit, credit
+            debit = interest_amount
+            amount_currency = self.interest_amount
+        return debit, credit, amount_currency
 
     def _get_interest_income_account(self):
         self.ensure_one()
@@ -328,7 +361,7 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         self.ensure_one()
         loan = self.loan_id
         name = _("%s %s principle receivable") % (loan.name, self.schedule_date)
-        debit, credit = self._get_realization_move_line_amount()
+        debit, credit, amount_currency = self._get_realization_move_line_amount()
         account = self._get_realization_move_line_account()
         res = {
             "move_id": move.id,
@@ -338,18 +371,28 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
             "credit": credit,
             "date_maturity": self.schedule_date,
             "partner_id": loan.partner_id.id,
+            "currency_id": self.currency_id.id,
+            "amount_currency": amount_currency,
         }
         return res
 
     def _get_realization_move_line_amount(self):
         self.ensure_one()
-        debit = credit = 0.0
         loan = self.loan_id
+        debit = credit = amount_currency = 0.0
+
+        principle_amount = loan._convert_amount_to_company_currency(
+            self.principle_amount
+        )
+
         if loan.direction == "in":
-            credit = self.principle_amount
+            credit = principle_amount
+            amount_currency = self.principle_amount * -1.0
         else:
-            debit = self.principle_amount
-        return debit, credit
+            debit = principle_amount
+            amount_currency = self.principle_amount
+
+        return debit, credit, amount_currency
 
     def _get_realization_move_line_account(self):
         self.ensure_one()
