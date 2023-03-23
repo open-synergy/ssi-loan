@@ -13,7 +13,6 @@
     <field name="mode">primary</field>
     <field name="arch" type="xml">
         <data>
-
         </data>
     </field>
 </record>
@@ -27,6 +26,7 @@
         <data>
             <xpath expr="//field[@name='company_id']" position="after">
                 <field name="partner_id" />
+                <field name="currency_id" />
                 <field name="date" />
                 <field name="request_date" />
                 <field name="direction" invisible="1" />
@@ -47,15 +47,19 @@
     <field name="arch" type="xml">
         <data>
             <xpath expr="//field[@name='user_id']" position="after">
+                <field name="company_currency_id" invisible="1" />
                 <field name="partner_id" />
                 <field name="date" />
                 <field name="request_date" />
             </xpath>
             <xpath expr="//group[@name='header_right']" position="inside">
                 <field name="type_id" />
-                <field name="direction" />
+                <field name="direction" invisible="1" />
                 <field name="maximum_loan_amount" force_save="1" />
                 <field name="loan_amount" />
+                <field name="currency_id" />
+                <field name="rate_inverted" />
+                <field name="rate" />
                 <field name="interest" />
             </xpath>
             <xpath expr="//page[@name='note']" position="before">
@@ -69,7 +73,8 @@
                         <button
                                 name="action_compute_payment"
                                 type="object"
-                                string="Compute Payment Schedule"
+                                string="Payment Schedule"
+                                help="Compute payment schedule"
                                 class="oe_highlight"
                                 attrs="{'invisible':[('state','!=','draft')]}"
                                 icon="fa-calculator"
@@ -77,6 +82,7 @@
                         <field name="payment_schedule_ids" colspan="4" nolabel="1">
                             <tree string="Payment Schedules">
                                 <field name="schedule_date" />
+                                <field name="currency_id" invisible="1" />
                                 <field
                                         name="principle_amount"
                                         sum="Total Principle Amount"
@@ -107,7 +113,7 @@
                                         attrs="{'invisible':[('interest_payment_state','!=','unpaid')]}"
                                     />
                                 <field name="interest_payment_state" />
-                                <field name="state" invisible="0" />
+                                <field name="state" invisible="1" />
                                 <field
                                         name="old_principle_move_line_id"
                                         invisible="1"
@@ -181,6 +187,10 @@
                                                             name="sequence"
                                                             widget="handle"
                                                         />
+                                                    <field
+                                                            name="currency_id"
+                                                            invisible="1"
+                                                        />
                                                     <field name="additional_item_id" />
                                                     <field name="amount" />
                                                     <field name="journal_id" />
@@ -211,9 +221,16 @@
                     </field>
                 </page>
                 <page name="accounting" string="Accounting">
-                    <group name="accounting_1" colspan="4" col="2">
-                        <field name="move_realization_id" />
-                        <field name="move_line_header_id" />
+                    <group
+                            name="accounting_1"
+                            colspan="4"
+                            col="2"
+                            string="Accounting Entry"
+                        >
+                        <field name="move_realization_id" string="# Journal Entry" />
+                        <field name="move_line_header_id" string="Header Line" />
+                    </group>
+                    <group name="accounting_2" colspan="4" col="2" string="Status">
                         <field name="realized" />
                         <field name="paid" />
                     </group>

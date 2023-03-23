@@ -3,7 +3,7 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 {
     "name": "Loan",
-    "version": "14.0.1.4.0",
+    "version": "14.0.1.5.0",
     "website": "https://simetri-sinergi.id",
     "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",
     "license": "LGPL-3",
@@ -16,6 +16,7 @@
         "ssi_transaction_open_mixin",
         "ssi_transaction_done_mixin",
         "ssi_transaction_cancel_mixin",
+        "ssi_currency_mixin",
         "account",
         "base_automation",
         "configuration_helper",

@@ -9,6 +9,8 @@ from odoo.exceptions import UserError, ValidationError
 class LoanMixin(models.AbstractModel):
     _name = "loan.mixin"
     _inherit = [
+        "mixin.currency",
+        "mixin.company_currency",
         "mixin.transaction_confirm",
         "mixin.transaction_ready",
         "mixin.transaction_open",
@@ -16,6 +18,8 @@ class LoanMixin(models.AbstractModel):
         "mixin.transaction_cancel",
     ]
     _description = "Loan Mixin"
+
+    _exchange_date_field = "date"
 
     # Multiple Approval Attribute
     _approval_from_state = "draft"
@@ -125,15 +129,11 @@ class LoanMixin(models.AbstractModel):
         ],
         default=lambda self: self._default_direction(),
     )
-    currency_id = fields.Many2one(
-        string="Currency",
-        comodel_name="res.currency",
-        readonly=True,
-    )
-    loan_amount = fields.Float(
+    loan_amount = fields.Monetary(
         string="Loan Amount",
         required=True,
         readonly=True,
+        currency_field="currency_id",
         states={
             "draft": [
                 ("readonly", False),
@@ -239,15 +239,17 @@ class LoanMixin(models.AbstractModel):
                     loan.total_principle_amount += schedule.principle_amount
                     loan.total_interest_amount += schedule.interest_amount
 
-    total_principle_amount = fields.Float(
+    total_principle_amount = fields.Monetary(
         string="Total Principle Amount",
         compute="_compute_total",
         store=True,
+        currency_field="currency_id",
     )
-    total_interest_amount = fields.Float(
+    total_interest_amount = fields.Monetary(
         string="Total Interest Amount",
         compute="_compute_total",
         store=True,
+        currency_field="currency_id",
     )
 
     @api.depends(
@@ -340,6 +342,12 @@ class LoanMixin(models.AbstractModel):
         if self.type_id:
             self.interest = self.type_id.interest_amount
 
+    @api.onchange(
+        "date",
+    )
+    def onchange_rate(self):
+        self.onchange_rate_mixin()
+
     def action_compute_payment(self):
         for record in self.sudo():
             record._compute_payment()
@@ -401,6 +409,7 @@ class LoanMixin(models.AbstractModel):
             "journal_id": self._get_realization_journal().id,
             "date": self.date,
             "ref": self.name,
+            "currency_id": self.currency_id.id,
         }
         return res
 
@@ -417,7 +426,7 @@ class LoanMixin(models.AbstractModel):
     def _prepare_header_move_line(self, move):
         self.ensure_one()
         name = _("%s loan realization") % (self.name)
-        debit, credit = self._get_realization_move_line_header_amount()
+        debit, credit, amount_currency = self._get_realization_move_line_header_amount()
         res = {
             "move_id": move.id,
             "name": name,
@@ -425,17 +434,26 @@ class LoanMixin(models.AbstractModel):
             "debit": debit,
             "credit": credit,
             "partner_id": self.partner_id.id,
+            "currency_id": self.currency_id.id,
+            "amount_currency": amount_currency,
         }
         return res
 
     def _get_realization_move_line_header_amount(self):
         self.ensure_one()
-        debit = credit = 0.0
+        debit = credit = amount_currency = 0.0
+
+        total_principle_amount = self._convert_amount_to_company_currency(
+            self.total_principle_amount
+        )
+
         if self.direction == "out":
-            credit = self.total_principle_amount
+            credit = total_principle_amount
+            amount_currency = -1.0 * self.total_principle_amount
         else:
-            debit = self.total_principle_amount
-        return debit, credit
+            debit = total_principle_amount
+            amount_currency = self.total_principle_amount
+        return debit, credit, amount_currency
 
     def _get_realization_account(self):
         self.ensure_one()
@@ -447,16 +465,32 @@ class LoanMixin(models.AbstractModel):
 
         return account
 
+    def _get_rounding_amount(self, amount):
+        debit = credit = amount_currency = 0.0
+
+        rounding_amount = self._convert_amount_to_company_currency(abs(amount))
+
+        if rounding_amount < 0.0:
+            credit = rounding_amount
+            amount_currency = -1.0 * abs(amount)
+        else:
+            debit = rounding_amount
+            amount_currency = abs(amount)
+        return debit, credit, amount_currency
+
     def _prepare_rounding_move_line(self, move, amount):
         self.ensure_one()
         name = _("%s loan rounding") % (self.name)
+        debit, credit, amount_currency = self._get_rounding_amount(amount)
         res = {
             "move_id": move.id,
             "name": name,
             "account_id": self._get_rounding_account().id,
-            "debit": amount < 0.0 and abs(amount) or 0.0,
-            "credit": amount > 0.0 and abs(amount) or 0.0,
+            "debit": debit,
+            "credit": credit,
             "partner_id": self.partner_id.id,
+            "currency_id": self.currency_id.id,
+            "amount_currency": amount_currency,
         }
         return res
 
