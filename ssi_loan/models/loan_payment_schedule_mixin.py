@@ -124,6 +124,7 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
             ("unpaid", "Unpaid"),
             ("partial", "Partial Paid"),
             ("paid", "Paid"),
+            ("manual", "Manually Control"),
         ],
         compute="_compute_state",
         store=True,
@@ -190,6 +191,14 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         copy=False,
     )
 
+    def action_mark_principle_as_manual(self):
+        for record in self.sudo():
+            record._mark_principle_as_manual()
+
+    def action_unmark_principle_as_manual(self):
+        for record in self.sudo():
+            record._unmark_principle_as_manual()
+
     def action_realize_interest(self):
         for schedule in self.sudo():
             schedule._create_interest_realization_move()
@@ -199,6 +208,22 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         for schedule in self.sudo():
             schedule._delete_interest_realization_move()
             schedule._delete_additional_item_move()
+
+    def _mark_principle_as_manual(self):
+        self.ensure_one()
+        self.write(
+            {
+                "principle_payment_state": "manual",
+            }
+        )
+
+    def _unmark_principle_as_manual(self):
+        self.ensure_one()
+        self.write(
+            {
+                "principle_payment_state": "unpaid",
+            }
+        )
 
     def _create_additional_item_move(self):
         self.ensure_one()
