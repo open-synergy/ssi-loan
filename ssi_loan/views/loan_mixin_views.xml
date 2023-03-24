@@ -50,6 +50,7 @@
                 <field name="company_currency_id" invisible="1" />
                 <field name="partner_id" />
                 <field name="date" />
+                <field name="date_cutoff" />
                 <field name="request_date" />
             </xpath>
             <xpath expr="//group[@name='header_right']" position="inside">
@@ -79,136 +80,133 @@
                                 attrs="{'invisible':[('state','!=','draft')]}"
                                 icon="fa-calculator"
                             />
-                        <field name="payment_schedule_ids" colspan="4" nolabel="1">
-                            <tree string="Payment Schedules">
+                    </group>
+                    <field name="payment_schedule_ids" colspan="4" nolabel="1">
+                        <tree string="Payment Schedules">
+                            <field name="schedule_date" />
+                            <field name="currency_id" invisible="1" />
+                            <field
+                                    name="principle_amount"
+                                    sum="Total Principle Amount"
+                                />
+                            <button
+                                    name="action_mark_principle_as_manual"
+                                    help="Mark as Manually Control"
+                                    type="object"
+                                    icon="fa-chain-broken"
+                                    attrs="{'invisible':['|',('state','!=','draft'),'&amp;',('state','=','draft'),('principle_payment_state','=','manual')]}"
+                                />
+                            <button
+                                    name="action_unmark_principle_as_manual"
+                                    help="Unmark as Manually Control"
+                                    type="object"
+                                    icon="fa-chain"
+                                    attrs="{'invisible':['|',('state','!=','draft'),'&amp;',('state','=','draft'),('principle_payment_state','!=','manual')]}"
+                                />
+                            <field name="interest_amount" sum="Total Interest Amount" />
+                            <field name="interest_move_line_id" invisible="1" />
+                            <field name="additional_amount" />
+                            <field
+                                    name="installment_amount"
+                                    sum="Total Installment Amount"
+                                />
+                            <field name="principle_payment_state" />
+                            <button
+                                    name="action_realize_interest"
+                                    type="object"
+                                    title="Realize Interest"
+                                    icon="fa-cogs"
+                                    attrs="{'invisible':['|',('state','!=','open'),'&amp;',('state','=','open'),('interest_payment_state','!=','unrealized')]}"
+                                />
+                            <button
+                                    name="action_unrealize_interest"
+                                    type="object"
+                                    title="Unrealize Interest"
+                                    icon="fa-eraser"
+                                    attrs="{'invisible':['|',('state','!=','open'),'&amp;',('state','=','open'),('interest_payment_state','!=','unpaid')]}"
+                                />
+                            <field name="interest_payment_state" />
+                            <field name="state" invisible="0" />
+                            <field name="old_principle_move_line_id" invisible="1" />
+                        </tree>
+                        <form string="Payment Schedule">
+                            <header>
+                            </header>
+                            <group name="group_main" colspan="4" col="2">
+                                <field name="loan_id" invisible="1" />
+                                <field name="state" invisible="1" />
                                 <field name="schedule_date" />
-                                <field name="currency_id" invisible="1" />
-                                <field
-                                        name="principle_amount"
-                                        sum="Total Principle Amount"
-                                    />
-                                <field
-                                        name="interest_amount"
-                                        sum="Total Interest Amount"
-                                    />
-                                <field name="interest_move_line_id" invisible="1" />
-                                <field name="additional_amount" />
                                 <field
                                         name="installment_amount"
-                                        sum="Total Installment Amount"
+                                        widget="monetary"
+                                        options="{'currency_field':'currency_id'}"
                                     />
-                                <field name="principle_payment_state" />
-                                <button
-                                        name="action_realize_interest"
-                                        type="object"
-                                        title="Realize Interest"
-                                        icon="fa-cogs"
-                                        attrs="{'invisible':[('interest_payment_state','!=','unrealized')]}"
-                                    />
-                                <button
-                                        name="action_unrealize_interest"
-                                        type="object"
-                                        title="Unrealize Interest"
-                                        icon="fa-eraser"
-                                        attrs="{'invisible':[('interest_payment_state','!=','unpaid')]}"
-                                    />
-                                <field name="interest_payment_state" />
-                                <field name="state" invisible="1" />
-                                <field
-                                        name="old_principle_move_line_id"
-                                        invisible="1"
-                                    />
-
-                            </tree>
-                            <form string="Payment Schedule">
-                                <header>
-                                </header>
-                                <group name="group_main" colspan="4" col="2">
-                                    <field name="loan_id" invisible="1" />
-                                    <field name="state" invisible="1" />
-                                    <field name="schedule_date" />
-                                    <field
-                                            name="installment_amount"
-                                            widget="monetary"
-                                            options="{'currency_field':'currency_id'}"
-                                        />
-                                    <field name="currency_id" invisible="1" />
-                                </group>
-                                <notebook colspan="4">
-                                    <page name="page_principle" string="Principle">
-                                        <group
-                                                name="group_principle"
-                                                colspan="4"
-                                                col="2"
+                                <field name="currency_id" invisible="1" />
+                            </group>
+                            <notebook colspan="4">
+                                <page name="page_principle" string="Principle">
+                                    <group name="group_principle" colspan="4" col="2">
+                                        <field
+                                                name="principle_amount"
+                                                widget="monetary"
+                                                options="{'currency_field':'currency_id'}"
+                                            />
+                                        <field name="principle_payment_state" />
+                                        <field name="principle_move_id" />
+                                        <field name="principle_move_line_id" />
+                                        <field name="old_principle_move_line_id" />
+                                    </group>
+                                </page>
+                                <page name="page_interest" string="Interest">
+                                    <group name="group_interest" colspan="4" col="2">
+                                        <field
+                                                name="interest_amount"
+                                                widget="monetary"
+                                                options="{'currency_field':'currency_id'}"
+                                            />
+                                        <field name="interest_payment_state" />
+                                        <field name="interest_move_id" />
+                                        <field name="interest_move_line_id" />
+                                    </group>
+                                </page>
+                                <page name="additional_item" string="Additional Items">
+                                    <group name="additional_item_1" colspan="4" col="2">
+                                        <field
+                                                name="additional_item_ids"
+                                                colspan="2"
+                                                nolabel="1"
                                             >
-                                            <field
-                                                    name="principle_amount"
-                                                    widget="monetary"
-                                                    options="{'currency_field':'currency_id'}"
-                                                />
-                                            <field name="principle_payment_state" />
-                                            <field name="principle_move_id" />
-                                            <field name="principle_move_line_id" />
-                                            <field name="old_principle_move_line_id" />
-                                        </group>
-                                    </page>
-                                    <page name="page_interest" string="Interest">
-                                        <group
-                                                name="group_interest"
-                                                colspan="4"
-                                                col="2"
-                                            >
-                                            <field
-                                                    name="interest_amount"
-                                                    widget="monetary"
-                                                    options="{'currency_field':'currency_id'}"
-                                                />
-                                            <field name="interest_payment_state" />
-                                            <field name="interest_move_id" />
-                                            <field name="interest_move_line_id" />
-                                        </group>
-                                    </page>
-                                    <page
-                                            name="additional_item"
-                                            string="Additional Items"
-                                        >
-                                        <group
-                                                name="additional_item_1"
-                                                colspan="4"
-                                                col="2"
-                                            >
-                                            <field
-                                                    name="additional_item_ids"
-                                                    colspan="2"
-                                                    nolabel="1"
-                                                >
-                                                <tree editable="top">
-                                                    <field
-                                                            name="sequence"
-                                                            widget="handle"
-                                                        />
-                                                    <field
-                                                            name="currency_id"
-                                                            invisible="1"
-                                                        />
-                                                    <field name="additional_item_id" />
-                                                    <field name="amount" />
-                                                    <field name="journal_id" />
-                                                    <field
-                                                            name="reconcilliation_account_id"
-                                                        />
-                                                    <field
-                                                            name="contra_reconcilliation_account_id"
-                                                        />
-                                                    <field name="state" />
-                                                </tree>
-                                            </field>
-                                            <field name="additional_amount" />
-                                        </group>
-                                    </page>
-                                </notebook>
-                            </form>
-                        </field>
+                                            <tree editable="top">
+                                                <field
+                                                        name="sequence"
+                                                        widget="handle"
+                                                    />
+                                                <field
+                                                        name="currency_id"
+                                                        invisible="1"
+                                                    />
+                                                <field name="additional_item_id" />
+                                                <field name="amount" />
+                                                <field name="journal_id" />
+                                                <field
+                                                        name="reconcilliation_account_id"
+                                                    />
+                                                <field
+                                                        name="contra_reconcilliation_account_id"
+                                                    />
+                                                <field name="state" />
+                                            </tree>
+                                        </field>
+                                        <field name="additional_amount" />
+                                    </group>
+                                </page>
+                            </notebook>
+                        </form>
+                    </field>
+                    <group name="repayment_term_3" colspan="4" col="2">
+                        <field name="total_principle_amount" />
+                        <field name="total_manual_principle_amount" />
+                        <field name="total_interest_amount" />
                     </group>
                 </page>
                 <page name="collateral" string="Collaterals">

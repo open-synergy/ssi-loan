@@ -76,6 +76,11 @@ class LoanMixin(models.AbstractModel):
         readonly=True,
         states={"draft": [("readonly", False)]},
     )
+    date_cutoff = fields.Date(
+        string="Date Cut-Off",
+        readonly=True,
+        states={"draft": [("readonly", False)]},
+    )
     partner_id = fields.Many2one(
         string="Partner",
         comodel_name="res.partner",
@@ -109,6 +114,31 @@ class LoanMixin(models.AbstractModel):
         string="Loan Type",
         comodel_name="loan.type",
         required=True,
+        readonly=True,
+        states={
+            "draft": [
+                ("readonly", False),
+            ],
+        },
+    )
+
+    currency_id = fields.Many2one(
+        readonly=True,
+        states={
+            "draft": [
+                ("readonly", False),
+            ],
+        },
+    )
+    rate_inverted = fields.Boolean(
+        readonly=True,
+        states={
+            "draft": [
+                ("readonly", False),
+            ],
+        },
+    )
+    rate = fields.Monetary(
         readonly=True,
         states={
             "draft": [
@@ -229,16 +259,27 @@ class LoanMixin(models.AbstractModel):
         "payment_schedule_ids",
         "payment_schedule_ids.principle_amount",
         "payment_schedule_ids.interest_amount",
+        "payment_schedule_ids.principle_payment_state",
     )
     def _compute_total(self):
         for loan in self:
-            loan.total_principle_amount = 0.0
-            loan.total_interest_amount = 0.0
+            loan.total_principle_amount = (
+                loan.total_interest_amount
+            ) = loan.total_manual_principle_amount = 0.0
             if loan.payment_schedule_ids:
                 for schedule in loan.payment_schedule_ids:
-                    loan.total_principle_amount += schedule.principle_amount
+                    if schedule.principle_payment_state == "manual":
+                        loan.total_manual_principle_amount += schedule.principle_amount
+                    else:
+                        loan.total_principle_amount += schedule.principle_amount
                     loan.total_interest_amount += schedule.interest_amount
 
+    total_manual_principle_amount = fields.Monetary(
+        string="Total Manual Principle Amount",
+        compute="_compute_total",
+        store=True,
+        currency_field="currency_id",
+    )
     total_principle_amount = fields.Monetary(
         string="Total Principle Amount",
         compute="_compute_total",
@@ -265,10 +306,10 @@ class LoanMixin(models.AbstractModel):
                 result = False
 
             for payment in record.payment_schedule_ids:
-                if (
-                    payment.principle_payment_state != "paid"
-                    or payment.interest_payment_state != "paid"
-                ):
+                if payment.principle_payment_state not in [
+                    "paid",
+                    "manual",
+                ] or payment.interest_payment_state not in ["paid", "manual"]:
                     result = False
                     break
             record.paid = result
@@ -384,7 +425,9 @@ class LoanMixin(models.AbstractModel):
             self._prepare_header_move_line(move)
         )
 
-        for schedule in self.payment_schedule_ids:
+        for schedule in self.payment_schedule_ids.filtered(
+            lambda r: r.principle_payment_state != "manual"
+        ):
             schedule._create_principle_receivable_move_line(move)
 
         debit = credit = 0.0
@@ -407,7 +450,7 @@ class LoanMixin(models.AbstractModel):
         res = {
             "name": "/",
             "journal_id": self._get_realization_journal().id,
-            "date": self.date,
+            "date": self.date_cutoff and self.date_cutoff or self.date,
             "ref": self.name,
             "currency_id": self.currency_id.id,
         }
