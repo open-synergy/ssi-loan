@@ -270,7 +270,7 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         self.ensure_one()
         direction = self.schedule_id.loan_id.type_id.direction
         schedule = self.schedule_id
-        loan = self.loan_id
+        loan = schedule.loan_id
         debit = credit = 0.0
         amount = self.currency_id._convert(
             from_amount=self.amount,
