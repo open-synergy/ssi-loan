@@ -309,7 +309,7 @@ class LoanMixin(models.AbstractModel):
                 if payment.principle_payment_state not in [
                     "paid",
                     "manual",
-                ] or payment.interest_payment_state not in ["paid", "manual"]:
+                ] or (payment.interest_amount and payment.interest_payment_state not in ["paid", "manual"]):
                     result = False
                     break
             record.paid = result
