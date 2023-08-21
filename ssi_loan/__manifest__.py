@@ -1,12 +1,12 @@
 # Copyright 2022 OpenSynergy Indonesia
 # Copyright 2022 PT. Simetri Sinergi Indonesia
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "Loan",
     "version": "14.0.1.5.3",
     "website": "https://simetri-sinergi.id",
-    "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",
-    "license": "LGPL-3",
+    "author": "OpenSynergy Indonesia, PT. Simetri Sinergi Indonesia",
+    "license": "AGPL-3",
     "installable": True,
     "application": True,
     "depends": [

@@ -1,6 +1,6 @@
 # Copyright 2022 OpenSynergy Indonesia
 # Copyright 2022 PT. Simetri Sinergi Indonesia
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
@@ -306,10 +306,10 @@ class LoanMixin(models.AbstractModel):
                 result = False
 
             for payment in record.payment_schedule_ids:
-                if payment.principle_payment_state not in [
-                    "paid",
-                    "manual",
-                ] or (payment.interest_amount and payment.interest_payment_state not in ["paid", "manual"]):
+                if payment.principle_payment_state not in ["paid", "manual"] or (
+                    payment.interest_amount
+                    and payment.interest_payment_state not in ["paid", "manual"]
+                ):
                     result = False
                     break
             record.paid = result
