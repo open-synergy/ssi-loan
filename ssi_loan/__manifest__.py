@@ -20,6 +20,7 @@
         "account",
         "base_automation",
         "configuration_helper",
+        "ssi_decorator",
     ],
     "data": [
         "security/ir_module_category_data.xml",

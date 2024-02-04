@@ -4,6 +4,7 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons.ssi_decorator import ssi_decorator
 
 
 class LoanMixin(models.AbstractModel):
@@ -636,3 +637,13 @@ class LoanMixin(models.AbstractModel):
             record._check_loan_realization()
 
         _super.action_cancel(cancel_reason)
+
+    @ssi_decorator.pre_confirm_check()
+    def _check_total_principle_amount(self):
+        self.ensure_one()
+        if self.total_principle_amount != self.loan_amount:
+            total_principle_amount = '{:0,.2f}'.format(self.total_principle_amount)
+            loan_amount = '{:0,.2f}'.format(self.loan_amount)
+            raise ValidationError(_(
+                f'Total principal amount ({total_principle_amount}) '
+                f'different with loan amount ({loan_amount}).'))
