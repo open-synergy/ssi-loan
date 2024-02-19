@@ -647,3 +647,13 @@ class LoanMixin(models.AbstractModel):
             raise ValidationError(_(
                 f'Total principal amount ({total_principle_amount}) '
                 f'different with loan amount ({loan_amount}).'))
+
+    @ssi_decorator.pre_confirm_check()
+    def _check_maximum_loan(self):
+        self.ensure_one()
+        if self.loan_amount > self.maximum_loan_amount:
+            loan_amount = '{:0,.2f}'.format(self.loan_amount)
+            maximum_loan_amount = '{:0,.2f}'.format(self.maximum_loan_amount)
+            raise ValidationError(_(
+                f'Loan amount ({loan_amount}) '
+                f'cannot exceed the maximum total loan ({maximum_loan_amount}).'))
