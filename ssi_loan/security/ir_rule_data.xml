@@ -17,6 +17,17 @@
     <field name="perm_create" eval="1" />
 </record>
 
+<record id="loan_out_self_rule" model="ir.rule">
+    <field name="name">Loan Out - Responsible to own data</field>
+    <field name="model_id" ref="model_loan_out" />
+    <field name="groups" eval="[(4, ref('loan_out_self_group'))]" />
+    <field name="domain_force">[('partner_id','child_of',user.partner_id.ids)]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
 <record id="loan_out_company_rule" model="ir.rule">
     <field name="name">Loan Out - Responsible to company data</field>
     <field name="model_id" ref="model_loan_out" />
@@ -60,6 +71,17 @@
     <field name="domain_force">[
       ('user_id','=',user.id),
     ]</field>
+    <field name="perm_unlink" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_create" eval="1" />
+</record>
+
+<record id="loan_in_self_rule" model="ir.rule">
+    <field name="name">Loan In - Responsible to own data</field>
+    <field name="model_id" ref="model_loan_out" />
+    <field name="groups" eval="[(4, ref('loan_in_self_group'))]" />
+    <field name="domain_force">[('partner_id','child_of',user.partner_id.ids)]</field>
     <field name="perm_unlink" eval="1" />
     <field name="perm_write" eval="1" />
     <field name="perm_read" eval="1" />
