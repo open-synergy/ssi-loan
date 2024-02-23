@@ -4,6 +4,7 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+
 from odoo.addons.ssi_decorator import ssi_decorator
 
 
@@ -642,18 +643,24 @@ class LoanMixin(models.AbstractModel):
     def _check_total_principle_amount(self):
         self.ensure_one()
         if self.total_principle_amount != self.loan_amount:
-            total_principle_amount = '{:0,.2f}'.format(self.total_principle_amount)
-            loan_amount = '{:0,.2f}'.format(self.loan_amount)
-            raise ValidationError(_(
-                f'Total principal amount ({total_principle_amount}) '
-                f'different with loan amount ({loan_amount}).'))
+            total_principle_amount = "{:0,.2f}".format(self.total_principle_amount)
+            loan_amount = "{:0,.2f}".format(self.loan_amount)
+            raise ValidationError(
+                _(
+                    f"Total principal amount ({total_principle_amount}) "
+                    f"different with loan amount ({loan_amount})."
+                )
+            )
 
     @ssi_decorator.pre_confirm_check()
     def _check_maximum_loan(self):
         self.ensure_one()
         if self.loan_amount > self.maximum_loan_amount:
-            loan_amount = '{:0,.2f}'.format(self.loan_amount)
-            maximum_loan_amount = '{:0,.2f}'.format(self.maximum_loan_amount)
-            raise ValidationError(_(
-                f'Loan amount ({loan_amount}) '
-                f'cannot exceed the maximum total loan ({maximum_loan_amount}).'))
+            loan_amount = "{:0,.2f}".format(self.loan_amount)
+            maximum_loan_amount = "{:0,.2f}".format(self.maximum_loan_amount)
+            raise ValidationError(
+                _(
+                    f"Loan amount ({loan_amount}) "
+                    f"cannot exceed the maximum total loan ({maximum_loan_amount})."
+                )
+            )
