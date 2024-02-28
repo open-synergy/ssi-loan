@@ -18,7 +18,7 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
-[ssi_loan](ssi_loan/) | 14.0.1.6.1 |  | Loan
+[ssi_loan](ssi_loan/) | 14.0.1.7.0 |  | Loan
 
 [//]: # (end addons)
 
