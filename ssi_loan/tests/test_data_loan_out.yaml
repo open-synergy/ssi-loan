@@ -1,0 +1,181 @@
+scenarios:
+  - name: "Loan Out - Flat interest workflow"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan Out Partner"
+          is_company: false
+
+      - step: "Create loan.out with flat interest type"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_flat"
+        values:
+          date: "2024-01-01"
+          partner_id: "EVAL: registry['partner'].id"
+          type_id: "REF: ssi_loan.demo_type_out1"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Assert loan.out created in draft"
+        action: "assert"
+        target: "loan_out_flat"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          loan_amount:
+            type: "value"
+            expected: 3000.0
+          manual_loan_period:
+            type: "value"
+            expected: 6
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_flat"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Invalidate cache after compute"
+        action: "call"
+        target: "loan_out_flat"
+        method: "invalidate_cache"
+
+      - step: "Assert payment schedules generated"
+        action: "assert"
+        target: "loan_out_flat"
+        asserts:
+          total_principle_amount:
+            type: "value"
+            expected: 3000.0
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_flat"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Invalidate cache after confirm"
+        action: "call"
+        target: "loan_out_flat"
+        method: "invalidate_cache"
+
+      - step: "Assert loan.out is confirmed"
+        action: "assert"
+        target: "loan_out_flat"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+  - name: "Loan Out - Anuity interest workflow"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_anuity"
+        values:
+          name: "Test Loan Out Anuity Partner"
+
+      - step: "Create loan.out with anuity type"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_anuity"
+        values:
+          date: "2024-01-01"
+          partner_id: "EVAL: registry['partner_anuity'].id"
+          type_id: "REF: ssi_loan.demo_type_out2"
+          currency_id: "REF: base.USD"
+          loan_amount: 4000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 12
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute anuity payment"
+        action: "call"
+        target: "loan_out_anuity"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Invalidate cache"
+        action: "call"
+        target: "loan_out_anuity"
+        method: "invalidate_cache"
+
+      - step: "Assert anuity loan created"
+        action: "assert"
+        target: "loan_out_anuity"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          loan_amount:
+            type: "value"
+            expected: 4000.0
+
+  - name: "Loan Out - Effective interest workflow"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_eff"
+        values:
+          name: "Test Loan Out Effective Partner"
+
+      - step: "Create loan.out with effective type"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_eff"
+        values:
+          date: "2024-01-01"
+          partner_id: "EVAL: registry['partner_eff'].id"
+          type_id: "REF: ssi_loan.demo_type_out3"
+          currency_id: "REF: base.USD"
+          loan_amount: 2400.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute effective payment"
+        action: "call"
+        target: "loan_out_eff"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Invalidate cache"
+        action: "call"
+        target: "loan_out_eff"
+        method: "invalidate_cache"
+
+      - step: "Confirm effective loan.out"
+        action: "call"
+        target: "loan_out_eff"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Invalidate cache after confirm"
+        action: "call"
+        target: "loan_out_eff"
+        method: "invalidate_cache"
+
+      - step: "Assert effective loan confirmed"
+        action: "assert"
+        target: "loan_out_eff"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"

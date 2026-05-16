@@ -1,0 +1,127 @@
+scenarios:
+  - name: "Loan Type - Create master data"
+    steps:
+      - step: "Create loan type - flat interest out"
+        action: "create"
+        model: "loan.type"
+        save_as: "loan_type_flat_out"
+        values:
+          name: "Test Flat Loan Out"
+          code: "TLFO001"
+          direction: "out"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 3.0
+          maximum_loan_amount: 5000.0
+          maximum_installment_period: 12
+
+      - step: "Assert loan type created"
+        action: "assert"
+        target: "loan_type_flat_out"
+        asserts:
+          name:
+            type: "value"
+            expected: "Test Flat Loan Out"
+          direction:
+            type: "value"
+            expected: "out"
+          interest_method:
+            type: "value"
+            expected: "flat"
+          active:
+            type: "value"
+            expected: true
+
+      - step: "Create loan type - anuity interest out"
+        action: "create"
+        model: "loan.type"
+        save_as: "loan_type_anuity_out"
+        values:
+          name: "Test Anuity Loan Out"
+          code: "TLAO001"
+          direction: "out"
+          interest_method: "anuity"
+          currency_id: "REF: base.USD"
+          interest_amount: 5.0
+          maximum_loan_amount: 10000.0
+          maximum_installment_period: 24
+
+      - step: "Assert anuity type created"
+        action: "assert"
+        target: "loan_type_anuity_out"
+        asserts:
+          interest_method:
+            type: "value"
+            expected: "anuity"
+
+      - step: "Create loan type - effective interest in"
+        action: "create"
+        model: "loan.type"
+        save_as: "loan_type_effective_in"
+        values:
+          name: "Test Effective Loan In"
+          code: "TLEI001"
+          direction: "in"
+          interest_method: "effective"
+          currency_id: "REF: base.USD"
+          interest_amount: 4.0
+          maximum_loan_amount: 8000.0
+          maximum_installment_period: 18
+
+      - step: "Assert effective in type created"
+        action: "assert"
+        target: "loan_type_effective_in"
+        asserts:
+          direction:
+            type: "value"
+            expected: "in"
+          interest_method:
+            type: "value"
+            expected: "effective"
+
+  - name: "Loan Collateral Type - Create master data"
+    steps:
+      - step: "Create loan collateral type"
+        action: "create"
+        model: "loan_collateral_type"
+        save_as: "collateral_type"
+        values:
+          name: "Test Collateral Type"
+          code: "TCT001"
+
+      - step: "Assert collateral type created"
+        action: "assert"
+        target: "collateral_type"
+        asserts:
+          name:
+            type: "value"
+            expected: "Test Collateral Type"
+          active:
+            type: "value"
+            expected: true
+
+  - name: "Loan Additional Item - Create master data"
+    steps:
+      - step: "Create loan additional item"
+        action: "create"
+        model: "loan.additional_item"
+        save_as: "additional_item"
+        values:
+          name: "Test Additional Item"
+          code: "TAI001"
+          loan_out_ok: true
+          loan_in_ok: false
+
+      - step: "Assert additional item created"
+        action: "assert"
+        target: "additional_item"
+        asserts:
+          name:
+            type: "value"
+            expected: "Test Additional Item"
+          loan_out_ok:
+            type: "value"
+            expected: true
+          loan_in_ok:
+            type: "value"
+            expected: false

@@ -82,7 +82,7 @@
                             />
                     </group>
                     <field name="payment_schedule_ids" colspan="4" nolabel="1">
-                        <tree string="Payment Schedules">
+                        <tree>
                             <field name="schedule_date" />
                             <field name="currency_id" invisible="1" />
                             <field
