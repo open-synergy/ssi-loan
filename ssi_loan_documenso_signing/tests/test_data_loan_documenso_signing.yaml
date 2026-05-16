@@ -1,0 +1,76 @@
+scenarios:
+  - name: "Loan Out - Documenso Signing: has signing fields"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan DS Partner"
+          is_company: false
+
+      - step: "Create loan.out"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out"
+        values:
+          date: "2026-01-01"
+          partner_id: "EVAL: registry['partner'].id"
+          type_id: "REF: ssi_loan.demo_type_out1"
+          currency_id: "REF: base.USD"
+          loan_amount: 1000.0
+          interest: 1.0
+          manual_loan_period: 3
+          first_payment_date: "2026-02-01"
+
+      - step: "Assert loan.out has documenso fields"
+        action: "assert"
+        target: "loan_out"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          signature_request_ids:
+            type: "value"
+            operator: "is_falsy"
+          approval_signature_request_id:
+            type: "value"
+            operator: "is_falsy"
+
+  - name: "Loan In - Documenso Signing: has signing fields"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan In DS Partner"
+          is_company: false
+
+      - step: "Create loan.in"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in"
+        values:
+          date: "2026-01-01"
+          partner_id: "EVAL: registry['partner'].id"
+          type_id: "REF: ssi_loan.demo_type_in1"
+          currency_id: "REF: base.USD"
+          loan_amount: 1000.0
+          interest: 1.0
+          manual_loan_period: 3
+          first_payment_date: "2026-02-01"
+
+      - step: "Assert loan.in has documenso fields"
+        action: "assert"
+        target: "loan_in"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          signature_request_ids:
+            type: "value"
+            operator: "is_falsy"
+          approval_signature_request_id:
+            type: "value"
+            operator: "is_falsy"
