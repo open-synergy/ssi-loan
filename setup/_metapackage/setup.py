@@ -9,6 +9,7 @@ setuptools.setup(
     version=version,
     install_requires=[
         'odoo14-addon-ssi_loan',
+        'odoo14-addon-ssi_loan_documenso_signing',
         'odoo14-addon-ssi_loan_operating_unit',
     ],
     classifiers=[
