@@ -1,0 +1,1964 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ssi_loan
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__move_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__move_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__move_id
+msgid "# Accounting Entry"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__name
+msgid "# Document"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "# Journal Entry"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_mixin__loan_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__loan_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__loan_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__loan_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__loan_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__loan_id
+msgid "# Loan"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_payment_schedule_mixin.py:0
+#, python-format
+msgid "%s %s interest income"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_payment_schedule_mixin.py:0
+#, python-format
+msgid "%s %s interest receivable"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_payment_schedule_mixin.py:0
+#, python-format
+msgid "%s %s principle receivable"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_mixin.py:0
+#, python-format
+msgid "%s loan realization"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_mixin.py:0
+#, python-format
+msgid "%s loan rounding"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__account_realization_id
+msgid ""
+"Account that will server as cross-account for realization.\n"
+"\n"
+"It will use as debit account for loan in or credit account for loan out"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_type_view_form
+msgid "Accounting"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Accounting Entry"
+msgstr ""
+
+#. module: ssi_loan
+#: model:base.automation,name:ssi_loan.loan_in_open_2_done
+#: model:base.automation,name:ssi_loan.loan_out_open_2_done
+#: model:ir.actions.server,name:ssi_loan.loan_in_action_done
+#: model:ir.actions.server,name:ssi_loan.loan_out_action_done
+msgid "Action Done"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_needaction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_needaction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_needaction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_needaction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_needaction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: ssi_loan
+#: model:base.automation,name:ssi_loan.loan_in_done_2_open
+#: model:base.automation,name:ssi_loan.loan_in_ready_2_open
+#: model:base.automation,name:ssi_loan.loan_out_done_2_open
+#: model:base.automation,name:ssi_loan.loan_out_ready_2_open
+#: model:ir.actions.server,name:ssi_loan.loan_in_action_open
+#: model:ir.actions.server,name:ssi_loan.loan_out_action_open
+msgid "Action Open"
+msgstr ""
+
+#. module: ssi_loan
+#: model:base.automation,name:ssi_loan.loan_in_open_2_ready
+#: model:base.automation,name:ssi_loan.loan_out_open_2_ready
+#: model:ir.actions.server,name:ssi_loan.loan_in_action_ready
+#: model:ir.actions.server,name:ssi_loan.loan_out_action_ready
+msgid "Action Ready"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__active
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__active
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__active
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__state__active
+msgid "Active"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__active_approval_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__active_approval_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__active_approval_ids
+msgid "Active Approvals"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__active_approver_partner_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__active_approver_partner_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__active_approver_partner_ids
+msgid "Active Partners"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__active_approver_user_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__active_approver_user_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__active_approver_user_ids
+msgid "Active Users"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__additional_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__additional_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__additional_amount
+msgid "Additional Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__additional_item_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__additional_item_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__additional_item_id
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_type_view_form
+msgid "Additional Item"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__additional_item_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__additional_item_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__additional_item_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__additional_item_ids
+#: model:ir.ui.menu,name:ssi_loan.loan_additional_item_menu
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Additional Items"
+msgstr ""
+
+#. module: ssi_loan
+#: model:res.groups,name:ssi_loan.loan_in_all_group
+#: model:res.groups,name:ssi_loan.loan_out_all_group
+msgid "All"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__allowed_additional_item_ids
+msgid "Allowed Additional Items"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__allowed_policy_template_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__allowed_policy_template_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__allowed_policy_template_ids
+msgid "Allowed Policy Templates"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__amount
+msgid "Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_type__interest_method__anuity
+msgid "Anuity"
+msgstr ""
+
+#. module: ssi_loan
+#: model:loan.type,name:ssi_loan.demo_type_in5
+#: model:loan.type,name:ssi_loan.demo_type_out5
+msgid "Anuity Long - (test)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:loan.type,name:ssi_loan.demo_type_in2
+#: model:loan.type,name:ssi_loan.demo_type_out2
+msgid "Anuity Short - (test)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__approval_template_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__approval_template_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__approval_template_id
+msgid "Approval Configuration"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__approval_template_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__approval_template_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__approval_template_id
+msgid "Approval Template"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__approval_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__approval_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__approval_ids
+msgid "Approvals"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__approve_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__approve_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__approve_ok
+msgid ""
+"Approve policy\n"
+"\n"
+"* If active user can see and execute 'Approve' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__approved
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__approved
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__approved
+msgid "Approved"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__loan_in_ok
+msgid "Available for Loan In"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__loan_out_ok
+msgid "Available for Loan Out"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__approve_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__approve_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__approve_ok
+msgid "Can Approve"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__cancel_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__cancel_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__cancel_ok
+msgid "Can Cancel"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__confirm_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__confirm_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__confirm_ok
+msgid "Can Confirm"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__done_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__done_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__done_ok
+msgid "Can Finished"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__manual_number_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__manual_number_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__manual_number_ok
+msgid "Can Input Manual Document Number"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__reject_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__reject_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__reject_ok
+msgid "Can Reject"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__restart_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__restart_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__restart_ok
+msgid "Can Restart"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__restart_approval_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__restart_approval_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__restart_approval_ok
+msgid "Can Restart Approval"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__ready_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__ready_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__ready_ok
+msgid "Can Stagged"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__open_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__open_ok
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__open_ok
+msgid "Can Start"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__cancel_reason_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__cancel_reason_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__cancel_reason_id
+msgid "Cancel Reason"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__cancel_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__cancel_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__cancel_ok
+msgid ""
+"Cancel policy\n"
+"\n"
+"* If active user can see and execute 'Cancel' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_in__state__cancel
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__state__cancel
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_out__state__cancel
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__state__cancel
+msgid "Cancelled"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__code
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__code
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__code
+msgid "Code"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_mixin__name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__name
+msgid "Collateral Name"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__collateral_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__collateral_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__collateral_ids
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Collaterals"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_res_company
+msgid "Companies"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__company_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__company_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__company_id
+#: model:ir.model.fields,field_description:ssi_loan.field_res_config_settings__company_id
+#: model:res.groups,name:ssi_loan.loan_in_company_group
+#: model:res.groups,name:ssi_loan.loan_out_company_group
+msgid "Company"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__company_currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__company_currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__company_currency_id
+msgid "Company Currency"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__company_partner_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__company_partner_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__company_partner_id
+msgid "Company Partner"
+msgstr ""
+
+#. module: ssi_loan
+#: model:res.groups,name:ssi_loan.loan_in_company_child_group
+#: model:res.groups,name:ssi_loan.loan_out_company_child_group
+msgid "Company and All Child Companies"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__company_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__company_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__company_id
+msgid ""
+"Company that own the document\n"
+"\n"
+"* Automatically filled with user's company.\n"
+"  Default company can be changed"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Compute payment schedule"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.ui.menu,name:ssi_loan.menu_loan_configuration
+msgid "Configuration"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__confirm_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__confirm_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__confirm_ok
+msgid ""
+"Confirm policy\n"
+"\n"
+"* If active user can see and execute 'Confirm' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__contra_payable_account_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__contra_reconcilliation_account_id
+msgid "Contra-Payable Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__contra_receivable_account_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__contra_reconcilliation_account_id
+msgid "Contra-Receivable Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__contra_reconcilliation_account_id
+msgid "Contra-Reconcilliation Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__create_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__create_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__date_cutoff
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__date_cutoff
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__date_cutoff
+msgid "Date Cut-Off"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__date
+msgid "Date Transaction"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__direction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__direction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__direction
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__direction
+msgid "Direction"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_mixin__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_res_company__display_name
+#: model:ir.model.fields,field_description:ssi_loan.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_in__state__done
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__state__done
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_out__state__done
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__state__done
+msgid "Done"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__done_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__done_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__done_ok
+msgid ""
+"Done policy\n"
+"\n"
+"* If active user can see and execute 'Done' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_in__state__draft
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__state__draft
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_out__state__draft
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_type__interest_method__effective
+msgid "Effective"
+msgstr ""
+
+#. module: ssi_loan
+#: model:loan.type,name:ssi_loan.demo_type_in6
+#: model:loan.type,name:ssi_loan.demo_type_out6
+msgid "Effective Long - (test)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:loan.type,name:ssi_loan.demo_type_in3
+#: model:loan.type,name:ssi_loan.demo_type_out3
+msgid "Effective Short - (test)"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.res_config_settings_view_form
+msgid "Feature"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__first_payment_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__first_payment_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__first_payment_date
+msgid "First Payment Date"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_type__interest_method__flat
+msgid "Flat"
+msgstr ""
+
+#. module: ssi_loan
+#: model:loan.type,name:ssi_loan.demo_type_in4
+#: model:loan.type,name:ssi_loan.demo_type_out4
+msgid "Flat Long - (test)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:loan.type,name:ssi_loan.demo_type_in1
+#: model:loan.type,name:ssi_loan.demo_type_out1
+msgid "Flat Short - (test)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_channel_ids
+msgid "Followers (Channels)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__activity_type_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__activity_type_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__activity_type_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__activity_type_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__activity_type_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Header Line"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_mixin__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__id
+#: model:ir.model.fields,field_description:ssi_loan.field_res_company__id
+#: model:ir.model.fields,field_description:ssi_loan.field_res_config_settings__id
+msgid "ID"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__activity_exception_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__activity_exception_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__activity_exception_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__activity_exception_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__activity_exception_icon
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__message_needaction
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__message_unread
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__message_needaction
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__message_unread
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__message_needaction
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__message_unread
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__message_needaction
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__message_unread
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__message_needaction
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__message_unread
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__message_needaction
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__message_unread
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__message_has_error
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__message_has_error
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__message_has_error
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__message_has_error
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__message_has_error
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__direction__in
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_type__direction__in
+msgid "In"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_in__state__open
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__state__open
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_out__state__open
+msgid "In Progress"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__installment_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__installment_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__installment_amount
+msgid "Installment Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.res_config_settings_view_form
+msgid "Integration"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Interest"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__interest
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__interest
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__interest
+msgid "Interest (p.a)"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__account_interest_id
+msgid "Interest Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__interest_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__interest_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__interest_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__interest_amount
+msgid "Interest Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__account_interest_income_id
+msgid "Interest Income Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__interest_journal_id
+msgid "Interest Journal"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__interest_method
+msgid "Interest Method"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__interest_move_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__interest_move_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__interest_move_id
+msgid "Interest Move"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__interest_move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__interest_move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__interest_move_line_id
+msgid "Interest Move Line"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__interest_payment_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__interest_payment_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__interest_payment_state
+msgid "Interest Payment State"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_type_view_form
+msgid "Interest Realization"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_is_follower
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_is_follower
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_is_follower
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_is_follower
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_is_follower
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__journal_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__journal_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__journal_id
+msgid "Journal"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_mixin____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_res_company____last_update
+#: model:ir.model.fields,field_description:ssi_loan.field_res_config_settings____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__write_uid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__write_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.module.category,name:ssi_loan.loan_module_category
+#: model:ir.ui.menu,name:ssi_loan.menu_root_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.res_config_settings_view_form
+msgid "Loan"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.module.category,name:ssi_loan.loan_configurator_module_category
+msgid "Loan - Configurator"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.module.category,name:ssi_loan.loan_data_ownership_module_category
+msgid "Loan - Data Ownership"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.module.category,name:ssi_loan.loan_workflow_module_category
+msgid "Loan - Workflow"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.actions.act_window,name:ssi_loan.loan_additional_item_action
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__name
+#: model:res.groups,name:ssi_loan.loan_additional_item_group
+msgid "Loan Additional Item"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__loan_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__loan_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__loan_amount
+msgid "Loan Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_in_collateral
+msgid "Loan Collateral In"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_collateral_mixin
+msgid "Loan Collateral Mixin"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_out_collateral
+msgid "Loan Collateral Out"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_collateral_type
+#: model:res.groups,name:ssi_loan.loan_collateral_type_group
+msgid "Loan Collateral Type"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.actions.act_window,name:ssi_loan.loan_collateral_type_action
+#: model:ir.ui.menu,name:ssi_loan.loan_collateral_type_menu
+msgid "Loan Collateral Types"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_type_view_form
+msgid "Loan Configuration"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_in
+#: model:ir.module.category,name:ssi_loan.loan_in_data_ownership_module_category
+#: model:ir.module.category,name:ssi_loan.loan_in_module_category
+msgid "Loan In"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_additional_item_view_form
+msgid "Loan In Configuration"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_payment_schedule_in
+msgid "Loan In Payment Schedule"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_mixin
+msgid "Loan Mixin"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_out
+#: model:ir.module.category,name:ssi_loan.loan_out_data_ownership_module_category
+#: model:ir.module.category,name:ssi_loan.loan_out_module_category
+msgid "Loan Out"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_additional_item_view_form
+msgid "Loan Out Configuration"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_payment_schedule_out
+msgid "Loan Out Payment Schedule"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_payment_schedule_additional_item_mixin
+msgid "Loan Payment Schedule Additional Item Mixin"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_payment_schedule_in_additional_item
+msgid "Loan Payment Schedule In Additional Item"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_payment_schedule_mixin
+msgid "Loan Payment Schedule Mixin"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_payment_schedule_out_additional_item
+msgid "Loan Payment Schedule Out Additional Item"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__manual_loan_period
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__manual_loan_period
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__manual_loan_period
+msgid "Loan Period"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model,name:ssi_loan.model_loan_additional_item
+#: model:ir.model,name:ssi_loan.model_loan_type
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__name
+#: model:res.groups,name:ssi_loan.loan_type_group
+msgid "Loan Type"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.actions.act_window,name:ssi_loan.loan_type_action
+#: model:ir.ui.menu,name:ssi_loan.loan_type_menu
+msgid "Loan Types"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.actions.act_window,name:ssi_loan.loan_in_action
+#: model:ir.ui.menu,name:ssi_loan.loan_in_menu
+msgid "Loans In"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.actions.act_window,name:ssi_loan.loan_out_action
+#: model:ir.ui.menu,name:ssi_loan.loan_out_menu
+msgid "Loans Out"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__long_account_principle_id
+msgid "Long-Term Principle Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__manual_number_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__manual_number_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__manual_number_ok
+msgid ""
+"Manual number assignment policy\n"
+"\n"
+"* If active user can edit document number"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__principle_payment_state__manual
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__principle_payment_state__manual
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__principle_payment_state__manual
+msgid "Manually Control"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Mark as Manually Control"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__active
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__active
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__active
+msgid ""
+"Master data status\n"
+"\n"
+"* Inactive data can not be selected when creating new transaction\n"
+"* Transaction with inactive master data can still be viewed\n"
+"* Set master data as inactive if master data no longger needed,\n"
+"but master data already used on transaction"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__code
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__code
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__code
+msgid ""
+"Master data unique identifier.\n"
+"\n"
+"* Fill with '/' if You do not need unique identifier\n"
+"* Click 'Generate Code' button to automatically assign code.\n"
+"  Sequence template mush be set to perform this action\n"
+"  Only master data with '/' code will be assign automatic code"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__maximum_installment_period
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__maximum_installment_period
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__maximum_installment_period
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__maximum_installment_period
+msgid "Maximum Installment Period"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__maximum_loan_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__maximum_loan_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__maximum_loan_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__maximum_loan_amount
+msgid "Maximum Loan Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_has_error
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_has_error
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_has_error
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_has_error
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_has_error
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__move_line_id
+msgid "Move Line"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__name
+msgid "Name"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__need_validation
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__need_validation
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__need_validation
+msgid "Need Validation"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_summary
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_summary
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_summary
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_summary
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_summary
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__next_approval_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__next_approval_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__next_approval_ids
+msgid "Next Approvals"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_payment_schedule_mixin.py:0
+#, python-format
+msgid "No interest income account defined"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_payment_schedule_mixin.py:0
+#, python-format
+msgid "No interest journal defined"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_payment_schedule_mixin.py:0
+#, python-format
+msgid "No long-term principle account defined"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_mixin.py:0
+#, python-format
+msgid "No realization account defined"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_mixin.py:0
+#, python-format
+msgid "No realization journal defined"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_mixin.py:0
+#, python-format
+msgid "No rounding account defined"
+msgstr ""
+
+#. module: ssi_loan
+#: code:addons/ssi_loan/models/loan_payment_schedule_mixin.py:0
+#, python-format
+msgid "No short-term principle account defined"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__note
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__note
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__note
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__note
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__note
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__note
+msgid "Note"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__message_needaction_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__message_needaction_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__message_needaction_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__message_needaction_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__message_needaction_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__message_has_error_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__message_has_error_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__message_has_error_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__message_has_error_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__message_has_error_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__message_unread_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__message_unread_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__message_unread_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__message_unread_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__message_unread_counter
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__message_unread_counter
+msgid "Number of unread messages"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__old_principle_move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__old_principle_move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__old_principle_move_line_id
+msgid "Old Principle Move Line"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__direction__out
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_type__direction__out
+msgid "Out"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__paid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__paid
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_additional_item_mixin__state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__interest_payment_state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__principle_payment_state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in_additional_item__state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__interest_payment_state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__principle_payment_state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__interest_payment_state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__principle_payment_state__paid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out_additional_item__state__paid
+msgid "Paid"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_additional_item_mixin__state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__interest_payment_state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__principle_payment_state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in_additional_item__state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__interest_payment_state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__principle_payment_state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__interest_payment_state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__principle_payment_state__partial
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out_additional_item__state__partial
+msgid "Partial Paid"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__partner_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__partner_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__partner_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__partner_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__partner_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__partner_id
+msgid "Partner"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__payable_account_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__reconcilliation_account_id
+msgid "Payable Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__payable_journal_id
+msgid "Payable Journal"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Payment Schedule"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__payment_schedule_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__payment_schedule_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__payment_schedule_ids
+msgid "Payment Schedules"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__policy_template_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__policy_template_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__policy_template_id
+msgid "Policy Template"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_type_view_form
+msgid "Priciple Realization"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Principle"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__principle_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__principle_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__principle_amount
+msgid "Principle Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__principle_move_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__principle_move_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__principle_move_id
+msgid "Principle Move"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__principle_move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__principle_move_line_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__principle_move_line_id
+msgid "Principle Move Line"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__principle_payment_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__principle_payment_state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__principle_payment_state
+msgid "Principle Payment State"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__rate_inverted
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__rate_inverted
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__rate_inverted
+msgid "Rate Inverted"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__ready_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__ready_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__ready_ok
+msgid ""
+"Ready policy\n"
+"\n"
+"* If active user can see and execute 'Staged' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_in__state__ready
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__state__ready
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_out__state__ready
+msgid "Ready to Process"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__account_realization_id
+msgid "Realization Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__realization_journal_id
+msgid "Realization Journal"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__move_realization_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__move_realization_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__move_realization_id
+msgid "Realization Journal Entry"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__move_line_header_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__move_line_header_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__move_line_header_id
+msgid "Realization Move Line Header"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Realize Interest"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__realized
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__realized
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__realized
+msgid "Realized"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__receivable_account_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__reconcilliation_account_id
+msgid "Receivable Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__receivable_journal_id
+msgid "Receivable Journal"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__reconcilliation_account_id
+msgid "Reconcilliation Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__reject_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__reject_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__reject_ok
+msgid ""
+"Reject policy\n"
+"\n"
+"* If active user can see and execute 'Reject' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__rejected
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__rejected
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__rejected
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_in__state__reject
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__state__reject
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_out__state__reject
+msgid "Rejected"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Repayment Term"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.ui.menu,name:ssi_loan.menu_loan_report
+msgid "Report"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__request_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__request_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__request_date
+msgid "Request Date"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__user_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__user_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__user_id
+msgid "Responsible"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__activity_user_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__activity_user_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__activity_user_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__activity_user_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__activity_user_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__restart_approval_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__restart_approval_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__restart_approval_ok
+msgid ""
+"Restart approval policy\n"
+"\n"
+"* If active user can see and execute 'Restart Approval' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__restart_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__restart_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__restart_ok
+msgid ""
+"Restart policy\n"
+"\n"
+"* If active user can see and execute 'Restart' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__reviewer_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__reviewer_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__reviewer_id
+msgid "Reviewer"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__account_rounding_id
+msgid "Rounding Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__schedule_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__schedule_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__schedule_id
+msgid "Schedule"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__schedule_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__schedule_date
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__schedule_date
+msgid "Schedule Date"
+msgstr ""
+
+#. module: ssi_loan
+#: model:res.groups,name:ssi_loan.loan_in_self_group
+#: model:res.groups,name:ssi_loan.loan_out_self_group
+msgid "Self"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_mixin__sequence
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__sequence
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__sequence
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__sequence
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__sequence
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.actions.act_window,name:ssi_loan.res_config_settings_action
+#: model:ir.ui.menu,name:ssi_loan.res_config_settings_menu
+msgid "Settings"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__short_account_principle_id
+msgid "Short-Term Principle Account"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__open_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__open_ok
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__open_ok
+msgid ""
+"Start policy\n"
+"\n"
+"* If active user can see and execute 'Start' button"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_additional_item_mixin__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in_additional_item__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__state
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out_additional_item__state
+msgid "State"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Status"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__activity_state
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__activity_state
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__activity_state
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__activity_state
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__activity_state
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_payment_schedule_additional_item_mixin__move_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_payment_schedule_in__interest_move_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_payment_schedule_in__principle_move_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_payment_schedule_in_additional_item__move_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_payment_schedule_out__interest_move_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_payment_schedule_out__principle_move_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_payment_schedule_out_additional_item__move_id
+msgid "The move of this entry line."
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Total Installment Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__total_interest_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__total_interest_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__total_interest_amount
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Total Interest Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__total_manual_principle_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__total_manual_principle_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__total_manual_principle_amount
+msgid "Total Manual Principle Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__total_principle_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__total_principle_amount
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__total_principle_amount
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Total Principle Amount"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__currency_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__currency_id
+msgid "Transaction Currency"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__rate
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__rate
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__rate
+msgid "Transaction Rate"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__name
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__name
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__name
+msgid ""
+"Transaction/document number\n"
+"\n"
+"* Unique indentifer of transaction\n"
+"* Leave '/' to automatically generate number\n"
+"* Change '/' into any number/identifier to manually assign number.\n"
+"  Manual number assignment can be done in 'Draft' state\n"
+"  Only user with 'Can Manualy Assign Number' policy can manually assign number.\n"
+"* Transaction with number other than '/' can not be deleted."
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_mixin__type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in_collateral__type_id
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out_collateral__type_id
+msgid "Type"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Unmark as Manually Control"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_additional_item_mixin__state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__interest_payment_state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__principle_payment_state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in_additional_item__state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__interest_payment_state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__principle_payment_state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__interest_payment_state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__principle_payment_state__unpaid
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out_additional_item__state__unpaid
+msgid "Unpaid"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_unread
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_unread
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_unread
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_unread
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_unread
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_unread
+msgid "Unread Messages"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_form
+msgid "Unrealize Interest"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_in__interest_payment_state__unrealized
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__interest_payment_state__unrealized
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_out__interest_payment_state__unrealized
+msgid "Unrealized"
+msgstr ""
+
+#. module: ssi_loan
+#: model:res.groups,name:ssi_loan.loan_in_user_group
+#: model:res.groups,name:ssi_loan.loan_out_user_group
+msgid "User"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__user_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__user_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__user_id
+msgid ""
+"User that responsible for document\n"
+"\n"
+"* Create user can be different with responsible user\n"
+"* Automatically filled with user that initiate document creation.\n"
+"  Default responsible can be changed."
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__reviewer_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__reviewer_id
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__reviewer_id
+msgid ""
+"User that responsible to review document\n"
+"\n"
+"* Unless it configured to approve reviewer does not equal to approver"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__active_approver_user_ids
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__active_approver_user_ids
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__active_approver_user_ids
+msgid "Users that can approve/reject document"
+msgstr ""
+
+#. module: ssi_loan
+#: model:res.groups,name:ssi_loan.loan_in_validator_group
+#: model:res.groups,name:ssi_loan.loan_out_validator_group
+msgid "Validator"
+msgstr ""
+
+#. module: ssi_loan
+#: model:res.groups,name:ssi_loan.loan_in_viewer_group
+#: model:res.groups,name:ssi_loan.loan_out_viewer_group
+msgid "Viewer"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_in__state__confirm
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_mixin__state__confirm
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_out__state__confirm
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__state__confirm
+msgid "Waiting for Approval"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields.selection,name:ssi_loan.selection__loan_payment_schedule_mixin__state__approve
+msgid "Waiting for Realization"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_additional_item__website_message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_collateral_type__website_message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_in__website_message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__website_message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_out__website_message_ids
+#: model:ir.model.fields,field_description:ssi_loan.field_loan_type__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: ssi_loan
+#: model:ir.model.fields,help:ssi_loan.field_loan_additional_item__website_message_ids
+#: model:ir.model.fields,help:ssi_loan.field_loan_collateral_type__website_message_ids
+#: model:ir.model.fields,help:ssi_loan.field_loan_in__website_message_ids
+#: model:ir.model.fields,help:ssi_loan.field_loan_mixin__website_message_ids
+#: model:ir.model.fields,help:ssi_loan.field_loan_out__website_message_ids
+#: model:ir.model.fields,help:ssi_loan.field_loan_type__website_message_ids
+msgid "Website communication history"
+msgstr ""
