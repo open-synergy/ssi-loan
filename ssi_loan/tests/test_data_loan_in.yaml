@@ -1,0 +1,125 @@
+scenarios:
+  - name: "Loan In - Flat interest workflow"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_in"
+        values:
+          name: "Test Loan In Partner"
+          is_company: false
+
+      - step: "Create loan.in with flat interest type"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in_flat"
+        values:
+          date: "2024-01-01"
+          partner_id: "EVAL: registry['partner_in'].id"
+          type_id: "REF: ssi_loan.demo_type_in1"
+          currency_id: "REF: base.USD"
+          loan_amount: 2400.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Assert loan.in created in draft"
+        action: "assert"
+        target: "loan_in_flat"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          loan_amount:
+            type: "value"
+            expected: 2400.0
+          manual_loan_period:
+            type: "value"
+            expected: 6
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_in_flat"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Invalidate cache after compute"
+        action: "call"
+        target: "loan_in_flat"
+        method: "invalidate_cache"
+
+      - step: "Assert payment schedules generated"
+        action: "assert"
+        target: "loan_in_flat"
+        asserts:
+          total_principle_amount:
+            type: "value"
+            expected: 2400.0
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "loan_in_flat"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Invalidate cache after confirm"
+        action: "call"
+        target: "loan_in_flat"
+        method: "invalidate_cache"
+
+      - step: "Assert loan.in is confirmed"
+        action: "assert"
+        target: "loan_in_flat"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+  - name: "Loan In - Anuity interest workflow"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_in_anuity"
+        values:
+          name: "Test Loan In Anuity Partner"
+
+      - step: "Create loan.in with anuity type"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in_anuity"
+        values:
+          date: "2024-01-01"
+          partner_id: "EVAL: registry['partner_in_anuity'].id"
+          type_id: "REF: ssi_loan.demo_type_in2"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 12
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute anuity payment"
+        action: "call"
+        target: "loan_in_anuity"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Invalidate cache"
+        action: "call"
+        target: "loan_in_anuity"
+        method: "invalidate_cache"
+
+      - step: "Assert anuity loan.in created"
+        action: "assert"
+        target: "loan_in_anuity"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          loan_amount:
+            type: "value"
+            expected: 3000.0
