@@ -2,9 +2,9 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-================================
+=====================================
 Loan - Documenso Signing Integration
-================================
+=====================================
 
 Glue module that adds Documenso digital signing support to the Loan (loan.in
 and loan.out) documents via ``mixin.documenso_signing_approval``.
