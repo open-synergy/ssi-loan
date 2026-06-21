@@ -586,6 +586,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_mixin__direction
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_out__direction
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_type__direction
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_type_view_search
 msgid "Direction"
 msgstr ""
 
@@ -720,6 +721,21 @@ msgstr ""
 #: model:ir.model.fields,help:ssi_loan.field_loan_out__activity_type_icon
 #: model:ir.model.fields,help:ssi_loan.field_loan_type__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_additional_item_view_search
+msgid "For Loan In"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_additional_item_view_search
+msgid "For Loan Out"
+msgstr ""
+
+#. module: ssi_loan
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_type_view_search
+msgid "Group By"
 msgstr ""
 
 #. module: ssi_loan
@@ -1095,6 +1111,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_out__type_id
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_type__name
 #: model:res.groups,name:ssi_loan.loan_type_group
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_search
 msgid "Loan Type"
 msgstr ""
 
@@ -1432,6 +1449,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_in__partner_id
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_mixin__partner_id
 #: model:ir.model.fields,field_description:ssi_loan.field_loan_payment_schedule_out__partner_id
+#: model_terms:ir.ui.view,arch_db:ssi_loan.loan_mixin_view_search
 msgid "Partner"
 msgstr ""
 
