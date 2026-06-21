@@ -19,10 +19,10 @@
             <xpath expr="//group[@name='dom_active']" position="after">
                 <group expand="0" string="Group By">
                     <filter
-                        name="grp_direction"
-                        string="Direction"
-                        context="{'group_by':'direction'}"
-                    />
+                            name="grp_direction"
+                            string="Direction"
+                            context="{'group_by':'direction'}"
+                        />
                 </group>
             </xpath>
         </data>
