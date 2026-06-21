@@ -12,7 +12,21 @@
         />
     <field name="mode">primary</field>
     <field name="arch" type="xml">
-        <data />
+        <data>
+            <xpath expr="//group[@name='dom_active']" position="inside">
+                <separator />
+                <filter
+                    name="dom_loan_out_ok"
+                    string="For Loan Out"
+                    domain="[('loan_out_ok','=',True)]"
+                />
+                <filter
+                    name="dom_loan_in_ok"
+                    string="For Loan In"
+                    domain="[('loan_in_ok','=',True)]"
+                />
+            </xpath>
+        </data>
     </field>
 </record>
 
