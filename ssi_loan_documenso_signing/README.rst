@@ -10,6 +10,13 @@ Glue module that adds Documenso digital signing support to the Loan (loan.in
 and loan.out) documents via ``mixin.documenso_signing_approval``.
 
 
+Work Instruction
+================
+
+* `Loan Out <docs/loan_out/index.html>`_
+* `Loan In <docs/loan_in/index.html>`_
+
+
 Bug Tracker
 ===========
 
