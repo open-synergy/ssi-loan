@@ -8,11 +8,24 @@ from odoo.exceptions import UserError
 
 
 class LoanPaymentScheduleMixin(models.AbstractModel):
+    """Represent a single installment of a ``loan.mixin`` document.
+
+    Tracks the principal, interest, and additional-item amounts due
+    on ``schedule_date``, the reconciliation-derived payment state of
+    each portion, and the accounting entries realizing the interest
+    and additional items into the general ledger.
+    """
+
     _name = "loan.payment_schedule_mixin"
     _description = "Loan Payment Schedule Mixin"
 
     @api.depends("principle_amount", "interest_amount", "additional_amount")
     def _compute_installment(self):
+        """Sum principal, interest, and additional items per line.
+
+        ``installment_amount`` is the total amount due for the
+        schedule line.
+        """
         for payment in self:
             payment.installment_amount = (
                 payment.principle_amount
@@ -22,6 +35,10 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
 
     @api.depends("additional_item_ids", "additional_item_ids.amount")
     def _compute_additional_amount(self):
+        """Sum the amounts of the schedule's additional items.
+
+        Feeds ``installment_amount`` via ``_compute_installment``.
+        """
         for record in self:
             result = 0.0
             for additional in record.additional_item_ids:
@@ -37,6 +54,14 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         "interest_move_line_id.matched_credit_ids",
     )
     def _compute_state(self):
+        """Derive payment states from move line reconciliation.
+
+        ``principle_payment_state`` and ``interest_payment_state``
+        are set to ``unpaid``, ``partial``, or ``paid`` depending on
+        whether ``principle_move_line_id``/``interest_move_line_id``
+        exist and are (partially) reconciled; interest starts as
+        ``unrealized`` before its move line is created.
+        """
         for payment in self:
             principle_move_line = payment.principle_move_line_id
             interest_move_line = payment.interest_move_line_id
@@ -192,24 +217,51 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
     )
 
     def action_mark_principle_as_manual(self):
+        """Switch the selected schedules to manual principal control.
+
+        Delegates to ``_mark_principle_as_manual`` for each record
+        run with ``sudo()``.
+        """
         for record in self.sudo():
             record._mark_principle_as_manual()
 
     def action_unmark_principle_as_manual(self):
+        """Revert the selected schedules to automatic principal.
+
+        Delegates to ``_unmark_principle_as_manual`` for each record
+        run with ``sudo()``.
+        """
         for record in self.sudo():
             record._unmark_principle_as_manual()
 
     def action_realize_interest(self):
+        """Post interest and additional-item entries for schedules.
+
+        Delegates to ``_create_interest_realization_move`` and
+        ``_create_additional_item_move`` for each record run with
+        ``sudo()``.
+        """
         for schedule in self.sudo():
             schedule._create_interest_realization_move()
             schedule._create_additional_item_move()
 
     def action_unrealize_interest(self):
+        """Reverse interest and additional-item entries for schedules.
+
+        Delegates to ``_delete_interest_realization_move`` and
+        ``_delete_additional_item_move`` for each record run with
+        ``sudo()``.
+        """
         for schedule in self.sudo():
             schedule._delete_interest_realization_move()
             schedule._delete_additional_item_move()
 
     def _mark_principle_as_manual(self):
+        """Set ``principle_payment_state`` to ``manual``.
+
+        Once manual, the schedule's principal is excluded from
+        ``loan.total_principle_amount`` and tracked separately.
+        """
         self.ensure_one()
         self.write(
             {
@@ -218,6 +270,7 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         )
 
     def _unmark_principle_as_manual(self):
+        """Reset ``principle_payment_state`` back to ``unpaid``."""
         self.ensure_one()
         self.write(
             {
@@ -226,20 +279,38 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         )
 
     def _create_additional_item_move(self):
+        """Post the accounting entry for every additional item.
+
+        Delegates to ``action_create_accounting_entry`` on each
+        record in ``additional_item_ids``.
+        """
         self.ensure_one()
         for additional_item in self.additional_item_ids:
             additional_item.action_create_accounting_entry()
 
     def _delete_additional_item_move(self):
+        """Reverse the accounting entry for every additional item.
+
+        Delegates to ``action_delete_accounting_entry`` on each
+        record in ``additional_item_ids``.
+        """
         self.ensure_one()
         for additional_item in self.additional_item_ids:
             additional_item.action_delete_accounting_entry()
 
     def _delete_interest_realization_move(self):
+        """Delete the schedule's interest realization journal entry."""
         self.ensure_one()
         self.interest_move_id.with_context(force_delete=True).unlink()
 
     def _prepare_interest_realization_move(self):
+        """Build the ``account.move`` header for interest realization.
+
+        Extension point: override to change the journal, date, or
+        reference used for the interest entry.
+
+        :return: dict of ``account.move`` values
+        """
         self.ensure_one()
         loan = self.loan_id
         res = {
@@ -252,6 +323,15 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return res
 
     def _get_interest_journal(self):
+        """Resolve the journal used for the interest entry.
+
+        Extension point: override to source the journal from
+        elsewhere than ``loan_id.type_id.interest_journal_id``.
+
+        :return: an ``account.journal`` record
+        :raises UserError: if the loan type has no interest journal
+            defined
+        """
         self.ensure_one()
         loan = self.loan_id
         journal = loan.type_id.interest_journal_id
@@ -263,6 +343,12 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return journal
 
     def _create_interest_realization_move(self):
+        """Post the interest realization journal entry.
+
+        Creates the ``account.move``, the interest receivable line
+        (stored on ``interest_move_line_id``), and the interest
+        income line, then posts the move.
+        """
         self.ensure_one()
         obj_move = self.env["account.move"]
         obj_line = self.env["account.move.line"]
@@ -282,6 +368,14 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         move.action_post()
 
     def _prepare_interest_realization_move_line(self, move):
+        """Build the interest receivable ``account.move.line`` values.
+
+        Extension point: override to change the account or partner
+        used for the interest receivable line.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         loan = self.loan_id
         loan_type = loan.type_id
@@ -307,6 +401,17 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return res
 
     def _get_interest_realization_move_line_amount(self):
+        """Compute the interest receivable debit/credit amounts.
+
+        Converts ``interest_amount`` to the loan's company currency
+        and splits it between debit and credit based on
+        ``loan_id.direction``.
+
+        Extension point: override to change how the interest
+        receivable amount is booked.
+
+        :return: tuple of ``(debit, credit, amount_currency)``
+        """
         self.ensure_one()
         debit = credit = 0.0
         loan = self.loan_id
@@ -326,6 +431,14 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return debit, credit, amount_currency
 
     def _prepare_interest_income_move_line(self, move):
+        """Build the interest income ``account.move.line`` values.
+
+        Extension point: override to change the account or partner
+        used for the interest income line.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         loan = self.loan_id
         name = _("%s %s interest income") % (loan.name, self.schedule_date)
@@ -344,6 +457,17 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return res
 
     def _get_interest_move_line_amount(self):
+        """Compute the interest income debit/credit amounts.
+
+        Converts ``interest_amount`` to the loan's company currency
+        and splits it between debit and credit based on
+        ``loan_id.direction`` (mirrored versus the receivable line).
+
+        Extension point: override to change how the interest income
+        amount is booked.
+
+        :return: tuple of ``(debit, credit, amount_currency)``
+        """
         self.ensure_one()
         debit = credit = 0.0
         loan = self.loan_id
@@ -363,6 +487,15 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return debit, credit, amount_currency
 
     def _get_interest_income_account(self):
+        """Resolve the account used for the interest income line.
+
+        Extension point: override to source the account from
+        elsewhere than ``loan_id.type_id.account_interest_income_id``.
+
+        :return: an ``account.account`` record
+        :raises UserError: if the loan type has no interest income
+            account defined
+        """
         self.ensure_one()
         loan = self.loan_id
         account = loan.type_id.account_interest_income_id
@@ -374,6 +507,12 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return account
 
     def _create_principle_receivable_move_line(self, move):
+        """Post the principal receivable line onto the given move.
+
+        Stores the created line on ``principle_move_line_id``.
+
+        :param move: the ``account.move`` the line will belong to
+        """
         self.ensure_one()
         line = (
             self.env["account.move.line"]
@@ -383,6 +522,14 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         self.principle_move_line_id = line
 
     def _prepare_principle_receivable_move_line(self, move):
+        """Build the principal receivable ``account.move.line`` values.
+
+        Extension point: override to change the account or partner
+        used for the principal receivable line.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         loan = self.loan_id
         name = _("%s %s principle receivable") % (loan.name, self.schedule_date)
@@ -402,6 +549,17 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return res
 
     def _get_realization_move_line_amount(self):
+        """Compute the principal receivable debit/credit amounts.
+
+        Converts ``principle_amount`` to the loan's company currency
+        and splits it between debit and credit based on
+        ``loan_id.direction``.
+
+        Extension point: override to change how the principal amount
+        is booked.
+
+        :return: tuple of ``(debit, credit, amount_currency)``
+        """
         self.ensure_one()
         loan = self.loan_id
         debit = credit = amount_currency = 0.0
@@ -420,6 +578,16 @@ class LoanPaymentScheduleMixin(models.AbstractModel):
         return debit, credit, amount_currency
 
     def _get_realization_move_line_account(self):
+        """Resolve the principal account for the receivable line.
+
+        Extension point: override to change the long/short-term
+        account selection rule (currently based on whether
+        ``schedule_date`` is more than 365 days from today).
+
+        :return: an ``account.account`` record
+        :raises UserError: if the loan type has no matching
+            long-term or short-term principal account defined
+        """
         self.ensure_one()
         dt_today = fields.Date.today()
         loan = self.loan_id

@@ -7,6 +7,13 @@ from odoo import fields, models
 
 
 class LoanCollateralMixin(models.AbstractModel):
+    """Represent a collateral pledged against a loan.
+
+    Each record links back to the loan via ``loan_id`` and records
+    the collateral's type and descriptive name; ``sequence`` controls
+    display order on the loan form.
+    """
+
     _name = "loan.collateral_mixin"
     _description = "Loan Collateral Mixin"
     _order = "sequence, id, loan_id"
