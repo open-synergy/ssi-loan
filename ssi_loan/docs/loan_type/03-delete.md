@@ -1,0 +1,16 @@
+# Delete Loan Type
+
+## Pre-Condition
+
+- User must belong to the **Loan Type** access group (`loan_type_group`).
+
+## Flow
+
+1. Open the **Loan > Configuration > Loan Types** menu.
+2. Select one or more records to delete (check the checkbox).
+3. Click **Action** > **Delete**.
+4. Click **OK** to confirm.
+
+## Post-Condition
+
+- The selected records are permanently removed from the system.
