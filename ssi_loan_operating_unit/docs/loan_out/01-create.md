@@ -1,6 +1,7 @@
 # Create Loan Out
 
 > **Module:** ssi_loan_operating_unit
+>
 > **Extends:** ssi_loan — model `loan.out`, aksi `01-create`
 
 ## Additional Fields
