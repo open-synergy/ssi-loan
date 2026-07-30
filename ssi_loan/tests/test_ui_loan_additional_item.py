@@ -14,6 +14,4 @@ class TestUiLoanAdditionalItem(HttpCase):
 
         IK: docs/loan_additional_item/01-create.md
         """
-        self.start_tour(
-            "/web", "ssi_loan_loan_additional_item_create", login="admin"
-        )
+        self.start_tour("/web", "ssi_loan_loan_additional_item_create", login="admin")

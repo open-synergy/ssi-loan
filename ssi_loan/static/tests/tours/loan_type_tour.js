@@ -24,8 +24,7 @@ odoo.define("ssi_loan.loan_type_tour", function (require) {
             },
             {
                 content: "Open the Loan Types menu",
-                trigger:
-                    '.o_menu_sections [data-menu-xmlid="ssi_loan.loan_type_menu"]',
+                trigger: '.o_menu_sections [data-menu-xmlid="ssi_loan.loan_type_menu"]',
             },
             {
                 // Gate: wait for the TARGET action to be mounted, not just

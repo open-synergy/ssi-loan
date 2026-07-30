@@ -82,8 +82,7 @@ odoo.define("ssi_loan.loan_additional_item_tour", function (require) {
             // journal are optional, left blank)
             {
                 content: "Open the Loan Out Configuration tab",
-                trigger:
-                    ".o_notebook .nav-link:contains(Loan Out Configuration)",
+                trigger: ".o_notebook .nav-link:contains(Loan Out Configuration)",
             },
             {
                 content: "Loan Out Configuration tab is displayed",
@@ -97,8 +96,7 @@ odoo.define("ssi_loan.loan_additional_item_tour", function (require) {
             // journal are optional, left blank)
             {
                 content: "Open the Loan In Configuration tab",
-                trigger:
-                    ".o_notebook .nav-link:contains(Loan In Configuration)",
+                trigger: ".o_notebook .nav-link:contains(Loan In Configuration)",
             },
             {
                 content: "Loan In Configuration tab is displayed",

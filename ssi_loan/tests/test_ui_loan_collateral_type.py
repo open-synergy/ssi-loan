@@ -14,6 +14,4 @@ class TestUiLoanCollateralType(HttpCase):
 
         IK: docs/loan_collateral_type/01-create.md
         """
-        self.start_tour(
-            "/web", "ssi_loan_loan_collateral_type_create", login="admin"
-        )
+        self.start_tour("/web", "ssi_loan_loan_collateral_type_create", login="admin")
