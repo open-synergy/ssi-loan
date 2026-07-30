@@ -1,9 +1,9 @@
 # Set Ready Loan Out
 
-This transition is not triggered by a button; it is executed automatically by the
-system (`base.automation`) once the trigger condition below is met. The initial
-**Waiting for Approval** → **Ready to Process** transition is triggered instead by the
-approval mechanism — see the Post-Condition of `05-approve.md`.
+This transition is not triggered by a button; it is executed automatically by the system
+(`base.automation`) once the trigger condition below is met. The initial **Waiting for
+Approval** → **Ready to Process** transition is triggered instead by the approval
+mechanism — see the Post-Condition of `05-approve.md`.
 
 ## Pre-Condition
 

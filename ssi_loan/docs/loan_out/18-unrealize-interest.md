@@ -16,6 +16,6 @@
 
 ## Post-Condition
 
-- The line's interest realization journal entry and its additional item entries (if
-  any) are deleted.
+- The line's interest realization journal entry and its additional item entries (if any)
+  are deleted.
 - The line's **Interest Payment State** changes back to **Unrealized**.

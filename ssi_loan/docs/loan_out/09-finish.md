@@ -1,7 +1,7 @@
 # Finish Loan Out
 
-This transition is not triggered by a button; it is executed automatically by the
-system (`base.automation`) once the trigger condition below is met.
+This transition is not triggered by a button; it is executed automatically by the system
+(`base.automation`) once the trigger condition below is met.
 
 ## Pre-Condition
 
