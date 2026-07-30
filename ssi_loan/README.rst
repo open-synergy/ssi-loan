@@ -14,6 +14,7 @@ Work Instruction
 * `Loan Collateral Type <docs/loan_collateral_type/index.html>`_
 * `Loan Additional Item <docs/loan_additional_item/index.html>`_
 * `Loan Out <docs/loan_out/index.html>`_
+* `Loan In <docs/loan_in/index.html>`_
 
 
 Installation
