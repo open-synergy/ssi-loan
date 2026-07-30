@@ -6,6 +6,14 @@ from odoo import fields, models
 
 
 class LoanPaymentScheduleOut(models.Model):
+    """Single installment line of a ``loan.out`` payment schedule.
+
+    Detail model of ``loan.out``: adds the ``loan_id`` back-reference
+    plus partner/currency/state fields related from the parent loan,
+    on top of the due-date and principal/interest fields inherited
+    from ``loan.payment_schedule_mixin``.
+    """
+
     _name = "loan.payment_schedule_out"
     _inherit = ["loan.payment_schedule_mixin"]
     _description = "Loan Out Payment Schedule"

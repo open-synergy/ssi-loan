@@ -6,6 +6,14 @@ from odoo import fields, models
 
 
 class LoanIn(models.Model):
+    """Represent a loan the company receives from a third party.
+
+    Restricts ``type_id`` to incoming loan types and routes payment
+    schedules and collateral to their ``*.in`` counterparts; the
+    borrowing/payable lifecycle itself is inherited from
+    ``loan.mixin``.
+    """
+
     _name = "loan.in"
     _inherit = ["loan.mixin"]
     _description = "Loan In"

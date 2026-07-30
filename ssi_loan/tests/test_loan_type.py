@@ -9,5 +9,8 @@ from odoo.tests import tagged
 
 @tagged("post_install", "-at_install")
 class TestLoanType(YamlTransactionCase):
+    """Cover ``loan.type`` master data CRUD via YAML scenario."""
+
     def test_loan_type(self):
+        """Run the ``test_data_loan_type.yaml`` scenario."""
         self.run_yaml_scenario("test_data_loan_type.yaml")
