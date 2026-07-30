@@ -7,6 +7,15 @@ from odoo import fields, models
 
 
 class LoanAdditionalItem(models.Model):
+    """Master data for extra charges/fees billable on a loan schedule.
+
+    Each record defines whether it applies to loan out and/or loan
+    in (``loan_out_ok``/``loan_in_ok``) and the receivable/payable
+    accounts and journals used to book it; selectable on
+    ``loan.type.additional_item_ids`` and instantiated per schedule
+    line as a ``loan.payment_schedule_*_additional_item``.
+    """
+
     _name = "loan.additional_item"
     _inherit = ["mixin.master_data"]
     _description = "Loan Type"

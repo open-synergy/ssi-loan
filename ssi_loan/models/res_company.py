@@ -6,5 +6,14 @@ from odoo import models
 
 
 class ResCompany(models.Model):
+    """Enable ``res.company`` to carry ``ssi_loan`` settings fields.
+
+    Pure ``_inherit`` hook so ``abstract.config.settings`` (from
+    ``configuration_helper``) can mirror any ``setting_``-prefixed
+    company field of this module onto ``res.config.settings``. No
+    such field is defined yet: loan defaults currently live directly
+    on ``loan.type`` as ``company_dependent`` fields instead.
+    """
+
     _name = "res.company"
     _inherit = "res.company"

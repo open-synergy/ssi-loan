@@ -8,6 +8,15 @@ from odoo import api, fields, models
 
 
 class LoanType(models.Model):
+    """Master data defining a loan product and its interest rule.
+
+    Fixes the ``direction`` (in/out) a loan of this type can be used
+    for, the ``interest_method`` used to build its payment schedule,
+    and the company-dependent limits (maximum amount/period) and
+    default accounts/journals used for realization and interest
+    posting.
+    """
+
     _name = "loan.type"
     _inherit = ["mixin.master_data"]
     _description = "Loan Type"
@@ -103,6 +112,13 @@ class LoanType(models.Model):
         "direction",
     )
     def _compute_allowed_additional_item(self):
+        """Restrict selectable additional items to the type's direction.
+
+        Searches ``loan.additional_item`` for records flagged
+        ``loan_out_ok`` when ``direction`` is ``out``, or
+        ``loan_in_ok`` when ``direction`` is ``in``; empty when
+        ``direction`` is not set.
+        """
         LoanAdditionalItem = self.env["loan.additional_item"]
         for record in self:
             result = []
@@ -140,6 +156,23 @@ class LoanType(models.Model):
     def _compute_interest(
         self, loan_amount, interest, period, first_payment_date, interest_method
     ):
+        """Dispatch to the schedule builder for ``interest_method``.
+
+        Calls ``_compute_flat``, ``_compute_effective`` or
+        ``_compute_anuity`` depending on ``interest_method``; used by
+        ``loan.mixin._compute_payment`` to regenerate a loan's
+        payment schedule.
+
+        :param loan_amount: principal amount to be scheduled
+        :param interest: annual interest rate, in percent
+        :param period: number of monthly installments
+        :param first_payment_date: date of the first installment
+        :param interest_method: one of ``flat``, ``effective``,
+            ``anuity``
+        :return: list of dict, one per installment, each with
+            ``schedule_date``, ``principle_amount`` and
+            ``interest_amount``
+        """
         if interest_method == "flat":
             return self._compute_flat(loan_amount, interest, period, first_payment_date)
         elif interest_method == "effective":
@@ -153,6 +186,21 @@ class LoanType(models.Model):
 
     @api.model
     def _compute_flat(self, loan_amount, interest, period, first_payment_date):
+        """Build a flat-rate installment schedule.
+
+        Principal is split evenly across ``period`` installments;
+        interest is a constant ``loan_amount * interest% / 12`` on
+        every installment, always computed on the original principal
+        rather than the declining balance.
+
+        :param loan_amount: principal amount to be scheduled
+        :param interest: annual interest rate, in percent
+        :param period: number of monthly installments
+        :param first_payment_date: date of the first installment
+        :return: list of dict, one per installment, each with
+            ``schedule_date``, ``principle_amount`` and
+            ``interest_amount``
+        """
         result = []
 
         principle_amount = loan_amount / period
@@ -173,6 +221,22 @@ class LoanType(models.Model):
 
     @api.model
     def _compute_effective(self, loan_amount, interest, period, first_payment_date):
+        """Build an effective-rate installment schedule.
+
+        Principal is split evenly across ``period`` installments, as
+        in ``_compute_flat``, but interest is charged on the
+        outstanding balance still owed at the start of each
+        installment (``loan_amount`` minus principal already
+        scheduled), so it decreases every period.
+
+        :param loan_amount: principal amount to be scheduled
+        :param interest: annual interest rate, in percent
+        :param period: number of monthly installments
+        :param first_payment_date: date of the first installment
+        :return: list of dict, one per installment, each with
+            ``schedule_date``, ``principle_amount`` and
+            ``interest_amount``
+        """
         result = []
         principle_amount = loan_amount / float(period)
         interest_dec = interest / 100.00
@@ -198,6 +262,23 @@ class LoanType(models.Model):
 
     @api.model
     def _compute_anuity(self, loan_amount, interest, period, first_payment_date):
+        """Build an annuity installment schedule.
+
+        Computes a fixed total installment amount (the standard
+        annuity payment formula) that stays the same every period;
+        each installment's interest is charged on the remaining
+        balance and the principal share is the remainder of the
+        fixed installment, so principal grows and interest shrinks
+        as the loan is paid down.
+
+        :param loan_amount: principal amount to be scheduled
+        :param interest: annual interest rate, in percent
+        :param period: number of monthly installments
+        :param first_payment_date: date of the first installment
+        :return: list of dict, one per installment, each with
+            ``schedule_date``, ``principle_amount`` and
+            ``interest_amount``
+        """
         result = []
         interest_decimal = interest / 100.00
         total_principle_amount = 0.0

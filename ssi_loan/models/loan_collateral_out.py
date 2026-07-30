@@ -6,6 +6,13 @@ from odoo import fields, models
 
 
 class LoanCollateralOut(models.Model):
+    """Collateral line pledged against a single ``loan.out`` record.
+
+    Detail model of ``loan.out``: adds the ``loan_id`` back-reference
+    on top of the type/name/sequence fields inherited from
+    ``loan.collateral_mixin``.
+    """
+
     _name = "loan_out.collateral"
     _inherit = ["loan.collateral_mixin"]
     _description = "Loan Collateral Out"

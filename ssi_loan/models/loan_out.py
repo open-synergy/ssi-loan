@@ -6,6 +6,14 @@ from odoo import fields, models
 
 
 class LoanOut(models.Model):
+    """Represent a loan disbursed by the company to a third party.
+
+    Restricts ``type_id`` to outgoing loan types and routes payment
+    schedules and collateral to their ``*.out`` counterparts; the
+    disbursement/receivable lifecycle itself is inherited from
+    ``loan.mixin``.
+    """
+
     _name = "loan.out"
     _inherit = ["loan.mixin"]
     _description = "Loan Out"
