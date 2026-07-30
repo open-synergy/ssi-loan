@@ -24,6 +24,12 @@ from the parent loan document is propagated to each generated schedule line.
 .. contents::
    :local:
 
+Work Instruction
+================
+
+* `Loan Out <docs/loan_out/index.html>`_
+* `Loan In <docs/loan_in/index.html>`_
+
 Installation
 ============
 
