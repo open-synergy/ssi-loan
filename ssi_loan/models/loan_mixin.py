@@ -9,6 +9,16 @@ from odoo.addons.ssi_decorator import ssi_decorator
 
 
 class LoanMixin(models.AbstractModel):
+    """Represent a loan request/agreement document.
+
+    Combines the multi-currency, company-currency, and multi-state
+    transaction mixins (confirm/ready/open/done/cancel) inherited
+    from ``ssi-mixin`` into the loan business layer: principal
+    amount, interest rate, disbursement ``direction`` (in/out), the
+    generated ``payment_schedule_ids`` lines, and the realization
+    journal entry created once the loan becomes ready to disburse.
+    """
+
     _name = "loan.mixin"
     _inherit = [
         "mixin.currency",
@@ -151,6 +161,7 @@ class LoanMixin(models.AbstractModel):
 
     @api.model
     def _default_direction(self):
+        """Default new loans to outgoing (``out``) disbursement."""
         return "out"
 
     direction = fields.Selection(
@@ -231,6 +242,12 @@ class LoanMixin(models.AbstractModel):
         "move_line_header_id.matched_credit_ids",
     )
     def _compute_realized(self):
+        """Flag the loan once its realization move line reconciles.
+
+        ``realized`` becomes ``True`` when ``move_line_header_id`` is
+        fully reconciled, the same condition checked by
+        ``_check_loan_realization`` before allowing cancellation.
+        """
         for record in self:
             result = False
 
@@ -264,6 +281,15 @@ class LoanMixin(models.AbstractModel):
         "payment_schedule_ids.principle_payment_state",
     )
     def _compute_total(self):
+        """Aggregate principal and interest across payment schedules.
+
+        Schedules whose ``principle_payment_state`` is ``manual`` are
+        summed into ``total_manual_principle_amount`` instead of
+        ``total_principle_amount``, so manually-controlled
+        installments are excluded from the auto-reconciled total,
+        while interest is always accumulated into
+        ``total_interest_amount``.
+        """
         for loan in self:
             loan.total_principle_amount = (
                 loan.total_interest_amount
@@ -301,6 +327,13 @@ class LoanMixin(models.AbstractModel):
         "payment_schedule_ids.interest_payment_state",
     )
     def _compute_paid(self):
+        """Flag the loan as paid once every schedule line settles.
+
+        ``paid`` is ``False`` when there are no payment schedules, or
+        when any schedule still has an unpaid/partial principal, or
+        an unpaid/partial interest on a schedule that carries
+        interest.
+        """
         for record in self:
             result = True
 
@@ -389,13 +422,30 @@ class LoanMixin(models.AbstractModel):
         "date",
     )
     def onchange_rate(self):
+        """Recompute the exchange rate when the transaction date changes.
+
+        Delegates to ``onchange_rate_mixin`` from ``mixin.currency``
+        so the rate lookup logic stays defined in one place.
+        """
         self.onchange_rate_mixin()
 
     def action_compute_payment(self):
+        """Regenerate the payment schedule for the selected loans.
+
+        Triggered by the "Compute Payment" button; delegates to
+        ``_compute_payment`` for each record run with ``sudo()``.
+        """
         for record in self.sudo():
             record._compute_payment()
 
     def _compute_payment(self):
+        """Rebuild ``payment_schedule_ids`` from the loan type's rules.
+
+        Deletes any existing schedule lines, then asks
+        ``loan.type._compute_interest`` for the principal/interest
+        breakdown per installment period and creates one
+        ``payment_schedule_ids`` record per period.
+        """
         self.ensure_one()
         schedule_object_name = self.payment_schedule_ids._name
 
@@ -417,6 +467,16 @@ class LoanMixin(models.AbstractModel):
             obj_payment.create(payment_data)
 
     def _create_realization_move(self):
+        """Post the loan realization journal entry.
+
+        Creates the header ``account.move``, the header move line
+        that is later matched for ``realized``, one principal
+        receivable line per non-manual payment schedule, and a
+        rounding line when the resulting entry does not balance. The
+        move is posted before returning.
+
+        :return: tuple of ``(move.id, move_line_header.id)``
+        """
         self.ensure_one()
         obj_move = self.env["account.move"]
         obj_line = self.env["account.move.line"]
@@ -448,6 +508,13 @@ class LoanMixin(models.AbstractModel):
         return move.id, move_line_header.id
 
     def _prepare_realization_move(self):
+        """Build the ``account.move`` header values for realization.
+
+        Extension point: override to change the journal, date, or
+        reference used for the loan realization entry.
+
+        :return: dict of ``account.move`` values
+        """
         self.ensure_one()
         res = {
             "name": "/",
@@ -459,6 +526,15 @@ class LoanMixin(models.AbstractModel):
         return res
 
     def _get_realization_journal(self):
+        """Resolve the journal used for the realization entry.
+
+        Extension point: override to source the journal from
+        elsewhere than ``type_id.realization_journal_id``.
+
+        :return: an ``account.journal`` record
+        :raises UserError: if the loan type has no realization
+            journal defined
+        """
         self.ensure_one()
         journal = self.type_id.realization_journal_id
 
@@ -469,6 +545,14 @@ class LoanMixin(models.AbstractModel):
         return journal
 
     def _prepare_header_move_line(self, move):
+        """Build the header ``account.move.line`` values.
+
+        Extension point: override to change the account or partner
+        used for the loan's realization header line.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         name = _("%s loan realization") % (self.name)
         debit, credit, amount_currency = self._get_realization_move_line_header_amount()
@@ -485,6 +569,13 @@ class LoanMixin(models.AbstractModel):
         return res
 
     def _get_realization_move_line_header_amount(self):
+        """Compute the header line debit/credit and foreign amount.
+
+        Extension point: override to change how the total principal
+        is split between debit and credit based on ``direction``.
+
+        :return: tuple of ``(debit, credit, amount_currency)``
+        """
         self.ensure_one()
         debit = credit = amount_currency = 0.0
 
@@ -501,6 +592,15 @@ class LoanMixin(models.AbstractModel):
         return debit, credit, amount_currency
 
     def _get_realization_account(self):
+        """Resolve the account used for the realization header line.
+
+        Extension point: override to source the account from
+        elsewhere than ``type_id.account_realization_id``.
+
+        :return: an ``account.account`` record
+        :raises UserError: if the loan type has no realization
+            account defined
+        """
         self.ensure_one()
         account = self.type_id.account_realization_id
 
@@ -511,6 +611,15 @@ class LoanMixin(models.AbstractModel):
         return account
 
     def _get_rounding_amount(self, amount):
+        """Compute the rounding line debit/credit and foreign amount.
+
+        Extension point: override to change how the rounding
+        difference between the realization move's debit and credit
+        is booked.
+
+        :param amount: the debit-minus-credit difference to absorb
+        :return: tuple of ``(debit, credit, amount_currency)``
+        """
         debit = credit = amount_currency = 0.0
 
         rounding_amount = self._convert_amount_to_company_currency(abs(amount))
@@ -524,6 +633,15 @@ class LoanMixin(models.AbstractModel):
         return debit, credit, amount_currency
 
     def _prepare_rounding_move_line(self, move, amount):
+        """Build the rounding ``account.move.line`` values.
+
+        Extension point: override to change the account or partner
+        used for the realization move's rounding line.
+
+        :param move: the ``account.move`` the line will belong to
+        :param amount: the debit-minus-credit difference to absorb
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         name = _("%s loan rounding") % (self.name)
         debit, credit, amount_currency = self._get_rounding_amount(amount)
@@ -540,6 +658,15 @@ class LoanMixin(models.AbstractModel):
         return res
 
     def _get_rounding_account(self):
+        """Resolve the account used for the rounding line.
+
+        Extension point: override to source the account from
+        elsewhere than ``type_id.account_rounding_id``.
+
+        :return: an ``account.account`` record
+        :raises UserError: if the loan type has no rounding account
+            defined
+        """
         self.ensure_one()
         account = self.type_id.account_rounding_id
 
@@ -550,6 +677,16 @@ class LoanMixin(models.AbstractModel):
         return account
 
     def _prepare_ready_data(self):
+        """Extend the ready-state values with realization move data.
+
+        Extension point: overrides ``mixin.transaction_ready`` to
+        create the realization journal entry the first time the loan
+        becomes ready, storing ``move_realization_id`` and
+        ``move_line_header_id`` alongside the inherited ``state``
+        value.
+
+        :return: dict of values written when the loan becomes ready
+        """
         self.ensure_one()
         _super = super(LoanMixin, self)
         result = _super._prepare_ready_data()
@@ -564,6 +701,16 @@ class LoanMixin(models.AbstractModel):
         return result
 
     def _prepare_cancel_data(self, cancel_reason=False):
+        """Extend the cancel values by reverting the realization move.
+
+        Extension point: overrides ``mixin.transaction_cancel`` to
+        clear ``move_realization_id``/``move_line_header_id`` and
+        delete the realization ``account.move`` before the inherited
+        cancel values are written.
+
+        :param cancel_reason: optional ``base.cancel_reason`` record
+        :return: dict of values written when the loan is cancelled
+        """
         self.ensure_one()
         _super = super(LoanMixin, self)
         result = _super._prepare_cancel_data()
@@ -579,6 +726,13 @@ class LoanMixin(models.AbstractModel):
         return result
 
     def _check_interest_realization_move(self):
+        """Block cancellation while any interest has been realized.
+
+        :return: ``True`` when no schedule has a realized interest
+            move line
+        :raises ValidationError: if any schedule has
+            ``interest_move_line_id`` set
+        """
         self.ensure_one()
 
         result = True
@@ -597,6 +751,13 @@ class LoanMixin(models.AbstractModel):
         return result
 
     def _check_payment(self):
+        """Block cancellation while principal or interest is paid.
+
+        :return: ``True`` when no schedule has a partial/paid
+            principal or interest
+        :raises ValidationError: if any schedule is partially or
+            fully paid
+        """
         self.ensure_one()
 
         result = True
@@ -616,6 +777,11 @@ class LoanMixin(models.AbstractModel):
         return result
 
     def _check_loan_realization(self):
+        """Block cancellation of an already realized loan.
+
+        :return: ``True`` when the loan is not yet ``realized``
+        :raises ValidationError: if ``realized`` is ``True``
+        """
         self.ensure_one()
 
         result = True
@@ -630,6 +796,17 @@ class LoanMixin(models.AbstractModel):
         return result
 
     def action_cancel(self, cancel_reason=False):
+        """Guard cancellation with loan-specific business checks.
+
+        Overrides ``mixin.transaction_cancel`` to run
+        ``_check_interest_realization_move``, ``_check_payment``, and
+        ``_check_loan_realization`` before delegating to the
+        inherited ``action_cancel``, so a loan cannot be cancelled
+        while interest is realized, principal/interest is paid, or
+        the loan itself is already realized.
+
+        :param cancel_reason: optional ``base.cancel_reason`` record
+        """
         _super = super(LoanMixin, self)
 
         for record in self.sudo():
@@ -641,6 +818,14 @@ class LoanMixin(models.AbstractModel):
 
     @ssi_decorator.pre_confirm_check()
     def _check_total_principle_amount(self):
+        """Gate confirmation on principal/schedule amount matching.
+
+        Runs before the loan is written to the ``confirm`` state
+        during ``action_confirm``.
+
+        :raises ValidationError: if ``total_principle_amount`` does
+            not equal ``loan_amount``
+        """
         self.ensure_one()
         if self.total_principle_amount != self.loan_amount:
             total_principle_amount = "{:0,.2f}".format(self.total_principle_amount)
@@ -654,6 +839,14 @@ class LoanMixin(models.AbstractModel):
 
     @ssi_decorator.pre_confirm_check()
     def _check_maximum_loan(self):
+        """Gate confirmation on the loan type's maximum loan amount.
+
+        Runs before the loan is written to the ``confirm`` state
+        during ``action_confirm``.
+
+        :raises ValidationError: if ``loan_amount`` exceeds
+            ``maximum_loan_amount``
+        """
         self.ensure_one()
         if self.loan_amount > self.maximum_loan_amount:
             loan_amount = "{:0,.2f}".format(self.loan_amount)

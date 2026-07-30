@@ -7,6 +7,14 @@ from odoo import api, fields, models
 
 
 class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
+    """Represent an extra charge/fee attached to a payment schedule.
+
+    Adds an ``additional_item_id`` (e.g. an admin fee or penalty) on
+    top of a ``loan.payment_schedule_mixin`` line, together with the
+    journal/account pair used to post and reconcile its accounting
+    entry.
+    """
+
     _name = "loan.payment_schedule_additional_item_mixin"
     _description = "Loan Payment Schedule Additional Item Mixin"
 
@@ -74,6 +82,12 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         "move_line_id.matched_credit_ids",
     )
     def _compute_state(self):
+        """Derive the payment state from move line reconciliation.
+
+        ``state`` is ``unpaid`` while ``move_line_id`` is empty or
+        unmatched, ``partial`` while matched but not fully
+        reconciled, and ``paid`` once fully reconciled.
+        """
         for record in self:
             move_line = record.move_line_id
 
@@ -108,6 +122,12 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         "additional_item_id",
     )
     def onchange_journal_id(self):
+        """Default the journal from the additional item's direction.
+
+        Uses ``additional_item_id.receivable_journal_id`` when the
+        loan's direction is ``out``, or
+        ``additional_item_id.payable_journal_id`` when ``in``.
+        """
         self.journal_id = False
         if self.schedule_id and self.additional_item_id:
             loan_type = self.schedule_id.loan_id.type_id
@@ -121,6 +141,12 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         "additional_item_id",
     )
     def onchange_reconcilliation_account_id(self):
+        """Default the reconciliation account from item direction.
+
+        Uses ``additional_item_id.receivable_account_id`` when the
+        loan's direction is ``out``, or
+        ``additional_item_id.payable_account_id`` when ``in``.
+        """
         self.reconcilliation_account_id = False
         if self.schedule_id and self.additional_item_id:
             loan_type = self.schedule_id.loan_id.type_id
@@ -138,6 +164,12 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         "additional_item_id",
     )
     def onchange_contra_reconcilliation_account_id(self):
+        """Default the contra account from the item's direction.
+
+        Uses ``additional_item_id.contra_receivable_account_id`` when
+        the loan's direction is ``out``, or
+        ``additional_item_id.contra_payable_account_id`` when ``in``.
+        """
         self.contra_reconcilliation_account_id = False
         if self.schedule_id and self.additional_item_id:
             loan_type = self.schedule_id.loan_id.type_id
@@ -151,14 +183,23 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
                 )
 
     def action_create_accounting_entry(self):
+        """Post the accounting entry for the selected additional items.
+
+        Delegates to ``_create_accounting_entry`` for each record.
+        """
         for record in self:
             record._create_accounting_entry()
 
     def action_delete_accounting_entry(self):
+        """Reverse the accounting entry of the selected items.
+
+        Delegates to ``_delete_accounting_entry`` for each record.
+        """
         for record in self:
             record._delete_accounting_entry()
 
     def _delete_accounting_entry(self):
+        """Clear ``move_line_id`` and delete its accounting entry."""
         self.ensure_one()
         move = self.move_id
         self.write(
@@ -169,6 +210,12 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         move.with_context(force_delete=True).unlink()
 
     def _create_accounting_entry(self):
+        """Post the reconciliation and contra-reconciliation lines.
+
+        Creates the ``account.move``, then its reconciliation and
+        contra-reconciliation lines, storing the reconciliation line
+        on ``move_line_id``.
+        """
         self.ensure_one()
         AccountMove = self.env["account.move"]
         move = AccountMove.create(self._prepare_account_move())
@@ -181,6 +228,13 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         )
 
     def _prepare_account_move(self):
+        """Build the ``account.move`` header values.
+
+        Extension point: override to change the journal, date, or
+        reference used for the additional item's entry.
+
+        :return: dict of ``account.move`` values
+        """
         self.ensure_one()
         return {
             "name": "/",
@@ -190,6 +244,11 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         }
 
     def _create_reconcilliation_ml(self, move):
+        """Post the reconciliation ``account.move.line``.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: the created ``account.move.line`` record
+        """
         self.ensure_one()
         AccountMoveLine = self.env["account.move.line"]
         return AccountMoveLine.with_context(check_move_validity=False).create(
@@ -197,6 +256,11 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         )
 
     def _create_contra_reconcilliation_ml(self, move):
+        """Post the contra-reconciliation ``account.move.line``.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: the created ``account.move.line`` record
+        """
         self.ensure_one()
         AccountMoveLine = self.env["account.move.line"]
         return AccountMoveLine.with_context(check_move_validity=False).create(
@@ -215,6 +279,25 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         partner,
         date_maturity=False,
     ):
+        """Build generic ``account.move.line`` values.
+
+        Shared by ``_prepare_reconcilliation_ml`` and
+        ``_prepare_contra_reconcilliation_ml``.
+
+        Extension point: override to add fields common to both
+        reconciliation lines.
+
+        :param move: the ``account.move`` the line will belong to
+        :param name: label for the line
+        :param account: the ``account.account`` to post to
+        :param debit: debit amount in company currency
+        :param credit: credit amount in company currency
+        :param currency: the ``res.currency`` of ``amount_currency``
+        :param amount_currency: amount in the schedule's currency
+        :param partner: optional ``res.partner`` on the line
+        :param date_maturity: optional maturity date
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         res = {
             "move_id": move.id,
@@ -230,6 +313,17 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         return res
 
     def _get_reconcilliation_ml_amount(self):
+        """Compute the reconciliation line debit/credit amounts.
+
+        Converts ``amount`` to the loan's company currency and
+        assigns it to debit when the loan direction is ``out``, or
+        credit when ``in``.
+
+        Extension point: override to change how the reconciliation
+        amount is booked.
+
+        :return: tuple of ``(debit, credit, amount_currency)``
+        """
         self.ensure_one()
         direction = self.schedule_id.loan_id.type_id.direction
         schedule = self.schedule_id
@@ -252,6 +346,14 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         return debit, credit, amount_currency
 
     def _prepare_reconcilliation_ml(self, move):
+        """Build the reconciliation ``account.move.line`` values.
+
+        Extension point: override to change the account or partner
+        used for the reconciliation line.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         debit, credit, amount_currency = self._get_reconcilliation_ml_amount()
         return self._prepare_ml(
@@ -267,6 +369,17 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         )
 
     def _get_contra_reconcilliation_ml_amount(self):
+        """Compute the contra-reconciliation debit/credit amounts.
+
+        Mirrors ``_get_reconcilliation_ml_amount``: assigns
+        ``amount`` to debit when the loan direction is ``in``, or
+        credit when ``out``.
+
+        Extension point: override to change how the contra amount is
+        booked.
+
+        :return: tuple of ``(debit, credit, amount_currency)``
+        """
         self.ensure_one()
         direction = self.schedule_id.loan_id.type_id.direction
         schedule = self.schedule_id
@@ -289,6 +402,14 @@ class LoanPaymentScheduleAdditionalItemMixin(models.AbstractModel):
         return debit, credit, amount_currency
 
     def _prepare_contra_reconcilliation_ml(self, move):
+        """Build the contra-reconciliation ``account.move.line`` values.
+
+        Extension point: override to change the account or partner
+        used for the contra-reconciliation line.
+
+        :param move: the ``account.move`` the line will belong to
+        :return: dict of ``account.move.line`` values
+        """
         self.ensure_one()
         debit, credit, amount_currency = self._get_contra_reconcilliation_ml_amount()
         return self._prepare_ml(
