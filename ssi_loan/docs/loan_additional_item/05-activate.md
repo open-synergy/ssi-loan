@@ -16,5 +16,5 @@
 ## Post-Condition
 
 - The records are restored and appear again in the default list view.
-- The records can be selected again as **Additional Items** on new **Loan
-  Type** records.
+- The records can be selected again as **Additional Items** on new **Loan Type**
+  records.

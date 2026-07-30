@@ -15,6 +15,6 @@
 ## Post-Condition
 
 - The records are archived and no longer appear in the default list view.
-- Deactivated records cannot be selected as **Additional Items** on new
-  **Loan Type** records.
+- Deactivated records cannot be selected as **Additional Items** on new **Loan Type**
+  records.
 - Transactions that already use this record can still be viewed.

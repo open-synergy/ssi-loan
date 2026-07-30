@@ -15,5 +15,4 @@
 ## Post-Condition
 
 - The records are restored and appear again in the default list view.
-- The records can be selected again in new **Loan In**/**Loan Out**
-  transactions.
+- The records can be selected again in new **Loan In**/**Loan Out** transactions.
