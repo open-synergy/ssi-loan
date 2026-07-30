@@ -1,0 +1,17 @@
+# Delete Loan Collateral Type
+
+## Pre-Condition
+
+- User must belong to the **Loan Collateral Type** access group
+  (`loan_collateral_type_group`).
+
+## Flow
+
+1. Open the **Loan > Configuration > Loan Collateral Types** menu.
+2. Select one or more records to delete (check the checkbox).
+3. Click **Action** > **Delete**.
+4. Click **OK** to confirm.
+
+## Post-Condition
+
+- The selected records are permanently removed from the system.

@@ -7,6 +7,14 @@ Loan
 ====
 
 
+Work Instruction
+================
+
+* `Loan Type <docs/loan_type/index.html>`_
+* `Loan Collateral Type <docs/loan_collateral_type/index.html>`_
+* `Loan Additional Item <docs/loan_additional_item/index.html>`_
+
+
 Installation
 ============
 
