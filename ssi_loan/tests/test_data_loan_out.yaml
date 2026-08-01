@@ -1,3 +1,142 @@
+options:
+  auto_refresh: true
+
+setup:
+  steps:
+    - step: "Get receivable account type"
+      action: "ref"
+      xml_id: "account.data_account_type_receivable"
+      save_as: "receivable_acc_type"
+
+    - step: "Get revenue account type"
+      action: "ref"
+      xml_id: "account.data_account_type_revenue"
+      save_as: "revenue_acc_type"
+
+    # `setup:` replays before every scenario in the same transaction (no
+    # rollback in between), so a fixed `code` would collide with the
+    # previous scenario's record on the 2nd+ replay (code is unique per
+    # company). Generate a fresh, never-colliding code on each replay.
+    - step: "Create realization account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_realization"
+      values:
+        code: "EVAL: 'LOREAL%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Realization Account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
+    - step: "Create rounding account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_rounding"
+      values:
+        code: "EVAL: 'LOROUND%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Rounding Account"
+        user_type_id: "REC: revenue_acc_type.id"
+
+    - step: "Create interest account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_interest"
+      values:
+        code: "EVAL: 'LOINT%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Interest Account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
+    - step: "Create interest income account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_interest_income"
+      values:
+        code: "EVAL: 'LOINC%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Interest Income Account"
+        user_type_id: "REC: revenue_acc_type.id"
+
+    - step: "Create realization journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "realization_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan Out Realization Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'OJ%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create interest journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "interest_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan Out Interest Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'OK%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create flat interest loan type"
+      action: "create"
+      model: "loan.type"
+      save_as: "loan_type_flat_out"
+      values:
+        name: "Test Flat Loan Out"
+        code: "/"
+        direction: "out"
+        interest_method: "flat"
+        currency_id: "REF: base.USD"
+        interest_amount: 3.0
+        maximum_loan_amount: 6000.0
+        maximum_installment_period: 12
+        realization_journal_id: "REC: realization_journal.id"
+        account_realization_id: "REC: account_realization.id"
+        account_rounding_id: "REC: account_rounding.id"
+        interest_journal_id: "REC: interest_journal.id"
+        account_interest_id: "REC: account_interest.id"
+        account_interest_income_id: "REC: account_interest_income.id"
+
+    - step: "Create anuity interest loan type"
+      action: "create"
+      model: "loan.type"
+      save_as: "loan_type_anuity_out"
+      values:
+        name: "Test Anuity Loan Out"
+        code: "/"
+        direction: "out"
+        interest_method: "anuity"
+        currency_id: "REF: base.USD"
+        interest_amount: 3.0
+        maximum_loan_amount: 6000.0
+        maximum_installment_period: 12
+        realization_journal_id: "REC: realization_journal.id"
+        account_realization_id: "REC: account_realization.id"
+        account_rounding_id: "REC: account_rounding.id"
+        interest_journal_id: "REC: interest_journal.id"
+        account_interest_id: "REC: account_interest.id"
+        account_interest_income_id: "REC: account_interest_income.id"
+
+    - step: "Create effective interest loan type"
+      action: "create"
+      model: "loan.type"
+      save_as: "loan_type_effective_out"
+      values:
+        name: "Test Effective Loan Out"
+        code: "/"
+        direction: "out"
+        interest_method: "effective"
+        currency_id: "REF: base.USD"
+        interest_amount: 3.0
+        maximum_loan_amount: 6000.0
+        maximum_installment_period: 12
+        realization_journal_id: "REC: realization_journal.id"
+        account_realization_id: "REC: account_realization.id"
+        account_rounding_id: "REC: account_rounding.id"
+        interest_journal_id: "REC: interest_journal.id"
+        account_interest_id: "REC: account_interest.id"
+        account_interest_income_id: "REC: account_interest_income.id"
+
 scenarios:
   - name: "Loan Out - Flat interest workflow"
     steps:
@@ -15,8 +154,8 @@ scenarios:
         save_as: "loan_out_flat"
         values:
           date: "2024-01-01"
-          partner_id: "EVAL: registry['partner'].id"
-          type_id: "REF: ssi_loan.demo_type_out1"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_flat_out.id"
           currency_id: "REF: base.USD"
           loan_amount: 3000.0
           maximum_loan_amount: 6000.0
@@ -44,11 +183,6 @@ scenarios:
         method: "action_compute_payment"
         as_user: "base.user_admin"
 
-      - step: "Invalidate cache after compute"
-        action: "call"
-        target: "loan_out_flat"
-        method: "invalidate_cache"
-
       - step: "Assert payment schedules generated"
         action: "assert"
         target: "loan_out_flat"
@@ -64,11 +198,6 @@ scenarios:
         as_user: "base.user_admin"
         context:
           bypass_policy_check: true
-
-      - step: "Invalidate cache after confirm"
-        action: "call"
-        target: "loan_out_flat"
-        method: "invalidate_cache"
 
       - step: "Assert loan.out is confirmed"
         action: "assert"
@@ -93,8 +222,8 @@ scenarios:
         save_as: "loan_out_anuity"
         values:
           date: "2024-01-01"
-          partner_id: "EVAL: registry['partner_anuity'].id"
-          type_id: "REF: ssi_loan.demo_type_out2"
+          partner_id: "REC: partner_anuity.id"
+          type_id: "REC: loan_type_anuity_out.id"
           currency_id: "REF: base.USD"
           loan_amount: 4000.0
           maximum_loan_amount: 6000.0
@@ -107,11 +236,6 @@ scenarios:
         target: "loan_out_anuity"
         method: "action_compute_payment"
         as_user: "base.user_admin"
-
-      - step: "Invalidate cache"
-        action: "call"
-        target: "loan_out_anuity"
-        method: "invalidate_cache"
 
       - step: "Assert anuity loan created"
         action: "assert"
@@ -139,8 +263,8 @@ scenarios:
         save_as: "loan_out_eff"
         values:
           date: "2024-01-01"
-          partner_id: "EVAL: registry['partner_eff'].id"
-          type_id: "REF: ssi_loan.demo_type_out3"
+          partner_id: "REC: partner_eff.id"
+          type_id: "REC: loan_type_effective_out.id"
           currency_id: "REF: base.USD"
           loan_amount: 2400.0
           maximum_loan_amount: 6000.0
@@ -154,11 +278,6 @@ scenarios:
         method: "action_compute_payment"
         as_user: "base.user_admin"
 
-      - step: "Invalidate cache"
-        action: "call"
-        target: "loan_out_eff"
-        method: "invalidate_cache"
-
       - step: "Confirm effective loan.out"
         action: "call"
         target: "loan_out_eff"
@@ -166,11 +285,6 @@ scenarios:
         as_user: "base.user_admin"
         context:
           bypass_policy_check: true
-
-      - step: "Invalidate cache after confirm"
-        action: "call"
-        target: "loan_out_eff"
-        method: "invalidate_cache"
 
       - step: "Assert effective loan confirmed"
         action: "assert"

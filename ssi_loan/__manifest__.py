@@ -21,6 +21,7 @@
         "base_automation",
         "configuration_helper",
         "ssi_decorator",
+        "web_tour",
     ],
     "data": [
         "security/ir_module_category_data.xml",
@@ -41,6 +42,7 @@
         "views/loan_mixin_views.xml",
         "views/loan_out_views.xml",
         "views/loan_in_views.xml",
+        "views/assets.xml",
     ],
     "demo": [
         "demo/account_account_demo.xml",
