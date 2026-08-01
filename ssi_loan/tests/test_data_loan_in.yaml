@@ -661,41 +661,6 @@ scenarios:
         context:
           bypass_policy_check: true
 
-      # TEMP DIAGNOSTIC (to be removed) -- narrows down why the assert below
-      # fails: does action_reject_approval's own approval.approval record
-      # actually flip to status=rejected (meaning user_approves matched but
-      # something *else* reverts loan.in.state afterward), or does it stay
-      # pending (meaning user_approves was empty despite the group fix that
-      # already makes the sibling "approve" scenario pass)?
-      - step: "DIAG: count active_approval_ids on the document itself"
-        action: "assert"
-        target: "loan_in_reject"
-        refresh: true
-        asserts:
-          active_approval_ids:
-            type: "m2m"
-            check: "count"
-            expected_count: 1
-
-      - step: "DIAG: find this loan.in's approval.approval record"
-        action: "search"
-        model: "approval.approval"
-        domain:
-          - ["model", "=", "loan.in"]
-          - ["res_id", "=", "REC: loan_in_reject.id"]
-        save_as: "diag_reject_approval"
-        expect_count: 1
-
-      - step: "DIAG: assert approver_user_ids contains admin"
-        action: "assert"
-        target: "diag_reject_approval"
-        asserts:
-          approver_user_ids:
-            type: "m2m"
-            check: "contains_xml_ids"
-            expected_xml_ids:
-              - "base.user_admin"
-
       - step: "Assert loan.in is rejected"
         action: "assert"
         target: "loan_in_reject"
@@ -795,18 +760,6 @@ scenarios:
         values:
           cancel_reason_id: "REC: cancel_reason_in"
         method: "action_confirm"
-        save_as: "diag_cancel_wizard_in"
-
-      # TEMP DIAGNOSTIC (to be removed): confirm the wizard itself actually
-      # holds the reason we passed at creation, before blaming action_cancel.
-      - step: "DIAG: assert the wizard's own cancel_reason_id"
-        action: "assert"
-        target: "diag_cancel_wizard_in"
-        refresh: true
-        asserts:
-          cancel_reason_id:
-            type: "m2o"
-            expected: "REC: cancel_reason_in"
 
       # Asserted as a separate plain `assert` step, not inline on the wizard
       # step above: the wizard action's own inline `asserts:` rebinds
