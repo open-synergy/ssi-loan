@@ -141,24 +141,21 @@ setup:
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
 
-    - step: "Create approval template for loan.in"
-      action: "create"
-      model: "approval.template"
-      save_as: "approval_template_in"
-      values:
-        name: "Test Loan In Approval Template"
-        model_id: "REF: ssi_loan.model_loan_in"
-        computation_method: "use_domain"
-        domain: "[]"
+    # ssi_loan ships a "Standard" approval.template for loan.in (sequence 100,
+    # always matches) whose approver group is ssi_loan.loan_in_validator_group
+    # -- action_reject_approval/action_approve_approval only flip state for a
+    # user in that template's resolved approver_user_ids, so base.user_admin
+    # must be a member for the reject/approve scenarios below to take effect.
+    - step: "Get base.user_admin"
+      action: "ref"
+      xml_id: "base.user_admin"
+      save_as: "admin_user"
 
-    - step: "Create approval template detail for loan.in (admin approves)"
-      action: "create"
-      model: "approval.template_detail"
-      save_as: "approval_template_detail_in"
+    - step: "Add admin to the loan.in validator group"
+      action: "write"
+      target: "admin_user"
       values:
-        template_id: "REC: approval_template_in.id"
-        approver_selection_method: "use_user"
-        approver_user_ids: [[6, 0, ["REF: base.user_admin"]]]
+        groups_id: [[4, "REF: ssi_loan.loan_in_validator_group"]]
 
 scenarios:
   - name: "Loan In - Flat interest workflow"
@@ -751,6 +748,7 @@ scenarios:
         save_as: "cancel_reason_in"
         values:
           name: "Test Loan In Cancel Reason"
+          code: "TEST-CANCEL-LOAN-IN"
 
       - step: "Cancel the ready loan.in via the select-cancel-reason wizard"
         action: "wizard"
