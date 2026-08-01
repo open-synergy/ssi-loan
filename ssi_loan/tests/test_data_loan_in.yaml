@@ -676,13 +676,15 @@ scenarios:
         save_as: "diag_reject_approval"
         expect_count: 1
 
-      - step: "DIAG: assert its status flipped to rejected"
+      - step: "DIAG: assert approver_user_ids contains admin"
         action: "assert"
         target: "diag_reject_approval"
         asserts:
-          status:
-            type: "value"
-            expected: "rejected"
+          approver_user_ids:
+            type: "m2m"
+            check: "contains_xml_ids"
+            expected_xml_ids:
+              - "base.user_admin"
 
       - step: "Assert loan.in is rejected"
         action: "assert"
