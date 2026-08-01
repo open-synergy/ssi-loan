@@ -100,8 +100,11 @@ odoo.define("ssi_loan.loan_out_tour", function (require) {
                 trigger: ".o_notebook .nav-link:contains(Repayment Term)",
             },
             {
+                // Plain Integer fields in a <group> table layout render
+                // the <input> itself as the o_field_widget root (no
+                // wrapping <div>), unlike Monetary/many2one/date fields.
                 content: "Fill in the Loan Period",
-                trigger: ".o_field_widget[name='manual_loan_period'] input",
+                trigger: ".o_field_widget[name='manual_loan_period']",
                 run: "text 6",
             },
             {
