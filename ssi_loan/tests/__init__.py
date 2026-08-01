@@ -10,3 +10,4 @@ from . import test_ui_loan_type
 from . import test_ui_loan_collateral_type
 from . import test_ui_loan_additional_item
 from . import test_ui_loan_out
+from . import test_ui_loan_in
