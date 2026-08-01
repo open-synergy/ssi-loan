@@ -201,6 +201,7 @@ setup:
       save_as: "additional_item"
       values:
         name: "Test Loan In Schedule Additional Item"
+        code: "/"
         loan_out_ok: true
         loan_in_ok: true
         receivable_journal_id: "REC: additional_item_receivable_journal.id"
