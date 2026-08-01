@@ -13,6 +13,16 @@ setup:
       xml_id: "account.data_account_type_revenue"
       save_as: "revenue_acc_type"
 
+    - step: "Get payable account type"
+      action: "ref"
+      xml_id: "account.data_account_type_payable"
+      save_as: "payable_acc_type"
+
+    - step: "Get expense account type"
+      action: "ref"
+      xml_id: "account.data_account_type_expenses"
+      save_as: "expense_acc_type"
+
     # `setup:` replays before every scenario in the same transaction (no
     # rollback in between), so a fixed `code` would collide with the
     # previous scenario's record on the 2nd+ replay (code is unique per
@@ -118,6 +128,88 @@ setup:
         account_interest_income_id: "REC: account_interest_income.id"
         short_account_principle_id: "REC: account_principle_short.id"
         long_account_principle_id: "REC: account_principle_long.id"
+
+    # `loan.additional_item` used by the additional item scenarios below.
+    # Both the receivable AND payable sides are filled (even though this
+    # file only ever attaches it to `out`-direction schedules) so that a
+    # future `in`-direction fixture in the sibling file can reuse the same
+    # shape without the two files' fixtures drifting apart.
+    - step: "Create additional item receivable account"
+      action: "create"
+      model: "account.account"
+      save_as: "additional_item_receivable_account"
+      values:
+        code: "EVAL: 'LOSCAIR%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Schedule Additional Item Receivable Account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
+    - step: "Create additional item contra-receivable account"
+      action: "create"
+      model: "account.account"
+      save_as: "additional_item_contra_receivable_account"
+      values:
+        code: "EVAL: 'LOSCAICR%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Schedule Additional Item Contra-Receivable Account"
+        user_type_id: "REC: revenue_acc_type.id"
+
+    - step: "Create additional item payable account"
+      action: "create"
+      model: "account.account"
+      save_as: "additional_item_payable_account"
+      values:
+        code: "EVAL: 'LOSCAIP%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Schedule Additional Item Payable Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create additional item contra-payable account"
+      action: "create"
+      model: "account.account"
+      save_as: "additional_item_contra_payable_account"
+      values:
+        code: "EVAL: 'LOSCAICP%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Schedule Additional Item Contra-Payable Account"
+        user_type_id: "REC: expense_acc_type.id"
+
+    - step: "Create additional item receivable journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "additional_item_receivable_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan Out Schedule Additional Item Receivable Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'OSAJR%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create additional item payable journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "additional_item_payable_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan Out Schedule Additional Item Payable Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'OSAJP%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create additional item usable on both directions"
+      action: "create"
+      model: "loan.additional_item"
+      save_as: "additional_item"
+      values:
+        name: "Test Loan Out Schedule Additional Item"
+        code: "/"
+        loan_out_ok: true
+        loan_in_ok: true
+        receivable_journal_id: "REC: additional_item_receivable_journal.id"
+        receivable_account_id: "REC: additional_item_receivable_account.id"
+        contra_receivable_account_id:
+          "REC: additional_item_contra_receivable_account.id"
+        payable_journal_id: "REC: additional_item_payable_journal.id"
+        payable_account_id: "REC: additional_item_payable_account.id"
+        contra_payable_account_id: "REC: additional_item_contra_payable_account.id"
 
 scenarios:
   - name: "Loan Out Schedule - installment compute and initial payment state"
@@ -411,3 +503,256 @@ scenarios:
           state:
             type: "value"
             expected: "ready"
+
+  - name: "Loan Out Schedule Additional Item - onchange fills receivable side"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan Out Schedule Additional Item Onchange Partner"
+          is_company: false
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_out"
+        domain:
+          - ["loan_id", "=", "REC: loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "schedule_row"
+        expect_count: 1
+
+      - step:
+          "Fill schedule_id and additional_item_id, then check the three onchange
+          targets and the empty condition"
+        action: "form"
+        model: "loan.payment_schedule_out_additional_item"
+        save: false
+        ops:
+          - set: {schedule_id: "REC: schedule_row"}
+          - set: {additional_item_id: "REC: additional_item"}
+          - assert:
+              journal_id:
+                type: "m2o"
+                expected: "REC: additional_item.receivable_journal_id"
+              reconcilliation_account_id:
+                type: "m2o"
+                expected: "REC: additional_item.receivable_account_id"
+              contra_reconcilliation_account_id:
+                type: "m2o"
+                expected: "REC: additional_item.contra_receivable_account_id"
+          # Odoo's Form.__setattr__ requires an empty recordset of the
+          # right model to clear a many2one -- plain `false` fails its
+          # own `isinstance(value, BaseModel)` assertion, it is not a
+          # no-op.
+          - set: {additional_item_id: "EVAL: env['loan.additional_item']"}
+          - assert:
+              journal_id:
+                type: "value"
+                operator: "is_falsy"
+              reconcilliation_account_id:
+                type: "value"
+                operator: "is_falsy"
+              contra_reconcilliation_account_id:
+                type: "value"
+                operator: "is_falsy"
+
+  - name: "Loan Out Schedule Additional Item - create and delete accounting entry"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan Out Schedule Additional Item Entry Partner"
+          is_company: false
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_out"
+        domain:
+          - ["loan_id", "=", "REC: loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "schedule_row"
+        expect_count: 1
+
+      - step:
+          "Create the additional item with explicit journal/account values -- onchange
+          does not run on create()"
+        action: "create"
+        model: "loan.payment_schedule_out_additional_item"
+        save_as: "entry_item"
+        values:
+          schedule_id: "REC: schedule_row.id"
+          additional_item_id: "REC: additional_item.id"
+          amount: 100.0
+          journal_id: "REC: additional_item.receivable_journal_id.id"
+          reconcilliation_account_id: "REC: additional_item.receivable_account_id.id"
+          contra_reconcilliation_account_id:
+            "REC: additional_item.contra_receivable_account_id.id"
+
+      - step: "Book the accounting entry"
+        action: "call"
+        target: "entry_item"
+        method: "action_create_accounting_entry"
+        asserts:
+          move_line_id:
+            type: "value"
+            operator: "is_truthy"
+          move_id:
+            type: "value"
+            operator: "is_truthy"
+          state:
+            type: "value"
+            expected: "unpaid"
+
+      - step: "Capture the booked move to prove it disappears after deletion"
+        action: "search"
+        model: "account.move"
+        domain:
+          - ["id", "=", "REC: entry_item.move_id.id"]
+        save_as: "booked_move"
+        expect_count: 1
+
+      - step: "Delete the accounting entry"
+        action: "call"
+        target: "entry_item"
+        method: "action_delete_accounting_entry"
+        asserts:
+          move_line_id:
+            type: "value"
+            operator: "is_falsy"
+          state:
+            type: "value"
+            expected: "unpaid"
+
+      - step: "Assert the booked move no longer exists"
+        action: "search"
+        model: "account.move"
+        domain:
+          - ["id", "=", "REC: booked_move.id"]
+        save_as: "booked_move_after_delete"
+        expect_count: 0
+
+  - name:
+      "Loan Out Schedule Additional Item - additional_amount and installment_amount
+      aggregate"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan Out Schedule Additional Item Aggregate Partner"
+          is_company: false
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_out"
+        domain:
+          - ["loan_id", "=", "REC: loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "schedule_row"
+        expect_count: 1
+
+      - step: "Assert no additional amount before attaching any item"
+        action: "assert"
+        target: "schedule_row"
+        asserts:
+          additional_amount:
+            type: "value"
+            expected: 0.0
+
+      - step:
+          "Attach an additional item with a clean amount (whole number, no rounding
+          tolerance needed)"
+        action: "create"
+        model: "loan.payment_schedule_out_additional_item"
+        save_as: "aggregate_item"
+        values:
+          schedule_id: "REC: schedule_row.id"
+          additional_item_id: "REC: additional_item.id"
+          amount: 100.0
+          journal_id: "REC: additional_item.receivable_journal_id.id"
+          reconcilliation_account_id: "REC: additional_item.receivable_account_id.id"
+          contra_reconcilliation_account_id:
+            "REC: additional_item.contra_receivable_account_id.id"
+
+      - step:
+          "Assert additional_amount equals the item's amount and installment_amount grew
+          by that same amount"
+        action: "assert"
+        target: "schedule_row"
+        asserts:
+          additional_amount:
+            type: "value"
+            expected: 100.0
+          installment_amount:
+            type: "value"
+            expected:
+              "EVAL: registry['schedule_row'].principle_amount +
+              registry['schedule_row'].interest_amount + 100.0"
