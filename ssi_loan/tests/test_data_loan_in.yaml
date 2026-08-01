@@ -667,6 +667,16 @@ scenarios:
       # something *else* reverts loan.in.state afterward), or does it stay
       # pending (meaning user_approves was empty despite the group fix that
       # already makes the sibling "approve" scenario pass)?
+      - step: "DIAG: count active_approval_ids on the document itself"
+        action: "assert"
+        target: "loan_in_reject"
+        refresh: true
+        asserts:
+          active_approval_ids:
+            type: "m2m"
+            check: "count"
+            expected_count: 1
+
       - step: "DIAG: find this loan.in's approval.approval record"
         action: "search"
         model: "approval.approval"
