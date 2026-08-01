@@ -58,9 +58,7 @@ class TestLoanType(YamlTransactionCase):
             STANDARD_SCHEDULE_DATES,
         )
         for row in result:
-            self.assertAlmostEqual(
-                row["principle_amount"], 400.0, places=2
-            )
+            self.assertAlmostEqual(row["principle_amount"], 400.0, places=2)
             self.assertAlmostEqual(row["interest_amount"], 6.0, places=2)
 
     def test_compute_effective(self):
@@ -89,12 +87,8 @@ class TestLoanType(YamlTransactionCase):
             STANDARD_SCHEDULE_DATES,
         )
         for row, interest in zip(result, expected_interest):
-            self.assertAlmostEqual(
-                row["principle_amount"], 400.0, places=2
-            )
-            self.assertAlmostEqual(
-                row["interest_amount"], interest, places=2
-            )
+            self.assertAlmostEqual(row["principle_amount"], 400.0, places=2)
+            self.assertAlmostEqual(row["interest_amount"], interest, places=2)
         interest_amounts = [row["interest_amount"] for row in result]
         self.assertLess(interest_amounts[-1], interest_amounts[0])
 
@@ -125,8 +119,7 @@ class TestLoanType(YamlTransactionCase):
             STANDARD_SCHEDULE_DATES,
         )
         installments = [
-            row["principle_amount"] + row["interest_amount"]
-            for row in result
+            row["principle_amount"] + row["interest_amount"] for row in result
         ]
         for installment in installments[1:]:
             self.assertAlmostEqual(installment, installments[0], places=2)
@@ -211,6 +204,4 @@ class TestLoanType(YamlTransactionCase):
         )
         expected_dates = ["2024-01-31", "2024-02-29", "2024-03-31"]
         self.assertEqual(len(result), 3)
-        self.assertEqual(
-            [row["schedule_date"] for row in result], expected_dates
-        )
+        self.assertEqual([row["schedule_date"] for row in result], expected_dates)
