@@ -577,3 +577,232 @@ scenarios:
           total_interest_amount:
             type: "value"
             expected: 90.0
+
+  - name: "Loan Out - approval moves the loan to ready and posts the realization move"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_ready"
+        values:
+          name: "Test Loan Out Ready Partner"
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_ready"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_ready.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_ready"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_ready"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Approve loan.out"
+        action: "call"
+        target: "loan_out_ready"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is ready with a posted realization move"
+        action: "assert"
+        target: "loan_out_ready"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+          move_realization_id:
+            type: "value"
+            operator: "is_truthy"
+          move_line_header_id:
+            type: "value"
+            operator: "is_truthy"
+          move_realization_id.state:
+            type: "value"
+            expected: "posted"
+
+  - name: "Loan Out - rejection followed by restart back to draft"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_reject"
+        values:
+          name: "Test Loan Out Reject Partner"
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_reject"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_reject.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_reject"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_reject"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Reject loan.out"
+        action: "call"
+        target: "loan_out_reject"
+        method: "action_reject_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is rejected"
+        action: "assert"
+        target: "loan_out_reject"
+        asserts:
+          state:
+            type: "value"
+            expected: "reject"
+
+      - step: "Restart rejected loan.out"
+        action: "call"
+        target: "loan_out_reject"
+        method: "action_restart"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is back to draft"
+        action: "assert"
+        target: "loan_out_reject"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Loan Out - cancel from ready via wizard removes the realization move"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_cancel"
+        values:
+          name: "Test Loan Out Cancel Partner"
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_cancel"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_cancel.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_cancel"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_cancel"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Approve loan.out"
+        action: "call"
+        target: "loan_out_cancel"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is ready before cancelling"
+        action: "assert"
+        target: "loan_out_cancel"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+          name:
+            type: "value"
+            operator: "is_truthy"
+
+      - step: "Create a dedicated cancel reason for this scenario"
+        action: "create"
+        model: "base.cancel_reason"
+        save_as: "cancel_reason_out"
+        values:
+          name: "Test Loan Out Cancel Reason"
+
+      - step: "Cancel the ready loan.out via the select-cancel-reason wizard"
+        action: "wizard"
+        model: "base.select_cancel_reason"
+        target: "loan_out_cancel"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+        values:
+          cancel_reason_id: "REC: cancel_reason_out"
+        method: "action_confirm"
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+          cancel_reason_id:
+            type: "m2o"
+            expected: "REC: cancel_reason_out"
+          move_realization_id:
+            type: "value"
+            operator: "is_falsy"
+          move_line_header_id:
+            type: "value"
+            operator: "is_falsy"
+
+      - step: "Assert the realization move no longer exists"
+        action: "search"
+        model: "account.move"
+        domain:
+          - ["ref", "=", "REC: loan_out_cancel.name"]
+        save_as: "deleted_realization_move_out"
+        expect_count: 0
