@@ -9,8 +9,7 @@ from odoo.tests import HttpCase, tagged
 class TestUiLoanType(HttpCase):
     """Tour tests for the ``loan.type`` work instructions."""
 
-    @classmethod
-    def setUpClass(cls):
+    def setUp(self):
         """Activate the currency required by the create tour.
 
         Pre-Condition IK: the Currency field must offer a
@@ -18,9 +17,14 @@ class TestUiLoanType(HttpCase):
         inactive depending on the database's default company
         currency, so force it active instead of assuming the
         demo state.
+
+        Overrides ``setUp`` rather than ``setUpClass`` because
+        ``HttpCase``/``TransactionCase`` only expose ``self.env``
+        per-test (set up in ``setUp``); ``cls.env`` is never
+        assigned at the class level.
         """
-        super().setUpClass()
-        cls.env.ref("base.USD").sudo().write({"active": True})
+        super().setUp()
+        self.env.ref("base.USD").sudo().write({"active": True})
 
     def test_create(self):
         """Run the create tour for ``loan.type``.
