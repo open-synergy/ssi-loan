@@ -806,6 +806,19 @@ scenarios:
         values:
           cancel_reason_id: "REC: cancel_reason_out"
         method: "action_confirm"
+
+      # Asserted as a separate plain `assert` step, not inline on the wizard
+      # step above: the wizard action's own inline `asserts:` rebinds
+      # `target` to the `as_user` env just for that read, which forces an
+      # uncached fetch that pulls in this env's whole loan.out prefetch set
+      # (every loan.out id touched so far by earlier scenarios in this same
+      # transaction) and trips the "user_id = user.id" record rule on
+      # sibling ids that were never created by base.user_admin. A plain
+      # `assert` step reads through the base test env instead, matching
+      # every other post-action assertion in this file.
+      - step: "Assert loan.out is cancelled and realization move/header cleared"
+        action: "assert"
+        target: "loan_out_cancel"
         asserts:
           state:
             type: "value"

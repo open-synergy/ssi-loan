@@ -661,6 +661,29 @@ scenarios:
         context:
           bypass_policy_check: true
 
+      # TEMP DIAGNOSTIC (to be removed) -- narrows down why the assert below
+      # fails: does action_reject_approval's own approval.approval record
+      # actually flip to status=rejected (meaning user_approves matched but
+      # something *else* reverts loan.in.state afterward), or does it stay
+      # pending (meaning user_approves was empty despite the group fix that
+      # already makes the sibling "approve" scenario pass)?
+      - step: "DIAG: find this loan.in's approval.approval record"
+        action: "search"
+        model: "approval.approval"
+        domain:
+          - ["model", "=", "loan.in"]
+          - ["res_id", "=", "REC: loan_in_reject.id"]
+        save_as: "diag_reject_approval"
+        expect_count: 1
+
+      - step: "DIAG: assert its status flipped to rejected"
+        action: "assert"
+        target: "diag_reject_approval"
+        asserts:
+          status:
+            type: "value"
+            expected: "rejected"
+
       - step: "Assert loan.in is rejected"
         action: "assert"
         target: "loan_in_reject"
@@ -760,6 +783,19 @@ scenarios:
         values:
           cancel_reason_id: "REC: cancel_reason_in"
         method: "action_confirm"
+
+      # Asserted as a separate plain `assert` step, not inline on the wizard
+      # step above: the wizard action's own inline `asserts:` rebinds
+      # `target` to the `as_user` env just for that read, which forces an
+      # uncached fetch that pulls in this env's whole loan.in prefetch set
+      # (every loan.in id touched so far by earlier scenarios in this same
+      # transaction) and trips the "user_id = user.id" record rule on
+      # sibling ids that were never created by base.user_admin. A plain
+      # `assert` step reads through the base test env instead, matching
+      # every other post-action assertion in this file.
+      - step: "Assert loan.in is cancelled and realization move/header cleared"
+        action: "assert"
+        target: "loan_in_cancel"
         asserts:
           state:
             type: "value"
