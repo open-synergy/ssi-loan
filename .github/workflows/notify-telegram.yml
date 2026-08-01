@@ -6,7 +6,9 @@
 # bug ikut tersalin ke 130 repo: Telegram menolak pesan lebih dari 4096 karakter dengan
 # `400 message is too long`, sehingga seluruh run CI jadi merah.
 #
-# `14.0` disubstitusi apply-ssi-overrides.sh dengan versi repo (14.0, 19.0, …).
+# Nilai branch di bawah diisi apply-ssi-overrides.sh sesuai versi repo (14.0, 19.0, …).
+# Placeholder-nya sengaja TIDAK disebut di komentar mana pun: substitusinya `sed` polos,
+# jadi penyebutan di komentar ikut tertimpa dan kalimatnya berubah jadi tak bermakna.
 #
 # Repo hulu bersifat PUBLIK, jadi repo di org mana pun — termasuk `open-synergy` — boleh
 # memanggilnya; reusable workflow privat hanya bisa dipanggil repo milik owner yang sama.
