@@ -52,6 +52,4 @@ class TestUiLoanIn(HttpCase):
 
         IK: docs/loan_in/01-create.md (E1 delta -- Additional Fields)
         """
-        self.start_tour(
-            "/web", "ssi_loan_operating_unit_loan_in_create", login="admin"
-        )
+        self.start_tour("/web", "ssi_loan_operating_unit_loan_in_create", login="admin")
