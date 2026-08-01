@@ -94,6 +94,12 @@ odoo.define("ssi_loan.loan_out_tour", function (require) {
                 in_modal: false,
             },
             {
+                // Loan Period and First Payment Date live in the
+                // Repayment Term tab, not the header.
+                content: "Open the Repayment Term tab",
+                trigger: ".o_notebook .nav-link:contains(Repayment Term)",
+            },
+            {
                 content: "Fill in the Loan Period",
                 trigger: ".o_field_widget[name='manual_loan_period'] input",
                 run: "text 6",

@@ -13,8 +13,9 @@ class TestUiLoanOut(HttpCase):
         """Prepare accounts, a loan type, and precondition records.
 
         Pre-Condition IK: every tour needs a fully-configured outgoing
-        ``loan.type`` (realization/interest accounts and journals) so
-        that ``action_compute_payment`` and ``action_approve_approval``
+        ``loan.type`` (realization/interest/short- and long-term
+        principle accounts and journals) so that
+        ``action_compute_payment`` and ``action_approve_approval``
         (which posts the realization journal entry) can run. The
         ``confirm``/``approve``/``cancel`` tours also need a record
         already sitting in the state the IK's Flow starts from, built
@@ -67,6 +68,22 @@ class TestUiLoanOut(HttpCase):
                 "user_type_id": revenue_type.id,
             }
         )
+        account_principle_short = self.env["account.account"].create(
+            {
+                "code": "TOURLO05",
+                "name": "Tour Loan Out Short-Term Principle Account",
+                "user_type_id": receivable_type.id,
+                "reconcile": True,
+            }
+        )
+        account_principle_long = self.env["account.account"].create(
+            {
+                "code": "TOURLO06",
+                "name": "Tour Loan Out Long-Term Principle Account",
+                "user_type_id": receivable_type.id,
+                "reconcile": True,
+            }
+        )
         realization_journal = self.env["account.journal"].create(
             {
                 "name": "Tour Loan Out Realization Journal",
@@ -97,6 +114,8 @@ class TestUiLoanOut(HttpCase):
                 "interest_journal_id": interest_journal.id,
                 "account_interest_id": account_interest.id,
                 "account_interest_income_id": account_interest_income.id,
+                "short_account_principle_id": account_principle_short.id,
+                "long_account_principle_id": account_principle_long.id,
             }
         )
         self.cancel_reason = self.env["base.cancel_reason"].create(
