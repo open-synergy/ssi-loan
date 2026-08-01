@@ -96,6 +96,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_realization.id"
+        long_account_principle_id: "REC: account_realization.id"
 
     - step: "Create anuity interest loan type"
       action: "create"
@@ -116,6 +118,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_realization.id"
+        long_account_principle_id: "REC: account_realization.id"
 
     - step: "Create effective interest loan type"
       action: "create"
@@ -136,6 +140,25 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+
+    - step: "Create approval template for loan.in"
+      action: "create"
+      model: "approval.template"
+      save_as: "approval_template_in"
+      values:
+        name: "Test Loan In Approval Template"
+        model_id: "REF: ssi_loan.model_loan_in"
+        computation_method: "use_domain"
+        domain: "[]"
+
+    - step: "Create approval template detail for loan.in (admin approves)"
+      action: "create"
+      model: "approval.template_detail"
+      save_as: "approval_template_detail_in"
+      values:
+        template_id: "REC: approval_template_in.id"
+        approver_selection_method: "use_user"
+        approver_user_ids: [[6, 0, ["REF: base.user_admin"]]]
 
 scenarios:
   - name: "Loan In - Flat interest workflow"
