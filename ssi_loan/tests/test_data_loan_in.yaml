@@ -343,7 +343,7 @@ scenarios:
           partner_id: "REC: partner_in_over_limit.id"
           type_id: "REC: loan_type_flat_in.id"
           currency_id: "REF: base.USD"
-          loan_amount: 7000.0
+          loan_amount: 7200.0
           maximum_loan_amount: 6000.0
           interest: 3.0
           manual_loan_period: 6
@@ -361,7 +361,7 @@ scenarios:
         asserts:
           total_principle_amount:
             type: "value"
-            expected: 7000.0
+            expected: 7200.0
 
       - step: "Confirm above maximum loan amount is rejected"
         action: "call"
