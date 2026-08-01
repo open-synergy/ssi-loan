@@ -14,6 +14,7 @@
     "depends": [
         "ssi_loan",
         "ssi_operating_unit_mixin",
+        "web_tour",
     ],
     "data": [
         "security/res_group/loan_out.xml",
@@ -22,5 +23,6 @@
         "security/ir_rule/loan_in.xml",
         "views/loan_out_views.xml",
         "views/loan_in_views.xml",
+        "views/assets.xml",
     ],
 }
