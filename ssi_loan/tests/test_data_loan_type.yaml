@@ -125,3 +125,443 @@ scenarios:
           loan_in_ok:
             type: "value"
             expected: false
+
+  - name: "Loan Type - Allowed additional item compute empty"
+    steps:
+      # At this point in the shared transaction the only
+      # "loan.additional_item" in existence is "additional_item"
+      # (code TAI001, loan_out_ok=true / loan_in_ok=false), so a
+      # "loan.type" with direction "in" has no candidate item yet.
+      - step: "Create loan type direction in with no matching item"
+        action: "create"
+        model: "loan.type"
+        save_as: "compute_empty_type"
+        values:
+          name: "Test Compute Empty In"
+          code: "CTE001"
+          direction: "in"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 1.0
+          maximum_loan_amount: 1000.0
+          maximum_installment_period: 1
+
+      - step: "Assert allowed additional items is empty"
+        action: "assert"
+        target: "compute_empty_type"
+        asserts:
+          allowed_additional_item_ids:
+            type: "m2m"
+            check: "count"
+            expected_count: 0
+
+  - name: "Loan Type - Allowed additional item compute normal"
+    steps:
+      - step: "Create additional item available for loan out only"
+        action: "create"
+        model: "loan.additional_item"
+        save_as: "compute_item_out"
+        values:
+          name: "Compute Item Out"
+          code: "CAO001"
+          loan_out_ok: true
+          loan_in_ok: false
+
+      - step: "Create additional item available for loan in only"
+        action: "create"
+        model: "loan.additional_item"
+        save_as: "compute_item_in"
+        values:
+          name: "Compute Item In"
+          code: "CAI001"
+          loan_out_ok: false
+          loan_in_ok: true
+
+      - step: "Create loan type direction out"
+        action: "create"
+        model: "loan.type"
+        save_as: "compute_type_out"
+        values:
+          name: "Test Compute Loan Out"
+          code: "CTO001"
+          direction: "out"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 1.0
+          maximum_loan_amount: 1000.0
+          maximum_installment_period: 1
+
+      - step: "Assert out type allows the out item"
+        action: "assert"
+        target: "compute_type_out"
+        asserts:
+          allowed_additional_item_ids:
+            type: "m2m"
+            check: "contains"
+            expected_records:
+              - "REC: compute_item_out"
+
+      - step: "Verify in item is excluded from out type"
+        action: "search"
+        model: "loan.additional_item"
+        domain:
+          - ["id", "=", "REC: compute_item_in.id"]
+          - ["id", "in", "REC: compute_type_out.allowed_additional_item_ids.ids"]
+        save_as: "out_type_excludes_in_item"
+        expect_count: 0
+
+      - step: "Create loan type direction in"
+        action: "create"
+        model: "loan.type"
+        save_as: "compute_type_in"
+        values:
+          name: "Test Compute Loan In"
+          code: "CTI001"
+          direction: "in"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 1.0
+          maximum_loan_amount: 1000.0
+          maximum_installment_period: 1
+
+      - step: "Assert in type allows the in item"
+        action: "assert"
+        target: "compute_type_in"
+        asserts:
+          allowed_additional_item_ids:
+            type: "m2m"
+            check: "contains"
+            expected_records:
+              - "REC: compute_item_in"
+
+      - step: "Verify out item is excluded from in type"
+        action: "search"
+        model: "loan.additional_item"
+        domain:
+          - ["id", "=", "REC: compute_item_out.id"]
+          - ["id", "in", "REC: compute_type_in.allowed_additional_item_ids.ids"]
+        save_as: "in_type_excludes_out_item"
+        expect_count: 0
+
+  - name: "Loan Type - Write master data"
+    steps:
+      - step: "Create loan type to be edited"
+        action: "create"
+        model: "loan.type"
+        save_as: "write_loan_type"
+        values:
+          name: "Test Write Loan Type"
+          code: "TLW001"
+          direction: "out"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 2.0
+          maximum_loan_amount: 3000.0
+          maximum_installment_period: 6
+
+      - step: "Write new name and interest amount"
+        action: "write"
+        target: "write_loan_type"
+        values:
+          name: "Test Write Loan Type Updated"
+          interest_amount: 9.0
+
+      - step: "Assert loan type updated"
+        action: "assert"
+        target: "write_loan_type"
+        asserts:
+          name:
+            type: "value"
+            expected: "Test Write Loan Type Updated"
+          interest_amount:
+            type: "value"
+            expected: 9.0
+
+  - name: "Loan Type - Archive and activate"
+    steps:
+      - step: "Create loan type to be archived"
+        action: "create"
+        model: "loan.type"
+        save_as: "archive_loan_type"
+        values:
+          name: "Test Archive Loan Type"
+          code: "TLA001"
+          direction: "out"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 1.0
+          maximum_loan_amount: 1000.0
+          maximum_installment_period: 1
+
+      - step: "Archive the loan type"
+        action: "write"
+        target: "archive_loan_type"
+        values:
+          active: false
+
+      - step: "Verify archived record is still findable when inactive"
+        action: "search"
+        model: "loan.type"
+        domain:
+          - ["code", "=", "TLA001"]
+          - ["active", "=", false]
+        save_as: "archived_loan_type_result"
+        expect_count: 1
+
+      - step: "Reactivate the loan type"
+        action: "write"
+        target: "archive_loan_type"
+        values:
+          active: true
+
+      - step: "Assert loan type is active again"
+        action: "assert"
+        target: "archive_loan_type"
+        asserts:
+          active:
+            type: "value"
+            expected: true
+
+  - name: "Loan Type - Delete master data"
+    steps:
+      - step: "Create loan type to be deleted"
+        action: "create"
+        model: "loan.type"
+        save_as: "delete_loan_type"
+        values:
+          name: "Test Delete Loan Type"
+          code: "TLD001"
+          direction: "out"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 1.0
+          maximum_loan_amount: 1000.0
+          maximum_installment_period: 1
+
+      - step: "Delete the loan type"
+        action: "unlink"
+        target: "delete_loan_type"
+
+      - step: "Verify loan type deleted"
+        action: "search"
+        model: "loan.type"
+        domain:
+          - ["code", "=", "TLD001"]
+        save_as: "delete_loan_type_result"
+        expect_count: 0
+
+  - name: "Loan Type - Duplicate code rejected"
+    steps:
+      - step: "Create loan type reusing an existing code must fail"
+        action: "create"
+        model: "loan.type"
+        expect_error:
+          type: "UserError"
+          message_contains: "Solution: Change code"
+        values:
+          name: "Duplicate Loan Type"
+          code: "TLFO001"
+          direction: "out"
+          interest_method: "flat"
+          currency_id: "REF: base.USD"
+          interest_amount: 1.0
+          maximum_loan_amount: 1000.0
+          maximum_installment_period: 1
+
+  - name: "Loan Collateral Type - Write master data"
+    steps:
+      - step: "Create loan collateral type to be edited"
+        action: "create"
+        model: "loan_collateral_type"
+        save_as: "write_collateral_type"
+        values:
+          name: "Test Write Collateral Type"
+          code: "TCW001"
+
+      - step: "Write new name and note"
+        action: "write"
+        target: "write_collateral_type"
+        values:
+          name: "Test Write Collateral Type Updated"
+          note: "Updated collateral type note"
+
+      - step: "Assert collateral type updated"
+        action: "assert"
+        target: "write_collateral_type"
+        asserts:
+          name:
+            type: "value"
+            expected: "Test Write Collateral Type Updated"
+          note:
+            type: "value"
+            expected: "Updated collateral type note"
+
+  - name: "Loan Collateral Type - Archive and activate"
+    steps:
+      - step: "Create loan collateral type to be archived"
+        action: "create"
+        model: "loan_collateral_type"
+        save_as: "archive_collateral_type"
+        values:
+          name: "Test Archive Collateral Type"
+          code: "TCA001"
+
+      - step: "Archive the collateral type"
+        action: "write"
+        target: "archive_collateral_type"
+        values:
+          active: false
+
+      - step: "Verify archived record is still findable when inactive"
+        action: "search"
+        model: "loan_collateral_type"
+        domain:
+          - ["code", "=", "TCA001"]
+          - ["active", "=", false]
+        save_as: "archived_collateral_type_result"
+        expect_count: 1
+
+      - step: "Reactivate the collateral type"
+        action: "write"
+        target: "archive_collateral_type"
+        values:
+          active: true
+
+      - step: "Assert collateral type is active again"
+        action: "assert"
+        target: "archive_collateral_type"
+        asserts:
+          active:
+            type: "value"
+            expected: true
+
+  - name: "Loan Collateral Type - Delete master data"
+    steps:
+      - step: "Create loan collateral type to be deleted"
+        action: "create"
+        model: "loan_collateral_type"
+        save_as: "delete_collateral_type"
+        values:
+          name: "Test Delete Collateral Type"
+          code: "TCD001"
+
+      - step: "Delete the collateral type"
+        action: "unlink"
+        target: "delete_collateral_type"
+
+      - step: "Verify collateral type deleted"
+        action: "search"
+        model: "loan_collateral_type"
+        domain:
+          - ["code", "=", "TCD001"]
+        save_as: "delete_collateral_type_result"
+        expect_count: 0
+
+  - name: "Loan Additional Item - Write master data"
+    steps:
+      - step: "Create additional item to be edited"
+        action: "create"
+        model: "loan.additional_item"
+        save_as: "write_additional_item"
+        values:
+          name: "Test Write Additional Item"
+          code: "TAW001"
+          loan_out_ok: true
+          loan_in_ok: false
+
+      - step: "Write new name and loan in flag"
+        action: "write"
+        target: "write_additional_item"
+        values:
+          name: "Test Write Additional Item Updated"
+          loan_in_ok: true
+
+      - step: "Assert additional item updated"
+        action: "assert"
+        target: "write_additional_item"
+        asserts:
+          name:
+            type: "value"
+            expected: "Test Write Additional Item Updated"
+          loan_in_ok:
+            type: "value"
+            expected: true
+
+  - name: "Loan Additional Item - Archive and activate"
+    steps:
+      - step: "Create additional item to be archived"
+        action: "create"
+        model: "loan.additional_item"
+        save_as: "archive_additional_item"
+        values:
+          name: "Test Archive Additional Item"
+          code: "TAA001"
+          loan_out_ok: true
+          loan_in_ok: false
+
+      - step: "Archive the additional item"
+        action: "write"
+        target: "archive_additional_item"
+        values:
+          active: false
+
+      - step: "Verify archived record is still findable when inactive"
+        action: "search"
+        model: "loan.additional_item"
+        domain:
+          - ["code", "=", "TAA001"]
+          - ["active", "=", false]
+        save_as: "archived_additional_item_result"
+        expect_count: 1
+
+      - step: "Reactivate the additional item"
+        action: "write"
+        target: "archive_additional_item"
+        values:
+          active: true
+
+      - step: "Assert additional item is active again"
+        action: "assert"
+        target: "archive_additional_item"
+        asserts:
+          active:
+            type: "value"
+            expected: true
+
+  - name: "Loan Additional Item - Delete master data"
+    steps:
+      - step: "Create additional item to be deleted"
+        action: "create"
+        model: "loan.additional_item"
+        save_as: "delete_additional_item"
+        values:
+          name: "Test Delete Additional Item"
+          code: "TAD001"
+          loan_out_ok: true
+          loan_in_ok: false
+
+      - step: "Delete the additional item"
+        action: "unlink"
+        target: "delete_additional_item"
+
+      - step: "Verify additional item deleted"
+        action: "search"
+        model: "loan.additional_item"
+        domain:
+          - ["code", "=", "TAD001"]
+        save_as: "delete_additional_item_result"
+        expect_count: 0
+
+  - name: "Loan Additional Item - Duplicate code rejected"
+    steps:
+      - step: "Create additional item reusing an existing code must fail"
+        action: "create"
+        model: "loan.additional_item"
+        expect_error:
+          type: "UserError"
+          message_contains: "Solution: Change code"
+        values:
+          name: "Duplicate Additional Item"
+          code: "TAI001"
+          loan_out_ok: true
+          loan_in_ok: false
