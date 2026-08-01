@@ -427,3 +427,153 @@ scenarios:
           state:
             type: "value"
             expected: "draft"
+
+  - name: "Loan Out - aggregate compute fields are empty before schedule is computed"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_empty"
+        values:
+          name: "Test Loan Out Empty Partner"
+
+      - step: "Create loan.out without computing payment schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_empty"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_empty.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Assert all aggregates are empty"
+        action: "assert"
+        target: "loan_out_empty"
+        asserts:
+          total_principle_amount:
+            type: "value"
+            expected: 0.0
+          total_interest_amount:
+            type: "value"
+            expected: 0.0
+          total_manual_principle_amount:
+            type: "value"
+            expected: 0.0
+          paid:
+            type: "value"
+            expected: false
+          realized:
+            type: "value"
+            expected: false
+
+  - name: "Loan Out - aggregate compute fields after schedule is computed"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_normal"
+        values:
+          name: "Test Loan Out Normal Partner"
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_normal"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_normal.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_normal"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Assert aggregates match the flat schedule"
+        action: "assert"
+        target: "loan_out_normal"
+        asserts:
+          total_principle_amount:
+            type: "value"
+            expected: 6000.0
+          total_manual_principle_amount:
+            type: "value"
+            expected: 0.0
+          total_interest_amount:
+            type: "value"
+            expected: 90.0
+          paid:
+            type: "value"
+            expected: false
+
+  - name: "Loan Out - manual schedule moves principle out of the auto-reconciled total"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_manual"
+        values:
+          name: "Test Loan Out Manual Partner"
+
+      - step: "Create loan.out with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_manual"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_manual.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_manual"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Find the 3rd installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_out"
+        domain:
+          - ["loan_id", "=", "REC: loan_out_manual.id"]
+          - ["schedule_date", "=", "2024-04-01"]
+        save_as: "schedule_row_manual"
+        expect_count: 1
+
+      - step: "Mark the found installment as manually controlled"
+        action: "write"
+        target: "schedule_row_manual"
+        values:
+          principle_payment_state: "manual"
+
+      - step: "Assert principle moved to the manual total, interest unchanged"
+        action: "assert"
+        target: "loan_out_manual"
+        asserts:
+          total_manual_principle_amount:
+            type: "value"
+            expected: 1000.0
+          total_principle_amount:
+            type: "value"
+            expected: 5000.0
+          total_interest_amount:
+            type: "value"
+            expected: 90.0
