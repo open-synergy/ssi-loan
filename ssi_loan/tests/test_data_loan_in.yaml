@@ -795,6 +795,18 @@ scenarios:
         values:
           cancel_reason_id: "REC: cancel_reason_in"
         method: "action_confirm"
+        save_as: "diag_cancel_wizard_in"
+
+      # TEMP DIAGNOSTIC (to be removed): confirm the wizard itself actually
+      # holds the reason we passed at creation, before blaming action_cancel.
+      - step: "DIAG: assert the wizard's own cancel_reason_id"
+        action: "assert"
+        target: "diag_cancel_wizard_in"
+        refresh: true
+        asserts:
+          cancel_reason_id:
+            type: "m2o"
+            expected: "REC: cancel_reason_in"
 
       # Asserted as a separate plain `assert` step, not inline on the wizard
       # step above: the wizard action's own inline `asserts:` rebinds
