@@ -150,6 +150,12 @@ class TestUiLoanOut(HttpCase):
     def _loan_out_values(self, partner):
         """Build ``loan.out`` create values shared by the fixtures.
 
+        ``user_id`` is forced to ``admin`` because ``loan_out_internal_
+        user_rule`` only lets a user see records where ``user_id`` is
+        themselves; records created here run under ``self.env``'s
+        default user, not the ``admin`` who logs into the tour, so the
+        list would otherwise render empty for the tour user.
+
         :param partner: ``res.partner`` record to use as borrower
         :return: dict of field values for ``loan.out.create``
         """
@@ -163,6 +169,7 @@ class TestUiLoanOut(HttpCase):
             "interest": 3.0,
             "manual_loan_period": 6,
             "first_payment_date": "2024-02-01",
+            "user_id": self.env.ref("base.user_admin").id,
         }
 
     def test_create(self):
