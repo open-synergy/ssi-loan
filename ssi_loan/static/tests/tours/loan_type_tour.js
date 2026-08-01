@@ -67,7 +67,7 @@ odoo.define("ssi_loan.loan_type_tour", function (require) {
             },
             {
                 content: "Select the Direction",
-                trigger: ".o_field_widget[name='direction'] select",
+                trigger: "select.o_field_widget[name='direction']",
                 run: "text Out",
             },
             {
@@ -89,12 +89,12 @@ odoo.define("ssi_loan.loan_type_tour", function (require) {
             },
             {
                 content: "Select the Interest Method",
-                trigger: ".o_field_widget[name='interest_method'] select",
+                trigger: "select.o_field_widget[name='interest_method']",
                 run: "text Flat",
             },
             {
                 content: "Fill in the Maximum Loan Amount",
-                trigger: ".o_field_widget[name='maximum_loan_amount']",
+                trigger: ".o_field_widget[name='maximum_loan_amount'] input",
                 run: "text 100000000",
             },
 
