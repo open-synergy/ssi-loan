@@ -21,6 +21,10 @@
                 type="text/javascript"
                 src="/ssi_loan/static/tests/tours/loan_additional_item_tour.js"
             />
+            <script
+                type="text/javascript"
+                src="/ssi_loan/static/tests/tours/loan_out_tour.js"
+            />
         </xpath>
     </template>
 </odoo>
