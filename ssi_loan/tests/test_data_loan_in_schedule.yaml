@@ -1,0 +1,413 @@
+options:
+  auto_refresh: true
+
+setup:
+  steps:
+    - step: "Get payable account type"
+      action: "ref"
+      xml_id: "account.data_account_type_payable"
+      save_as: "payable_acc_type"
+
+    - step: "Get expense account type"
+      action: "ref"
+      xml_id: "account.data_account_type_expenses"
+      save_as: "expense_acc_type"
+
+    # `setup:` replays before every scenario in the same transaction (no
+    # rollback in between), so a fixed `code` would collide with the
+    # previous scenario's record on the 2nd+ replay (code is unique per
+    # company). Generate a fresh, never-colliding code on each replay.
+    - step: "Create realization account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_realization"
+      values:
+        code: "EVAL: 'LISCREAL%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Schedule Realization Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create rounding account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_rounding"
+      values:
+        code: "EVAL: 'LISCROUND%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Schedule Rounding Account"
+        user_type_id: "REC: expense_acc_type.id"
+
+    - step: "Create interest account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_interest"
+      values:
+        code: "EVAL: 'LISCINT%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Schedule Interest Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create interest expense account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_interest_income"
+      values:
+        code: "EVAL: 'LISCINC%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Schedule Interest Expense Account"
+        user_type_id: "REC: expense_acc_type.id"
+
+    - step: "Create short-term principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_short"
+      values:
+        code: "EVAL: 'LISCPS%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Schedule Short Principle Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create long-term principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_long"
+      values:
+        code: "EVAL: 'LISCPL%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Schedule Long Principle Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create realization journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "realization_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan In Schedule Realization Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'ISJ%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create interest journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "interest_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan In Schedule Interest Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'ISK%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create flat interest loan type"
+      action: "create"
+      model: "loan.type"
+      save_as: "loan_type_in"
+      values:
+        name: "Test Loan In Schedule Type"
+        code: "/"
+        direction: "in"
+        interest_method: "flat"
+        currency_id: "REF: base.USD"
+        interest_amount: 3.0
+        maximum_loan_amount: 6000.0
+        maximum_installment_period: 12
+        realization_journal_id: "REC: realization_journal.id"
+        account_realization_id: "REC: account_realization.id"
+        account_rounding_id: "REC: account_rounding.id"
+        interest_journal_id: "REC: interest_journal.id"
+        account_interest_id: "REC: account_interest.id"
+        account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_principle_short.id"
+        long_account_principle_id: "REC: account_principle_long.id"
+
+scenarios:
+  - name: "Loan In Schedule - installment compute and initial payment state"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan In Schedule Partner Compute"
+          is_company: false
+
+      - step: "Create loan.in with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_in"
+        domain:
+          - ["loan_id", "=", "REC: loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "schedule_row"
+        expect_count: 1
+
+      - step: "Assert additional_amount empty and installment summed"
+        action: "assert"
+        target: "schedule_row"
+        asserts:
+          additional_amount:
+            type: "value"
+            expected: 0.0
+          installment_amount:
+            type: "value"
+            expected:
+              "EVAL: registry['schedule_row'].principle_amount +
+              registry['schedule_row'].interest_amount +
+              registry['schedule_row'].additional_amount"
+
+      - step: "Assert initial payment state before any action"
+        action: "assert"
+        target: "schedule_row"
+        asserts:
+          principle_payment_state:
+            type: "value"
+            expected: "unpaid"
+          interest_payment_state:
+            type: "value"
+            expected: "unrealized"
+
+  - name: "Loan In Schedule - mark and unmark principle as manual"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan In Schedule Partner Manual"
+          is_company: false
+
+      - step: "Create loan.in with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_in"
+        domain:
+          - ["loan_id", "=", "REC: loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "schedule_row"
+        expect_count: 1
+
+      - step: "Mark the installment as manually controlled"
+        action: "call"
+        target: "schedule_row"
+        method: "action_mark_principle_as_manual"
+        asserts:
+          principle_payment_state:
+            type: "value"
+            expected: "manual"
+
+      - step: "Unmark the installment back to automatic"
+        action: "call"
+        target: "schedule_row"
+        method: "action_unmark_principle_as_manual"
+        asserts:
+          principle_payment_state:
+            type: "value"
+            expected: "unpaid"
+
+  - name: "Loan In Schedule - realize and unrealize interest"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan In Schedule Partner Realize"
+          is_company: false
+
+      - step: "Create loan.in with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "loan"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Approve loan.in, auto-staging it to ready"
+        action: "call"
+        target: "loan"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in reached ready state"
+        action: "assert"
+        target: "loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_in"
+        domain:
+          - ["loan_id", "=", "REC: loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "schedule_row"
+        expect_count: 1
+
+      - step: "Realize interest for the installment"
+        action: "call"
+        target: "schedule_row"
+        method: "action_realize_interest"
+        asserts:
+          interest_move_line_id:
+            type: "value"
+            operator: "is_truthy"
+          interest_move_id.state:
+            type: "value"
+            expected: "posted"
+          interest_payment_state:
+            type: "value"
+            expected: "unpaid"
+
+      - step: "Unrealize interest for the installment"
+        action: "call"
+        target: "schedule_row"
+        method: "action_unrealize_interest"
+        asserts:
+          interest_move_line_id:
+            type: "value"
+            operator: "is_falsy"
+          interest_payment_state:
+            type: "value"
+            expected: "unrealized"
+
+  - name: "Loan In Schedule - cancel rejected when interest realized"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner"
+        values:
+          name: "Test Loan In Schedule Partner Cancel Gate"
+          is_company: false
+
+      - step: "Create loan.in with an evenly-divisible flat schedule"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner.id"
+          type_id: "REC: loan_type_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "loan"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Approve loan.in, auto-staging it to ready"
+        action: "call"
+        target: "loan"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_in"
+        domain:
+          - ["loan_id", "=", "REC: loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "schedule_row"
+        expect_count: 1
+
+      - step: "Realize interest for the installment"
+        action: "call"
+        target: "schedule_row"
+        method: "action_realize_interest"
+
+      - step: "Cancel is rejected while interest is realized"
+        action: "call"
+        target: "loan"
+        method: "action_cancel"
+        as_user: "base.user_admin"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "You cannot cancel loan with realized"
+
+      - step: "Assert loan.in stays ready, not cancelled"
+        action: "assert"
+        target: "loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
