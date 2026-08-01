@@ -137,6 +137,17 @@ setup:
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
 
+    # `code: "/"` triggers auto-sequence assignment (same trick as the loan
+    # types above), so this fixture stays safe across the repeated `setup:`
+    # replay before every scenario in this file.
+    - step: "Create collateral type"
+      action: "create"
+      model: "loan_collateral_type"
+      save_as: "collateral_type"
+      values:
+        name: "Test Loan Collateral Type"
+        code: "/"
+
 scenarios:
   - name: "Loan Out - Flat interest workflow"
     steps:
@@ -577,3 +588,123 @@ scenarios:
           total_interest_amount:
             type: "value"
             expected: 90.0
+
+  - name: "Loan Out - collateral lines created inline are stored on loan_out.collateral"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_collateral"
+        values:
+          name: "Test Loan Out Collateral Partner"
+
+      - step: "Create loan.out with two inline collateral lines"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_collateral"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_collateral.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+          collateral_ids:
+            - - 0
+              - 0
+              - type_id: "REC: collateral_type.id"
+                name: "Collateral Out Line A"
+            - - 0
+              - 0
+              - type_id: "REC: collateral_type.id"
+                name: "Collateral Out Line B"
+
+      - step: "Assert two collateral lines attached to loan.out"
+        action: "assert"
+        target: "loan_out_collateral"
+        asserts:
+          collateral_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+
+      - step: "Find collateral line A on loan_out.collateral"
+        action: "search"
+        model: "loan_out.collateral"
+        domain:
+          - ["loan_id", "=", "REC: loan_out_collateral.id"]
+          - ["name", "=", "Collateral Out Line A"]
+        save_as: "collateral_out_line_a"
+        expect_count: 1
+
+      - step: "Assert collateral line A points to the right loan and type"
+        action: "assert"
+        target: "collateral_out_line_a"
+        asserts:
+          loan_id.id:
+            type: "value"
+            expected: "REC: loan_out_collateral.id"
+          type_id.id:
+            type: "value"
+            expected: "REC: collateral_type.id"
+
+  - name: "Loan Out - collateral lines are removed when the loan is deleted (cascade)"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_collateral_cascade"
+        values:
+          name: "Test Loan Out Collateral Cascade Partner"
+
+      - step: "Create loan.out with two inline collateral lines to be deleted"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_collateral_cascade"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_collateral_cascade.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+          collateral_ids:
+            - - 0
+              - 0
+              - type_id: "REC: collateral_type.id"
+                name: "Collateral Out Cascade Line A"
+            - - 0
+              - 0
+              - type_id: "REC: collateral_type.id"
+                name: "Collateral Out Cascade Line B"
+
+      - step: "Assert two collateral lines attached before delete"
+        action: "assert"
+        target: "loan_out_collateral_cascade"
+        asserts:
+          collateral_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+
+      - step: "Delete loan.out"
+        action: "unlink"
+        target: "loan_out_collateral_cascade"
+
+      - step: "Assert collateral lines were deleted along with the loan"
+        action: "search"
+        model: "loan_out.collateral"
+        domain:
+          - [
+              "name",
+              "in",
+              ["Collateral Out Cascade Line A", "Collateral Out Cascade Line B"],
+            ]
+        save_as: "collateral_out_cascade_result"
+        expect_count: 0
