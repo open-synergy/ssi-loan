@@ -293,3 +293,137 @@ scenarios:
           state:
             type: "value"
             expected: "confirm"
+
+  - name: "Loan Out - onchange type_id fills and resets derived fields"
+    steps:
+      - step: "Fill type_id on a new loan.out form"
+        action: "form"
+        model: "loan.out"
+        save: false
+        ops:
+          - set: {type_id: "REC: loan_type_flat_out"}
+          - assert:
+              maximum_loan_amount:
+                type: "value"
+                expected: 6000.0
+              maximum_installment_period:
+                type: "value"
+                expected: 12
+              interest:
+                type: "value"
+                expected: 3.0
+          # Odoo's Form.__setattr__ requires an empty recordset of the
+          # right model to clear a many2one -- plain `false` fails its
+          # own `isinstance(value, BaseModel)` assertion, it is not a
+          # no-op.
+          - set: {type_id: "EVAL: env['loan.type']"}
+          - assert:
+              maximum_loan_amount:
+                type: "value"
+                expected: 0.0
+              maximum_installment_period:
+                type: "value"
+                expected: 0
+              interest:
+                type: "value"
+                expected: 0.0
+
+  - name: "Loan Out - confirm rejected when schedule not computed"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_no_schedule"
+        values:
+          name: "Test Loan Out No Schedule Partner"
+
+      - step: "Create loan.out without computing payment schedule"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_no_schedule"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_no_schedule.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Confirm without computed schedule is rejected"
+        action: "call"
+        target: "loan_out_no_schedule"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "ValidationError"
+          message_contains: "different with loan amount"
+
+      - step: "Assert loan.out stays draft"
+        action: "assert"
+        target: "loan_out_no_schedule"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Loan Out - confirm rejected when loan amount exceeds type maximum"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_over_limit"
+        values:
+          name: "Test Loan Out Over Limit Partner"
+
+      - step: "Create loan.out with amount above the type maximum"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_over_limit"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_over_limit.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 7000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_over_limit"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Assert schedule matches loan amount"
+        action: "assert"
+        target: "loan_out_over_limit"
+        asserts:
+          total_principle_amount:
+            type: "value"
+            expected: 7000.0
+
+      - step: "Confirm above maximum loan amount is rejected"
+        action: "call"
+        target: "loan_out_over_limit"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "ValidationError"
+          message_contains: "cannot exceed the maximum total loan"
+
+      - step: "Assert loan.out stays draft"
+        action: "assert"
+        target: "loan_out_over_limit"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
