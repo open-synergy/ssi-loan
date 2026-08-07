@@ -86,6 +86,4 @@ class TestUiLoanAdditionalItem(HttpCase):
 
         IK: docs/loan_additional_item/05-activate.md
         """
-        self.start_tour(
-            "/web", "ssi_loan_loan_additional_item_activate", login="admin"
-        )
+        self.start_tour("/web", "ssi_loan_loan_additional_item_activate", login="admin")
