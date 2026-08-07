@@ -55,6 +55,32 @@ setup:
         name: "Test Loan Out Interest Income Account"
         user_type_id: "REC: revenue_acc_type.id"
 
+    # `_get_realization_move_line_account` (loan_payment_schedule_mixin.py)
+    # picks the long- or short-term principle account depending on how far
+    # `schedule_date` is from `fields.Date.today()` (real server date, not
+    # the fixed 2024 dates used below). Both are required so the realization
+    # move -- exercised by the ready/cancel scenarios below -- always finds
+    # a matching account regardless of when this suite runs.
+    - step: "Create short-term principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_short"
+      values:
+        code: "EVAL: 'LOPRS%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Short-Term Principle Account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
+    - step: "Create long-term principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_long"
+      values:
+        code: "EVAL: 'LOPRL%d' % env['account.account'].search_count([])"
+        name: "Test Loan Out Long-Term Principle Account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
     - step: "Create realization journal"
       action: "create"
       model: "account.journal"
@@ -96,6 +122,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_principle_short.id"
+        long_account_principle_id: "REC: account_principle_long.id"
 
     - step: "Create anuity interest loan type"
       action: "create"
@@ -116,6 +144,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_principle_short.id"
+        long_account_principle_id: "REC: account_principle_long.id"
 
     - step: "Create effective interest loan type"
       action: "create"
@@ -136,6 +166,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_principle_short.id"
+        long_account_principle_id: "REC: account_principle_long.id"
 
     # `code: "/"` triggers auto-sequence assignment (same trick as the loan
     # types above), so this fixture stays safe across the repeated `setup:`
@@ -147,6 +179,25 @@ setup:
       values:
         name: "Test Loan Collateral Type"
         code: "/"
+
+    # `approval_template_data.xml` ships a default approval.template for
+    # `loan.out` whose sole approver group is `loan_out_validator_group`.
+    # The group's XML `users=` eval already lists admin, but
+    # `action_request_approval` (mixin_multiple_approval.py) resolves
+    # approvers from `res.groups.users` at runtime -- the same explicit
+    # `groups_id` write used by `test_ui_loan_out.py::setUp` is needed here
+    # too, or `action_approve_approval`/`action_reject_approval` never find
+    # admin as an active approver and the state never moves off `confirm`.
+    - step: "Get admin user"
+      action: "ref"
+      xml_id: "base.user_admin"
+      save_as: "admin_user"
+
+    - step: "Add admin to the loan out validator group"
+      action: "write"
+      target: "admin_user"
+      values:
+        groups_id: [[4, "REF: ssi_loan.loan_out_validator_group"]]
 
 scenarios:
   - name: "Loan Out - Flat interest workflow"
@@ -707,4 +758,337 @@ scenarios:
               ["Collateral Out Cascade Line A", "Collateral Out Cascade Line B"],
             ]
         save_as: "collateral_out_cascade_result"
+        expect_count: 0
+
+  - name: "Loan Out - approve to ready posts the realization move"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_ready"
+        values:
+          name: "Test Loan Out Ready Partner"
+
+      - step: "Create loan.out with flat interest type"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_ready"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_ready.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_ready"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_ready"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      # Forces a flush + cache invalidation (odoo-yaml-test's `_refresh`,
+      # triggered by any `action: assert` under `auto_refresh: true`)
+      # between `action_confirm` and `action_approve_approval`. Without
+      # it, the `approval.approval` created inside `action_confirm`'s
+      # `action_request_approval()` can have its stored
+      # `approver_user_ids` lazily computed for the first time from
+      # *inside* `action_approve_approval`'s own sudo'd/`as_user` call
+      # instead of against a clean, fully-flushed state -- observed to
+      # make the subsequent approve/reject nondeterministically miss the
+      # admin approver.
+      - step: "Assert loan.out is confirmed before approve"
+        action: "assert"
+        target: "loan_out_ready"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Approve loan.out"
+        action: "call"
+        target: "loan_out_ready"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is ready with a posted realization move"
+        action: "assert"
+        target: "loan_out_ready"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+          move_realization_id:
+            type: "value"
+            operator: "is_truthy"
+          move_line_header_id:
+            type: "value"
+            operator: "is_truthy"
+          move_realization_id.state:
+            type: "value"
+            expected: "posted"
+
+  - name: "Loan Out - reject moves the loan to reject state"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_reject"
+        values:
+          name: "Test Loan Out Reject Partner"
+
+      - step: "Create loan.out with flat interest type"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_reject"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_reject.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_reject"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_reject"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      # See "Assert loan.out is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.out is confirmed before reject"
+        action: "assert"
+        target: "loan_out_reject"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Reject loan.out"
+        action: "call"
+        target: "loan_out_reject"
+        method: "action_reject_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is rejected"
+        action: "assert"
+        target: "loan_out_reject"
+        asserts:
+          state:
+            type: "value"
+            expected: "reject"
+
+  - name: "Loan Out - restart from reject returns the loan to draft"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_restart"
+        values:
+          name: "Test Loan Out Restart Partner"
+
+      - step: "Create loan.out with flat interest type"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_restart"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_restart.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_restart"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_restart"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      # See "Assert loan.out is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.out is confirmed before reject"
+        action: "assert"
+        target: "loan_out_restart"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Reject loan.out"
+        action: "call"
+        target: "loan_out_restart"
+        method: "action_reject_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Restart rejected loan.out"
+        action: "call"
+        target: "loan_out_restart"
+        method: "action_restart"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is back to draft"
+        action: "assert"
+        target: "loan_out_restart"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Loan Out - cancel from ready removes the realization move"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_cancel"
+        values:
+          name: "Test Loan Out Cancel Partner"
+
+      - step: "Create loan.out with flat interest type"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_cancel"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_cancel.id"
+          type_id: "REC: loan_type_flat_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 3000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+          # `loan_out_internal_user_rule` only lets a user see records
+          # where `user_id` is themselves. Without this, the record
+          # defaults to the transaction's own user (superuser -- always
+          # bypasses record rules), but the cancel wizard step below acts
+          # `as_user: base.user_admin` (not superuser) and its `asserts:`
+          # re-read the document under that same non-superuser env (see
+          # `_rebind`/`auto_refresh` in odoo-yaml-test), which runs the
+          # ir.rule for real and denies admin unless it owns the record.
+          user_id: "REC: admin_user.id"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_out_cancel"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "loan_out_cancel"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      # See "Assert loan.out is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.out is confirmed before approve"
+        action: "assert"
+        target: "loan_out_cancel"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Approve loan.out"
+        action: "call"
+        target: "loan_out_cancel"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is ready before cancelling"
+        action: "assert"
+        target: "loan_out_cancel"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+
+      - step: "Create cancel reason"
+        action: "create"
+        model: "base.cancel_reason"
+        save_as: "cancel_reason_out"
+        values:
+          name: "Test Loan Out Cancel Reason"
+          code: "TLOCANCEL"
+
+      - step: "Cancel loan.out via the cancel reason wizard"
+        action: "wizard"
+        model: "base.select_cancel_reason"
+        target: "loan_out_cancel"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+        values:
+          cancel_reason_id: "REC: cancel_reason_out.id"
+        method: "action_confirm"
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+          cancel_reason_id:
+            type: "m2o"
+            expected: "REC: cancel_reason_out"
+          move_realization_id:
+            type: "value"
+            operator: "is_falsy"
+          move_line_header_id:
+            type: "value"
+            operator: "is_falsy"
+
+      - step: "Assert the realization journal entry no longer exists"
+        action: "search"
+        model: "account.move"
+        domain:
+          - ["ref", "=", "REC: loan_out_cancel.name"]
+        save_as: "cancel_move_search_out"
         expect_count: 0
