@@ -662,3 +662,275 @@ scenarios:
             ]
         save_as: "collateral_in_cascade_result"
         expect_count: 0
+
+  - name: "Loan In - approve to ready posts the realization move"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_in_ready"
+        values:
+          name: "Test Loan In Ready Partner"
+
+      - step: "Create loan.in with flat interest type"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in_ready"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_in_ready.id"
+          type_id: "REC: loan_type_flat_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 2400.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_in_ready"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "loan_in_ready"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Approve loan.in"
+        action: "call"
+        target: "loan_in_ready"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in is ready with a posted realization move"
+        action: "assert"
+        target: "loan_in_ready"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+          move_realization_id:
+            type: "value"
+            operator: "is_truthy"
+          move_line_header_id:
+            type: "value"
+            operator: "is_truthy"
+          move_realization_id.state:
+            type: "value"
+            expected: "posted"
+
+  - name: "Loan In - reject moves the loan to reject state"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_in_reject"
+        values:
+          name: "Test Loan In Reject Partner"
+
+      - step: "Create loan.in with flat interest type"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in_reject"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_in_reject.id"
+          type_id: "REC: loan_type_flat_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 2400.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_in_reject"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "loan_in_reject"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Reject loan.in"
+        action: "call"
+        target: "loan_in_reject"
+        method: "action_reject_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in is rejected"
+        action: "assert"
+        target: "loan_in_reject"
+        asserts:
+          state:
+            type: "value"
+            expected: "reject"
+
+  - name: "Loan In - restart from reject returns the loan to draft"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_in_restart"
+        values:
+          name: "Test Loan In Restart Partner"
+
+      - step: "Create loan.in with flat interest type"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in_restart"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_in_restart.id"
+          type_id: "REC: loan_type_flat_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 2400.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_in_restart"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "loan_in_restart"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Reject loan.in"
+        action: "call"
+        target: "loan_in_restart"
+        method: "action_reject_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Restart rejected loan.in"
+        action: "call"
+        target: "loan_in_restart"
+        method: "action_restart"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in is back to draft"
+        action: "assert"
+        target: "loan_in_restart"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Loan In - cancel from ready removes the realization move"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_in_cancel"
+        values:
+          name: "Test Loan In Cancel Partner"
+
+      - step: "Create loan.in with flat interest type"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in_cancel"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_in_cancel.id"
+          type_id: "REC: loan_type_flat_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 2400.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "loan_in_cancel"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "loan_in_cancel"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Approve loan.in"
+        action: "call"
+        target: "loan_in_cancel"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in is ready before cancelling"
+        action: "assert"
+        target: "loan_in_cancel"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+
+      - step: "Create cancel reason"
+        action: "create"
+        model: "base.cancel_reason"
+        save_as: "cancel_reason_in"
+        values:
+          name: "Test Loan In Cancel Reason"
+
+      - step: "Cancel loan.in via the cancel reason wizard"
+        action: "wizard"
+        model: "base.select_cancel_reason"
+        target: "loan_in_cancel"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+        values:
+          cancel_reason_id: "REC: cancel_reason_in.id"
+        method: "action_confirm"
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+          cancel_reason_id:
+            type: "m2o"
+            expected: "REC: cancel_reason_in"
+          move_realization_id:
+            type: "value"
+            operator: "is_falsy"
+          move_line_header_id:
+            type: "value"
+            operator: "is_falsy"
+
+      - step: "Assert the realization journal entry no longer exists"
+        action: "search"
+        model: "account.move"
+        domain:
+          - ["ref", "=", "REC: loan_in_cancel.name"]
+        save_as: "cancel_move_search_in"
+        expect_count: 0
