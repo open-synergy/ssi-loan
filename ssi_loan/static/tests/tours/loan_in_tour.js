@@ -724,6 +724,28 @@ odoo.define("ssi_loan.loan_in_tour", function (require) {
                 trigger: ".o_notebook .nav-link:contains(Repayment Term)",
             },
 
+            // ── Pre-Condition guard — the line's Principle Payment
+            // State must already be Manually Control. Reaching that
+            // reliably requires the same live click+RPC cycle as the
+            // mark tour (docs/loan_in/15-mark-principle-as-manual.md);
+            // it is driven here as a guard rather than built in Python
+            // setUp, since principle_payment_state is a computed,
+            // readonly field.
+            {
+                content: "(Guard) Click the Mark as Manually Control button",
+                trigger:
+                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first button[name='action_mark_principle_as_manual']",
+                extra_trigger: ".o_form_view",
+            },
+            {
+                content: "(Guard) Unmark as Manually Control button is shown",
+                trigger:
+                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first button[name='action_unmark_principle_as_manual']",
+                run: function () {
+                    // Assertion only; do not trigger the default click action.
+                },
+            },
+
             // ── Flow 4 — In the Payment Schedule table, click the icon
             // button (tooltip: Unmark as Manually Control) on the line
             {

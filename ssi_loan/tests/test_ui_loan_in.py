@@ -241,11 +241,13 @@ class TestUiLoanIn(HttpCase):
         self.loan_in_mark.action_compute_payment()
 
         # Pre-Condition IK 16-unmark-principle-as-manual.md: a Draft
-        # record whose first schedule line is already Manually
-        # Control. Written directly (rather than via
-        # ``action_mark_principle_as_manual``) since this fixture only
-        # needs the line to already sit in that state; the tour itself
-        # is what exercises the Unmark button.
+        # record with a freshly computed schedule. The line's
+        # Principle Payment State is not marked Manually Control here
+        # in Python: it is a computed, readonly field
+        # (``loan.payment_schedule_mixin._compute_state``), and the
+        # ``ssi_loan_loan_in_unmark_principle_as_manual`` tour instead
+        # drives the Mark button live as a guard step before exercising
+        # Unmark (see ``static/tests/tours/loan_in_tour.js``).
         partner_unmark = self.env["res.partner"].create(
             {"name": "Tour Loan In Unmark Partner"}
         )
@@ -253,9 +255,6 @@ class TestUiLoanIn(HttpCase):
             self._loan_in_values(partner_unmark)
         )
         self.loan_in_unmark.action_compute_payment()
-        self.loan_in_unmark.payment_schedule_ids[:1].sudo().write(
-            {"principle_payment_state": "manual"}
-        )
 
         # Pre-Condition IK 17-realize-interest.md: an In Progress
         # record whose first schedule line's Interest Payment State
