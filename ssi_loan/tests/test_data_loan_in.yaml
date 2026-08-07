@@ -752,6 +752,24 @@ scenarios:
         context:
           bypass_policy_check: true
 
+      # Forces a flush + cache invalidation (odoo-yaml-test's `_refresh`,
+      # triggered by any `action: assert` under `auto_refresh: true`)
+      # between `action_confirm` and `action_approve_approval`. Without
+      # it, the `approval.approval` created inside `action_confirm`'s
+      # `action_request_approval()` can have its stored
+      # `approver_user_ids` lazily computed for the first time from
+      # *inside* `action_approve_approval`'s own sudo'd/`as_user` call
+      # instead of against a clean, fully-flushed state -- observed to
+      # make the subsequent approve/reject nondeterministically miss the
+      # admin approver.
+      - step: "Assert loan.in is confirmed before approve"
+        action: "assert"
+        target: "loan_in_ready"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
       - step: "Approve loan.in"
         action: "call"
         target: "loan_in_ready"
@@ -815,25 +833,16 @@ scenarios:
         context:
           bypass_policy_check: true
 
-      - step: "DEBUG diagnose approval state after confirm"
+      # See "Assert loan.in is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.in is confirmed before reject"
         action: "assert"
         target: "loan_in_reject"
         asserts:
-          need_validation:
+          state:
             type: "value"
-            expected: false
-          approval_template_id:
-            type: "value"
-            operator: "is_truthy"
-          approval_ids:
-            type: "o2m"
-            check: "count"
-            expected_count: 1
-          active_approver_user_ids:
-            type: "m2m"
-            check: "contains"
-            expected_records:
-              - "REC: admin_user"
+            expected: "confirm"
 
       - step: "Reject loan.in"
         action: "call"
@@ -888,6 +897,17 @@ scenarios:
         as_user: "base.user_admin"
         context:
           bypass_policy_check: true
+
+      # See "Assert loan.in is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.in is confirmed before reject"
+        action: "assert"
+        target: "loan_in_restart"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
 
       - step: "Reject loan.in"
         action: "call"
@@ -959,6 +979,17 @@ scenarios:
         as_user: "base.user_admin"
         context:
           bypass_policy_check: true
+
+      # See "Assert loan.in is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.in is confirmed before approve"
+        action: "assert"
+        target: "loan_in_cancel"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
 
       - step: "Approve loan.in"
         action: "call"

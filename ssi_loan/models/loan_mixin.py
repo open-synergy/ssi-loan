@@ -713,7 +713,7 @@ class LoanMixin(models.AbstractModel):
         """
         self.ensure_one()
         _super = super(LoanMixin, self)
-        result = _super._prepare_cancel_data()
+        result = _super._prepare_cancel_data(cancel_reason)
         if self.move_realization_id:
             move = self.move_realization_id
             self.write(

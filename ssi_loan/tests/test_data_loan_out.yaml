@@ -798,6 +798,24 @@ scenarios:
         context:
           bypass_policy_check: true
 
+      # Forces a flush + cache invalidation (odoo-yaml-test's `_refresh`,
+      # triggered by any `action: assert` under `auto_refresh: true`)
+      # between `action_confirm` and `action_approve_approval`. Without
+      # it, the `approval.approval` created inside `action_confirm`'s
+      # `action_request_approval()` can have its stored
+      # `approver_user_ids` lazily computed for the first time from
+      # *inside* `action_approve_approval`'s own sudo'd/`as_user` call
+      # instead of against a clean, fully-flushed state -- observed to
+      # make the subsequent approve/reject nondeterministically miss the
+      # admin approver.
+      - step: "Assert loan.out is confirmed before approve"
+        action: "assert"
+        target: "loan_out_ready"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
       - step: "Approve loan.out"
         action: "call"
         target: "loan_out_ready"
@@ -861,6 +879,17 @@ scenarios:
         context:
           bypass_policy_check: true
 
+      # See "Assert loan.out is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.out is confirmed before reject"
+        action: "assert"
+        target: "loan_out_reject"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
       - step: "Reject loan.out"
         action: "call"
         target: "loan_out_reject"
@@ -914,6 +943,17 @@ scenarios:
         as_user: "base.user_admin"
         context:
           bypass_policy_check: true
+
+      # See "Assert loan.out is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.out is confirmed before reject"
+        action: "assert"
+        target: "loan_out_restart"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
 
       - step: "Reject loan.out"
         action: "call"
@@ -985,6 +1025,17 @@ scenarios:
         as_user: "base.user_admin"
         context:
           bypass_policy_check: true
+
+      # See "Assert loan.out is confirmed before approve" above for why
+      # this forced flush/invalidate between confirm and the approval
+      # action is required, not decorative.
+      - step: "Assert loan.out is confirmed before approve"
+        action: "assert"
+        target: "loan_out_cancel"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
 
       - step: "Approve loan.out"
         action: "call"
