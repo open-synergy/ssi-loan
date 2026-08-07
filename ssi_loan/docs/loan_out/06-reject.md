@@ -2,8 +2,8 @@
 
 ## Pre-Condition
 
-- Record is in **Waiting for Approval** status.
-- User is registered as an active approver on the record's approval flow.
+- **Record:** Record is in **Waiting for Approval** status.
+- **Access:** User is registered as an active approver on the record's approval flow.
 
 ## Flow
 

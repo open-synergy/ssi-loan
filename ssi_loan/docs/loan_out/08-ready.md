@@ -7,10 +7,10 @@ mechanism — see the Post-Condition of `05-approve.md`.
 
 ## Pre-Condition
 
-- Record is in **In Progress** status.
-- No dedicated access right is required for the automatic transition itself; the user
-  only needs their normal Accounting access to perform the reconciliation described
-  below.
+- **Record:** Record is in **In Progress** status.
+- **Access:** No dedicated access right is required for the automatic transition itself;
+  the user only needs their normal Accounting access to perform the reconciliation
+  described below.
 
 ## Flow
 

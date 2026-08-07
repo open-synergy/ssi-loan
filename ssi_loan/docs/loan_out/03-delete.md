@@ -2,9 +2,9 @@
 
 ## Pre-Condition
 
-- Record is in **Draft** status.
-- Document number is still **/** (not yet generated).
-- User must belong to the **User** access group (`loan_out_user_group`).
+- **Record:** Record is in **Draft** status.
+- **Record:** Document number is still **/** (not yet generated).
+- **Access:** User must belong to the **User** access group (`loan_out_user_group`).
 
 ## Flow
 

@@ -166,6 +166,135 @@ class TestUiLoanOut(HttpCase):
             self._loan_out_values(partner_cancel)
         )
 
+        # Pre-Condition IK 02-edit.md: a plain Draft record whose
+        # fields can be changed and re-saved.
+        partner_edit = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Edit Partner"}
+        )
+        self.loan_out_edit = self.env["loan.out"].create(
+            self._loan_out_values(partner_edit)
+        )
+
+        # Pre-Condition IK 03-delete.md: a plain Draft record whose
+        # document number is still "/" (delete is also allowed from
+        # Draft with an unassigned number).
+        partner_delete = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Delete Partner"}
+        )
+        self.loan_out_delete = self.env["loan.out"].create(
+            self._loan_out_values(partner_delete)
+        )
+
+        # Pre-Condition IK 06-reject.md: record already Waiting for
+        # Approval, with ``admin`` as its active approver.
+        partner_reject = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Reject Partner"}
+        )
+        self.loan_out_reject = self.env["loan.out"].create(
+            self._loan_out_values(partner_reject)
+        )
+        self.loan_out_reject.action_compute_payment()
+        self.loan_out_reject.with_context(bypass_policy_check=True).action_confirm()
+
+        # Pre-Condition IK 12-restart.md: a Rejected record (restart
+        # is also allowed from Cancelled). ``action_reject_approval``
+        # only transitions the record's state through the multiple
+        # approval workflow (``mixin.multiple_approval._action_
+        # approval``), which is sensitive to the exact acting-user/
+        # approval-instance setup. Since this fixture only needs the
+        # record to *sit* in Rejected status (the tour itself is what
+        # exercises the Restart button), the state is written directly
+        # instead of driving the full approval mechanism.
+        partner_restart = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Restart Partner"}
+        )
+        self.loan_out_restart = self.env["loan.out"].create(
+            self._loan_out_values(partner_restart)
+        )
+        self.loan_out_restart.action_compute_payment()
+        self.loan_out_restart.with_context(bypass_policy_check=True).action_confirm()
+        self.loan_out_restart.sudo().write({"state": "reject"})
+
+        # Pre-Condition IK 13-reset-number.md: a Draft record whose
+        # document number was already assigned (simulating a record
+        # that reached Ready to Process, where it received a number,
+        # and was later cancelled and restarted back to Draft, which
+        # keeps the assigned number).
+        partner_reset_number = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Reset Number Partner"}
+        )
+        self.loan_out_reset_number = self.env["loan.out"].create(
+            self._loan_out_values(partner_reset_number)
+        )
+        self.loan_out_reset_number.sudo().write({"name": "TOUR-LO-RESET-0001"})
+
+        # Pre-Condition IK 15-mark-principle-as-manual.md: a Draft
+        # record with a freshly computed schedule (each line's
+        # Principle Payment State defaults to Unpaid, not yet
+        # Manually Control).
+        partner_mark = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Mark Partner"}
+        )
+        self.loan_out_mark = self.env["loan.out"].create(
+            self._loan_out_values(partner_mark)
+        )
+        self.loan_out_mark.action_compute_payment()
+
+        # Pre-Condition IK 16-unmark-principle-as-manual.md: a Draft
+        # record with a freshly computed schedule. The line's
+        # Principle Payment State is not marked Manually Control here
+        # in Python: it is a computed, readonly field
+        # (``loan.payment_schedule_mixin._compute_state``), and the
+        # ``ssi_loan_loan_out_unmark_principle_as_manual`` tour instead
+        # drives the Mark button live as a guard step before exercising
+        # Unmark (see ``static/tests/tours/loan_out_tour.js``).
+        partner_unmark = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Unmark Partner"}
+        )
+        self.loan_out_unmark = self.env["loan.out"].create(
+            self._loan_out_values(partner_unmark)
+        )
+        self.loan_out_unmark.action_compute_payment()
+
+        # Pre-Condition IK 17-realize-interest.md: an In Progress
+        # record whose first schedule line's Interest Payment State
+        # is still Unrealized. ``action_approve_approval`` only marks
+        # the approval done when the ACTING user is a registered
+        # approver, hence ``with_user(admin)`` (see 12-restart.md
+        # fixture above). ``state`` is then forced to ``open`` directly
+        # because the Ready-to-Process-to-In-Progress transition is a
+        # base.automation triggered by bank reconciliation
+        # (docs/loan_out/07-start.md), out of scope for this tour.
+        partner_realize = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Realize Partner"}
+        )
+        self.loan_out_realize = self.env["loan.out"].create(
+            self._loan_out_values(partner_realize)
+        )
+        self.loan_out_realize.action_compute_payment()
+        self.loan_out_realize.with_context(bypass_policy_check=True).action_confirm()
+        self.loan_out_realize.with_user(self.env.ref("base.user_admin")).with_context(
+            bypass_policy_check=True
+        ).action_approve_approval()
+        self.loan_out_realize.sudo().write({"state": "open"})
+
+        # Pre-Condition IK 18-unrealize-interest.md: same as above,
+        # but the first schedule line's interest is already realized
+        # (Interest Payment State is Unpaid).
+        partner_unrealize = self.env["res.partner"].create(
+            {"name": "Tour Loan Out Unrealize Partner"}
+        )
+        self.loan_out_unrealize = self.env["loan.out"].create(
+            self._loan_out_values(partner_unrealize)
+        )
+        self.loan_out_unrealize.action_compute_payment()
+        self.loan_out_unrealize.with_context(bypass_policy_check=True).action_confirm()
+        self.loan_out_unrealize.with_user(self.env.ref("base.user_admin")).with_context(
+            bypass_policy_check=True
+        ).action_approve_approval()
+        self.loan_out_unrealize.sudo().write({"state": "open"})
+        self.loan_out_unrealize.payment_schedule_ids[:1].action_realize_interest()
+
     def _loan_out_values(self, partner):
         """Build ``loan.out`` create values shared by the fixtures.
 
@@ -227,3 +356,70 @@ class TestUiLoanOut(HttpCase):
         IK: docs/loan_out/10-cancel.md
         """
         self.start_tour("/web", "ssi_loan_loan_out_cancel", login="admin")
+
+    def test_edit(self):
+        """Run the edit tour for ``loan.out``.
+
+        IK: docs/loan_out/02-edit.md
+        """
+        self.start_tour("/web", "ssi_loan_loan_out_edit", login="admin")
+
+    def test_delete(self):
+        """Run the delete tour for ``loan.out``.
+
+        IK: docs/loan_out/03-delete.md
+        """
+        self.start_tour("/web", "ssi_loan_loan_out_delete", login="admin")
+
+    def test_reject(self):
+        """Run the reject tour for ``loan.out``.
+
+        IK: docs/loan_out/06-reject.md
+        """
+        self.start_tour("/web", "ssi_loan_loan_out_reject", login="admin")
+
+    def test_restart(self):
+        """Run the restart tour for ``loan.out``.
+
+        IK: docs/loan_out/12-restart.md
+        """
+        self.start_tour("/web", "ssi_loan_loan_out_restart", login="admin")
+
+    def test_reset_number(self):
+        """Run the reset document number tour for ``loan.out``.
+
+        IK: docs/loan_out/13-reset-number.md
+        """
+        self.start_tour("/web", "ssi_loan_loan_out_reset_number", login="admin")
+
+    def test_mark_principle_as_manual(self):
+        """Run the mark principle as manual tour for ``loan.out``.
+
+        IK: docs/loan_out/15-mark-principle-as-manual.md
+        """
+        self.start_tour(
+            "/web", "ssi_loan_loan_out_mark_principle_as_manual", login="admin"
+        )
+
+    def test_unmark_principle_as_manual(self):
+        """Run the unmark principle as manual tour for ``loan.out``.
+
+        IK: docs/loan_out/16-unmark-principle-as-manual.md
+        """
+        self.start_tour(
+            "/web", "ssi_loan_loan_out_unmark_principle_as_manual", login="admin"
+        )
+
+    def test_realize_interest(self):
+        """Run the realize interest tour for ``loan.out``.
+
+        IK: docs/loan_out/17-realize-interest.md
+        """
+        self.start_tour("/web", "ssi_loan_loan_out_realize_interest", login="admin")
+
+    def test_unrealize_interest(self):
+        """Run the unrealize interest tour for ``loan.out``.
+
+        IK: docs/loan_out/18-unrealize-interest.md
+        """
+        self.start_tour("/web", "ssi_loan_loan_out_unrealize_interest", login="admin")
