@@ -2,8 +2,8 @@
 
 ## Pre-Condition
 
-- User must belong to the **User** access group (`loan_in_user_group`), which also
-  grants the **Viewer** access needed to open the **Loans In** menu.
+- **Access:** User must belong to the **User** access group (`loan_in_user_group`),
+  which also grants the **Viewer** access needed to open the **Loans In** menu.
 
 ## Flow
 

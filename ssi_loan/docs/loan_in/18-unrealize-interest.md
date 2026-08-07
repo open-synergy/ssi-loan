@@ -2,9 +2,9 @@
 
 ## Pre-Condition
 
-- Record is in **In Progress** status.
-- The **Payment Schedule** line's **Interest Payment State** is **Unpaid**.
-- User must belong to the **User** access group (`loan_in_user_group`).
+- **Record:** Record is in **In Progress** status.
+- **Record:** The **Payment Schedule** line's **Interest Payment State** is **Unpaid**.
+- **Access:** User must belong to the **User** access group (`loan_in_user_group`).
 
 ## Flow
 

@@ -5,10 +5,10 @@ This transition is not triggered by a button; it is executed automatically by th
 
 ## Pre-Condition
 
-- Record is in **Ready to Process** status, or in **Done** status.
-- No dedicated access right is required for the automatic transition itself; the user
-  only needs their normal Accounting access to perform the reconciliation described
-  below.
+- **Record:** Record is in **Ready to Process** status, or in **Done** status.
+- **Access:** No dedicated access right is required for the automatic transition itself;
+  the user only needs their normal Accounting access to perform the reconciliation
+  described below.
 
 ## Flow
 
