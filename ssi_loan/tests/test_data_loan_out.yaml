@@ -861,6 +861,26 @@ scenarios:
         context:
           bypass_policy_check: true
 
+      - step: "DEBUG diagnose approval state after confirm"
+        action: "assert"
+        target: "loan_out_reject"
+        asserts:
+          need_validation:
+            type: "value"
+            expected: false
+          approval_template_id:
+            type: "value"
+            operator: "is_truthy"
+          approval_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 1
+          active_approver_user_ids:
+            type: "m2m"
+            check: "contains"
+            expected_records:
+              - "REC: admin_user"
+
       - step: "Reject loan.out"
         action: "call"
         target: "loan_out_reject"
