@@ -861,26 +861,6 @@ scenarios:
         context:
           bypass_policy_check: true
 
-      - step: "DEBUG diagnose approval state after confirm"
-        action: "assert"
-        target: "loan_out_reject"
-        asserts:
-          need_validation:
-            type: "value"
-            expected: false
-          approval_template_id:
-            type: "value"
-            operator: "is_truthy"
-          approval_ids:
-            type: "o2m"
-            check: "count"
-            expected_count: 1
-          active_approver_user_ids:
-            type: "m2m"
-            check: "contains"
-            expected_records:
-              - "REC: admin_user"
-
       - step: "Reject loan.out"
         action: "call"
         target: "loan_out_reject"
@@ -982,6 +962,15 @@ scenarios:
           interest: 3.0
           manual_loan_period: 6
           first_payment_date: "2024-02-01"
+          # `loan_out_internal_user_rule` only lets a user see records
+          # where `user_id` is themselves. Without this, the record
+          # defaults to the transaction's own user (superuser -- always
+          # bypasses record rules), but the cancel wizard step below acts
+          # `as_user: base.user_admin` (not superuser) and its `asserts:`
+          # re-read the document under that same non-superuser env (see
+          # `_rebind`/`auto_refresh` in odoo-yaml-test), which runs the
+          # ir.rule for real and denies admin unless it owns the record.
+          user_id: "REC: admin_user.id"
 
       - step: "Compute payment schedules"
         action: "call"
