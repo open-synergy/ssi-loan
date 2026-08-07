@@ -2,11 +2,11 @@
 
 ## Pre-Condition
 
-- Record is in **Draft** status.
-- **Total Principle Amount** (the sum of the **Payment Schedule** lines, built with the
-  **Payment Schedule** button) equals **Loan Amount**.
-- **Loan Amount** does not exceed the loan type's **Maximum Loan Amount**.
-- User must belong to the **User** access group (`loan_out_user_group`).
+- **Record:** Record is in **Draft** status.
+- **Record:** **Total Principle Amount** (the sum of the **Payment Schedule** lines,
+  built with the **Payment Schedule** button) equals **Loan Amount**.
+- **Record:** **Loan Amount** does not exceed the loan type's **Maximum Loan Amount**.
+- **Access:** User must belong to the **User** access group (`loan_out_user_group`).
 
 ## Flow
 

@@ -2,8 +2,9 @@
 
 ## Pre-Condition
 
-- Record is in **Draft** status.
-- User must belong to the **Validator** access group (`loan_out_validator_group`).
+- **Record:** Record is in **Draft** status.
+- **Access:** User must belong to the **Validator** access group
+  (`loan_out_validator_group`).
 
 ## Flow
 

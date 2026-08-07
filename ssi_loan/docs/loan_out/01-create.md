@@ -2,8 +2,8 @@
 
 ## Pre-Condition
 
-- User must belong to the **User** access group (`loan_out_user_group`), which also
-  grants the **Viewer** access needed to open the **Loans Out** menu.
+- **Access:** User must belong to the **User** access group (`loan_out_user_group`),
+  which also grants the **Viewer** access needed to open the **Loans Out** menu.
 
 ## Flow
 
