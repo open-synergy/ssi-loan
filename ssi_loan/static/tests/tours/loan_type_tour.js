@@ -181,8 +181,7 @@ odoo.define("ssi_loan.loan_type_tour", function (require) {
             // ── Flow 2 — Find and open the record to edit
             {
                 content: "Open the record",
-                trigger:
-                    ".o_data_row:contains(TOUR Loan Type Edit) .o_data_cell:first",
+                trigger: ".o_data_row:contains(TOUR Loan Type Edit) .o_data_cell:first",
                 extra_trigger: ".o_list_view",
             },
             {
