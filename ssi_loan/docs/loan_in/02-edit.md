@@ -2,8 +2,8 @@
 
 ## Pre-Condition
 
-- Record is in **Draft** status.
-- User must belong to the **User** access group (`loan_in_user_group`).
+- **Record:** Record is in **Draft** status.
+- **Access:** User must belong to the **User** access group (`loan_in_user_group`).
 
 ## Flow
 

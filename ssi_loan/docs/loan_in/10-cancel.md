@@ -2,10 +2,12 @@
 
 ## Pre-Condition
 
-- Record is in **Draft**, **Waiting for Approval**, or **Ready to Process** status.
-- Record is not yet **Realized**, has no realized interest, and has no partially or
-  fully paid principal/interest on any **Payment Schedule** line.
-- User must belong to the **Validator** access group (`loan_in_validator_group`).
+- **Record:** Record is in **Draft**, **Waiting for Approval**, or **Ready to Process**
+  status.
+- **Record:** Record is not yet **Realized**, has no realized interest, and has no
+  partially or fully paid principal/interest on any **Payment Schedule** line.
+- **Access:** User must belong to the **Validator** access group
+  (`loan_in_validator_group`).
 
 ## Flow
 

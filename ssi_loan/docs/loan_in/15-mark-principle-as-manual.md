@@ -2,10 +2,10 @@
 
 ## Pre-Condition
 
-- Record is in **Draft** status.
-- The **Payment Schedule** line's **Principle Payment State** is not already **Manually
-  Control**.
-- User must belong to the **User** access group (`loan_in_user_group`).
+- **Record:** Record is in **Draft** status.
+- **Record:** The **Payment Schedule** line's **Principle Payment State** is not already
+  **Manually Control**.
+- **Access:** User must belong to the **User** access group (`loan_in_user_group`).
 
 ## Flow
 

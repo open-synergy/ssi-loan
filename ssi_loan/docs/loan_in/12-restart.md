@@ -2,8 +2,9 @@
 
 ## Pre-Condition
 
-- Record is in **Cancelled** or **Rejected** status.
-- User must belong to the **Validator** access group (`loan_in_validator_group`).
+- **Record:** Record is in **Cancelled** or **Rejected** status.
+- **Access:** User must belong to the **Validator** access group
+  (`loan_in_validator_group`).
 
 ## Flow
 

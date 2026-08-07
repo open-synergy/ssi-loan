@@ -2,10 +2,10 @@
 
 ## Pre-Condition
 
-- Record is in **Draft** status.
-- **Loan Type**, **Loan Amount**, **Interest (p.a)**, **Loan Period**, and **First
-  Payment Date** are already filled in.
-- User must belong to the **User** access group (`loan_in_user_group`).
+- **Record:** Record is in **Draft** status.
+- **Record:** **Loan Type**, **Loan Amount**, **Interest (p.a)**, **Loan Period**, and
+  **First Payment Date** are already filled in.
+- **Access:** User must belong to the **User** access group (`loan_in_user_group`).
 
 ## Flow
 
