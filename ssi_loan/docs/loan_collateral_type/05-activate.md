@@ -2,7 +2,7 @@
 
 ## Pre-Condition
 
-- User must belong to the **Loan Collateral Type** access group
+- **Access:** User must belong to the **Loan Collateral Type** access group
   (`loan_collateral_type_group`).
 
 ## Flow
