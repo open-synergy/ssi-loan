@@ -3,3 +3,5 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from . import test_loan_documenso_signing
+from . import test_ui_loan_out
+from . import test_ui_loan_in

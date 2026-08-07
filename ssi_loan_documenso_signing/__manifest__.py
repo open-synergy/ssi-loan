@@ -15,7 +15,10 @@
     "depends": [
         "ssi_loan",
         "ssi_connector_documenso_signing",
+        "web_tour",
     ],
-    "data": [],
+    "data": [
+        "views/assets.xml",
+    ],
     "demo": [],
 }
