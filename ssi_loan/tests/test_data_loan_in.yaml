@@ -55,6 +55,32 @@ setup:
         name: "Test Loan In Interest Expense Account"
         user_type_id: "REC: expense_acc_type.id"
 
+    # `_get_realization_move_line_account` (loan_payment_schedule_mixin.py)
+    # picks the long- or short-term principle account depending on how far
+    # `schedule_date` is from `fields.Date.today()` (real server date, not
+    # the fixed 2024 dates used below). Both are required so the realization
+    # move -- exercised by the ready/cancel scenarios below -- always finds
+    # a matching account regardless of when this suite runs.
+    - step: "Create short-term principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_short"
+      values:
+        code: "EVAL: 'LIPRS%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Short-Term Principle Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create long-term principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_long"
+      values:
+        code: "EVAL: 'LIPRL%d' % env['account.account'].search_count([])"
+        name: "Test Loan In Long-Term Principle Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
     - step: "Create realization journal"
       action: "create"
       model: "account.journal"
@@ -96,6 +122,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_principle_short.id"
+        long_account_principle_id: "REC: account_principle_long.id"
 
     - step: "Create anuity interest loan type"
       action: "create"
@@ -116,6 +144,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_principle_short.id"
+        long_account_principle_id: "REC: account_principle_long.id"
 
     - step: "Create effective interest loan type"
       action: "create"
@@ -136,6 +166,8 @@ setup:
         interest_journal_id: "REC: interest_journal.id"
         account_interest_id: "REC: account_interest.id"
         account_interest_income_id: "REC: account_interest_income.id"
+        short_account_principle_id: "REC: account_principle_short.id"
+        long_account_principle_id: "REC: account_principle_long.id"
 
     # `code: "/"` triggers auto-sequence assignment (same trick as the loan
     # types above), so this fixture stays safe across the repeated `setup:`
@@ -147,6 +179,25 @@ setup:
       values:
         name: "Test Loan Collateral Type"
         code: "/"
+
+    # `approval_template_data.xml` ships a default approval.template for
+    # `loan.in` whose sole approver group is `loan_in_validator_group`.
+    # The group's XML `users=` eval already lists admin, but
+    # `action_request_approval` (mixin_multiple_approval.py) resolves
+    # approvers from `res.groups.users` at runtime -- the same explicit
+    # `groups_id` write used by `test_ui_loan_in.py::setUp` is needed here
+    # too, or `action_approve_approval`/`action_reject_approval` never find
+    # admin as an active approver and the state never moves off `confirm`.
+    - step: "Get admin user"
+      action: "ref"
+      xml_id: "base.user_admin"
+      save_as: "admin_user"
+
+    - step: "Add admin to the loan in validator group"
+      action: "write"
+      target: "admin_user"
+      values:
+        groups_id: [[4, "REF: ssi_loan.loan_in_validator_group"]]
 
 scenarios:
   - name: "Loan In - Flat interest workflow"
@@ -902,6 +953,7 @@ scenarios:
         save_as: "cancel_reason_in"
         values:
           name: "Test Loan In Cancel Reason"
+          code: "TLICANCEL"
 
       - step: "Cancel loan.in via the cancel reason wizard"
         action: "wizard"
