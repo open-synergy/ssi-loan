@@ -198,11 +198,13 @@ class TestUiLoanIn(HttpCase):
 
         # Pre-Condition IK 12-restart.md: a Rejected record (restart
         # is also allowed from Cancelled). ``action_reject_approval``
-        # only transitions the record's state when the ACTING user is
-        # a registered approver (``mixin.multiple_approval._action_
-        # approval`` matches against ``self.env.user``), so it must
-        # run ``with_user(admin)`` rather than the test transaction's
-        # default (super)user.
+        # only transitions the record's state through the multiple
+        # approval workflow (``mixin.multiple_approval._action_
+        # approval``), which is sensitive to the exact acting-user/
+        # approval-instance setup. Since this fixture only needs the
+        # record to *sit* in Rejected status (the tour itself is what
+        # exercises the Restart button), the state is written directly
+        # instead of driving the full approval mechanism.
         partner_restart = self.env["res.partner"].create(
             {"name": "Tour Loan In Restart Partner"}
         )
@@ -211,9 +213,7 @@ class TestUiLoanIn(HttpCase):
         )
         self.loan_in_restart.action_compute_payment()
         self.loan_in_restart.with_context(bypass_policy_check=True).action_confirm()
-        self.loan_in_restart.with_user(self.env.ref("base.user_admin")).with_context(
-            bypass_policy_check=True
-        ).action_reject_approval()
+        self.loan_in_restart.sudo().write({"state": "reject"})
 
         # Pre-Condition IK 13-reset-number.md: a Draft record whose
         # document number was already assigned (simulating a record
@@ -242,7 +242,10 @@ class TestUiLoanIn(HttpCase):
 
         # Pre-Condition IK 16-unmark-principle-as-manual.md: a Draft
         # record whose first schedule line is already Manually
-        # Control.
+        # Control. Written directly (rather than via
+        # ``action_mark_principle_as_manual``) since this fixture only
+        # needs the line to already sit in that state; the tour itself
+        # is what exercises the Unmark button.
         partner_unmark = self.env["res.partner"].create(
             {"name": "Tour Loan In Unmark Partner"}
         )
@@ -250,7 +253,9 @@ class TestUiLoanIn(HttpCase):
             self._loan_in_values(partner_unmark)
         )
         self.loan_in_unmark.action_compute_payment()
-        self.loan_in_unmark.payment_schedule_ids[:1].action_mark_principle_as_manual()
+        self.loan_in_unmark.payment_schedule_ids[:1].sudo().write(
+            {"principle_payment_state": "manual"}
+        )
 
         # Pre-Condition IK 17-realize-interest.md: an In Progress
         # record whose first schedule line's Interest Payment State
