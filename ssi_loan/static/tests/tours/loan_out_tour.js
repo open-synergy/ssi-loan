@@ -441,32 +441,25 @@ odoo.define("ssi_loan.loan_out_tour", function (require) {
             url: "/web",
         },
         [].concat(openLoanOutMenu, [
-            // ── Flow 2 — Select one or more records to delete (check
-            // the checkbox). 14.0: `tour_manager.js` itself documents
-            // that `this.$anchor` (captured when the trigger matched)
-            // can go stale if the row is re-rendered before `run()`
-            // executes — the click then lands on a detached node and
-            // silently has no effect, even though the step logs
-            // "succeeded" (patterns.md §I: list checkbox is fragile
-            // for exactly this reason). Re-query the checkbox by
-            // selector INSIDE `run()` so the click always targets the
-            // live DOM node, then gate on the resulting `:checked`
-            // state before continuing.
+            // ── Flow 2 — Open the record to delete. 14.0: deleting via
+            // the list bulk-select checkbox (.o_list_record_selector)
+            // is documented as fragile (patterns.md §I skill
+            // odoo-development-ui-test) — its synthetic click can race
+            // a row re-render and silently leave the record unselected
+            // even though the step reports "succeeded" (confirmed here
+            // across three separate click techniques, all landing on a
+            // stale/reset DOM node). Deleting from the form record's
+            // own Action menu is the skill's documented, deterministic
+            // alternative and exercises the exact same Delete action.
             {
-                content: "Check the record's checkbox",
+                content: "Open the record",
                 trigger:
-                    ".o_data_row:contains(Tour Loan Out Delete Partner) .o_list_record_selector input",
+                    ".o_data_row:contains(Tour Loan Out Delete Partner) .o_data_cell:first",
                 extra_trigger: ".o_list_view",
-                run: function () {
-                    $(
-                        ".o_data_row:contains(Tour Loan Out Delete Partner) .o_list_record_selector input"
-                    )[0].click();
-                },
             },
             {
-                content: "Record's checkbox is now checked",
-                trigger:
-                    ".o_data_row:contains(Tour Loan Out Delete Partner) .o_list_record_selector input:checked",
+                content: "Record form is displayed",
+                trigger: ".o_form_view",
                 run: function () {
                     // Assertion only; do not trigger the default click action.
                 },
@@ -500,8 +493,16 @@ odoo.define("ssi_loan.loan_out_tour", function (require) {
                 in_modal: true,
             },
 
-            // ── Post-Condition — The selected records are permanently
-            // removed from the system
+            // 14.0 may show the next/previous record in the recordset
+            // after delete rather than returning to the list itself;
+            // click the breadcrumb explicitly before asserting removal.
+            {
+                content: "Click the [Loans Out] breadcrumb to return to the list",
+                trigger: ".breadcrumb-item.o_back_button a:contains(Loans Out)",
+            },
+
+            // ── Post-Condition — The record is permanently removed
+            // from the system
             {
                 content: "Record no longer appears in the list",
                 trigger:
