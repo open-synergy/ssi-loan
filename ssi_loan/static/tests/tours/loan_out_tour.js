@@ -442,19 +442,25 @@ odoo.define("ssi_loan.loan_out_tour", function (require) {
         },
         [].concat(openLoanOutMenu, [
             // ── Flow 2 — Select one or more records to delete (check
-            // the checkbox). 14.0: the list checkbox's synthetic click
-            // can race a row re-render (patterns.md §I) and leave the
-            // input unchecked despite the step reporting "succeeded";
-            // use a native click via `this.$anchor[0].click()` and gate
-            // on the resulting `:checked` state before continuing, the
-            // same wait-with-assertion technique used for async writes.
+            // the checkbox). 14.0: `tour_manager.js` itself documents
+            // that `this.$anchor` (captured when the trigger matched)
+            // can go stale if the row is re-rendered before `run()`
+            // executes — the click then lands on a detached node and
+            // silently has no effect, even though the step logs
+            // "succeeded" (patterns.md §I: list checkbox is fragile
+            // for exactly this reason). Re-query the checkbox by
+            // selector INSIDE `run()` so the click always targets the
+            // live DOM node, then gate on the resulting `:checked`
+            // state before continuing.
             {
                 content: "Check the record's checkbox",
                 trigger:
                     ".o_data_row:contains(Tour Loan Out Delete Partner) .o_list_record_selector input",
                 extra_trigger: ".o_list_view",
                 run: function () {
-                    this.$anchor[0].click();
+                    $(
+                        ".o_data_row:contains(Tour Loan Out Delete Partner) .o_list_record_selector input"
+                    )[0].click();
                 },
             },
             {
