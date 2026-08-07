@@ -2,7 +2,7 @@
 
 ## Pre-Condition
 
-- User must belong to the **Loan Additional Item** access group
+- **Access:** User must belong to the **Loan Additional Item** access group
   (`loan_additional_item_group`).
 
 ## Flow
