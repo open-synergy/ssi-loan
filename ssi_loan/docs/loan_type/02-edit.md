@@ -2,7 +2,7 @@
 
 ## Pre-Condition
 
-- User must belong to the **Loan Type** access group (`loan_type_group`).
+- **Access:** User must belong to the **Loan Type** access group (`loan_type_group`).
 
 ## Flow
 
