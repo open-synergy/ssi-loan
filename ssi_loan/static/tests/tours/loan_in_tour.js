@@ -679,11 +679,15 @@ odoo.define("ssi_loan.loan_in_tour", function (require) {
             },
 
             // ── Post-Condition — The line's Principle Payment State
-            // changes to Manually Control
+            // changes to Manually Control (the row's action icon
+            // swaps from Mark to Unmark, which is what the user
+            // actually sees change; the state column itself is a
+            // plain-text list cell with no per-field selector to
+            // anchor on, since it carries no widget=)
             {
-                content: "Principle Payment State is Manually Control",
+                content: "Unmark as Manually Control button is now shown",
                 trigger:
-                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first .o_field_widget[name='principle_payment_state']:contains(Manually Control)",
+                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first button[name='action_unmark_principle_as_manual']",
                 run: function () {
                     // Assertion only; do not trigger the default click action.
                 },
@@ -730,11 +734,13 @@ odoo.define("ssi_loan.loan_in_tour", function (require) {
             },
 
             // ── Post-Condition — The line's Principle Payment State
-            // changes to Unpaid
+            // changes to Unpaid (the row's action icon swaps back
+            // from Unmark to Mark; see the mark tour above for why
+            // the state column text itself isn't a valid anchor)
             {
-                content: "Principle Payment State is Unpaid",
+                content: "Mark as Manually Control button is shown again",
                 trigger:
-                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first .o_field_widget[name='principle_payment_state']:contains(Unpaid)",
+                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first button[name='action_mark_principle_as_manual']",
                 run: function () {
                     // Assertion only; do not trigger the default click action.
                 },
@@ -781,11 +787,14 @@ odoo.define("ssi_loan.loan_in_tour", function (require) {
             },
 
             // ── Post-Condition — The line's Interest Payment State
-            // changes from Unrealized to Unpaid
+            // changes from Unrealized to Unpaid (the row's action
+            // icon swaps from Realize to Unrealize Interest; the
+            // state column itself is a plain-text list cell with no
+            // per-field selector to anchor on)
             {
-                content: "Interest Payment State is Unpaid",
+                content: "Unrealize Interest button is now shown",
                 trigger:
-                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first .o_field_widget[name='interest_payment_state']:contains(Unpaid)",
+                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first button[name='action_unrealize_interest']",
                 run: function () {
                     // Assertion only; do not trigger the default click action.
                 },
@@ -832,11 +841,12 @@ odoo.define("ssi_loan.loan_in_tour", function (require) {
             },
 
             // ── Post-Condition — The line's Interest Payment State
-            // changes back to Unrealized
+            // changes back to Unrealized (the row's action icon
+            // swaps back from Unrealize to Realize Interest)
             {
-                content: "Interest Payment State is Unrealized",
+                content: "Realize Interest button is shown again",
                 trigger:
-                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first .o_field_widget[name='interest_payment_state']:contains(Unrealized)",
+                    ".o_field_x2many[name='payment_schedule_ids'] .o_data_row:first button[name='action_realize_interest']",
                 run: function () {
                     // Assertion only; do not trigger the default click action.
                 },

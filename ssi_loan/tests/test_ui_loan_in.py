@@ -197,7 +197,12 @@ class TestUiLoanIn(HttpCase):
         self.loan_in_reject.with_context(bypass_policy_check=True).action_confirm()
 
         # Pre-Condition IK 12-restart.md: a Rejected record (restart
-        # is also allowed from Cancelled).
+        # is also allowed from Cancelled). ``action_reject_approval``
+        # only transitions the record's state when the ACTING user is
+        # a registered approver (``mixin.multiple_approval._action_
+        # approval`` matches against ``self.env.user``), so it must
+        # run ``with_user(admin)`` rather than the test transaction's
+        # default (super)user.
         partner_restart = self.env["res.partner"].create(
             {"name": "Tour Loan In Restart Partner"}
         )
@@ -206,7 +211,7 @@ class TestUiLoanIn(HttpCase):
         )
         self.loan_in_restart.action_compute_payment()
         self.loan_in_restart.with_context(bypass_policy_check=True).action_confirm()
-        self.loan_in_restart.with_context(
+        self.loan_in_restart.with_user(self.env.ref("base.user_admin")).with_context(
             bypass_policy_check=True
         ).action_reject_approval()
 
@@ -249,8 +254,11 @@ class TestUiLoanIn(HttpCase):
 
         # Pre-Condition IK 17-realize-interest.md: an In Progress
         # record whose first schedule line's Interest Payment State
-        # is still Unrealized. ``state`` is forced to ``open``
-        # directly because the Draft-to-In-Progress transition is a
+        # is still Unrealized. ``action_approve_approval`` only marks
+        # the approval done when the ACTING user is a registered
+        # approver, hence ``with_user(admin)`` (see 12-restart.md
+        # fixture above). ``state`` is then forced to ``open`` directly
+        # because the Ready-to-Process-to-In-Progress transition is a
         # base.automation triggered by bank reconciliation
         # (docs/loan_in/07-start.md), out of scope for this tour.
         partner_realize = self.env["res.partner"].create(
@@ -261,7 +269,7 @@ class TestUiLoanIn(HttpCase):
         )
         self.loan_in_realize.action_compute_payment()
         self.loan_in_realize.with_context(bypass_policy_check=True).action_confirm()
-        self.loan_in_realize.with_context(
+        self.loan_in_realize.with_user(self.env.ref("base.user_admin")).with_context(
             bypass_policy_check=True
         ).action_approve_approval()
         self.loan_in_realize.sudo().write({"state": "open"})
@@ -277,7 +285,7 @@ class TestUiLoanIn(HttpCase):
         )
         self.loan_in_unrealize.action_compute_payment()
         self.loan_in_unrealize.with_context(bypass_policy_check=True).action_confirm()
-        self.loan_in_unrealize.with_context(
+        self.loan_in_unrealize.with_user(self.env.ref("base.user_admin")).with_context(
             bypass_policy_check=True
         ).action_approve_approval()
         self.loan_in_unrealize.sudo().write({"state": "open"})
