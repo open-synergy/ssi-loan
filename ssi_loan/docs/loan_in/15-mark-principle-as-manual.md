@@ -1,5 +1,15 @@
 # Mark Principle as Manual — Loan In
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.in`
+>
+> **Menu:** Loan > Loans In
+>
+> **Actor:** user in group _User_ (`loan_in_user_group`)
+>
+> **Requires:** `14-compute-payment-schedule`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Draft** status.

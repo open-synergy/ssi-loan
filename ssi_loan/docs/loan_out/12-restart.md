@@ -1,5 +1,17 @@
 # Restart Loan Out
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.out`
+>
+> **Menu:** Loan > Loans Out
+>
+> **Actor:** user in group _Validator_ (`loan_out_validator_group`)
+>
+> **State:** `cancel`/`reject` → `draft`
+>
+> **Requires:** `10-cancel`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Cancelled** or **Rejected** status.

@@ -1,5 +1,15 @@
 # Create Loan Out
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.out`
+>
+> **Menu:** Loan > Loans Out
+>
+> **Actor:** user in group _User_ (`loan_out_user_group`)
+>
+> **State:** — → `draft`
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **User** access group (`loan_out_user_group`),

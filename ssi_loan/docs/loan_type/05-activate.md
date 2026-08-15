@@ -1,5 +1,17 @@
 # Activate Loan Type
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.type`
+>
+> **Menu:** Loan > Configuration > Loan Types
+>
+> **Actor:** user in group _Loan Type_ (`loan_type_group`)
+>
+> **Active:** `false` → `true`
+>
+> **Requires:** `04-deactivate`
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **Loan Type** access group (`loan_type_group`).

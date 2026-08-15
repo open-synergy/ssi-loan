@@ -233,6 +233,12 @@
                             <field name="type_id" />
                             <field name="name" />
                         </tree>
+                        <form>
+                            <group name="collateral_group_1">
+                                <field name="type_id" />
+                                <field name="name" />
+                            </group>
+                        </form>
                     </field>
                 </page>
                 <page name="accounting" string="Accounting">

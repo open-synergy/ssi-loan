@@ -1,5 +1,17 @@
 # Approve Loan In
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.in`
+>
+> **Menu:** Loan > Loans In
+>
+> **Actor:** user registered as an active approver on the record's approval flow
+>
+> **State:** `confirm` → `ready`
+>
+> **Requires:** `04-confirm`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Waiting for Approval** status.

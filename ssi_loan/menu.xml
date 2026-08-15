@@ -15,6 +15,6 @@
         id="menu_loan_configuration"
         name="Configuration"
         parent="menu_root_loan"
-        sequence="99"
+        sequence="999"
     />
 </odoo>

@@ -18,6 +18,6 @@ from . import (
     loan_payment_schedule_out_additional_item,
     loan_payment_schedule_in_additional_item,
     loan_collateral_mixin,
-    loan_collateral_in,
-    loan_collateral_out,
+    loan_in_collateral,
+    loan_out_collateral,
 )

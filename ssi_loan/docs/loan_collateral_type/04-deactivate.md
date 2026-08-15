@@ -1,5 +1,17 @@
 # Deactivate Loan Collateral Type
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan_collateral_type`
+>
+> **Menu:** Loan > Configuration > Loan Collateral Types
+>
+> **Actor:** user in group _Loan Collateral Type_ (`loan_collateral_type_group`)
+>
+> **Active:** `true` → `false`
+>
+> **Requires:** `01-create`
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **Loan Collateral Type** access group

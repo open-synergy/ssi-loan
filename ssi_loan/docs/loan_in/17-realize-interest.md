@@ -1,5 +1,15 @@
 # Realize Interest — Loan In
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.in`
+>
+> **Menu:** Loan > Loans In
+>
+> **Actor:** user in group _User_ (`loan_in_user_group`)
+>
+> **Requires:** `07-start`
+
 ## Pre-Condition
 
 - **Record:** Record is in **In Progress** status.

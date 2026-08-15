@@ -1,5 +1,13 @@
 # Edit Loan Collateral Type
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan_collateral_type`
+>
+> **Menu:** Loan > Configuration > Loan Collateral Types
+>
+> **Actor:** user in group _Loan Collateral Type_ (`loan_collateral_type_group`)
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **Loan Collateral Type** access group

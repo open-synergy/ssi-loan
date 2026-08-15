@@ -1,5 +1,17 @@
 # Cancel Loan Out
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.out`
+>
+> **Menu:** Loan > Loans Out
+>
+> **Actor:** user in group _Validator_ (`loan_out_validator_group`)
+>
+> **State:** `draft`/`confirm`/`ready` → `cancel`
+>
+> **Requires:** `01-create`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Draft**, **Waiting for Approval**, or **Ready to Process**

@@ -1,5 +1,17 @@
 # Restart Loan In
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.in`
+>
+> **Menu:** Loan > Loans In
+>
+> **Actor:** user in group _Validator_ (`loan_in_validator_group`)
+>
+> **State:** `cancel`/`reject` → `draft`
+>
+> **Requires:** `10-cancel`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Cancelled** or **Rejected** status.

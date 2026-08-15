@@ -1,5 +1,17 @@
 # Activate Loan Additional Item
 
+> **Module:** ssi_loan
+>
+> **Model:** `loan.additional_item`
+>
+> **Menu:** Loan > Configuration > Additional Items
+>
+> **Actor:** user in group _Loan Additional Item_ (`loan_additional_item_group`)
+>
+> **Active:** `false` → `true`
+>
+> **Requires:** `04-deactivate`
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **Loan Additional Item** access group

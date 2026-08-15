@@ -5,18 +5,18 @@
 from odoo import fields, models
 
 
-class LoanCollateralIn(models.Model):
-    """Collateral line pledged against a single ``loan.in`` record.
+class LoanOutCollateral(models.Model):
+    """Collateral line pledged against a single ``loan.out`` record.
 
-    Detail model of ``loan.in``: adds the ``loan_id`` back-reference
+    Detail model of ``loan.out``: adds the ``loan_id`` back-reference
     on top of the type/name/sequence fields inherited from
     ``loan.collateral_mixin``.
     """
 
-    _name = "loan_in.collateral"
+    _name = "loan_out.collateral"
     _inherit = ["loan.collateral_mixin"]
-    _description = "Loan Collateral In"
+    _description = "Loan Collateral Out"
 
     loan_id = fields.Many2one(
-        comodel_name="loan.in",
+        comodel_name="loan.out",
     )
