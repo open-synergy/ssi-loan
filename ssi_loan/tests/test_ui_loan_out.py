@@ -2,11 +2,11 @@
 # Copyright 2026 PT. Simetri Sinergi Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo.tests import HttpCase, tagged
+from odoo.tests import HttpSavepointCase, tagged
 
 
 @tagged("post_install", "-at_install")
-class TestUiLoanOut(HttpCase):
+class TestUiLoanOut(HttpSavepointCase):
     """Tour tests for the ``loan.out`` work instructions."""
 
     def setUp(self):
@@ -25,10 +25,9 @@ class TestUiLoanOut(HttpCase):
         including being the sole approver on the default approval
         template.
 
-        Overrides ``setUp`` rather than ``setUpClass`` because
-        ``HttpCase``/``TransactionCase`` only expose ``self.env``
-        per-test (set up in ``setUp``); ``cls.env`` is never assigned
-        at the class level.
+        Overrides ``setUp`` rather than ``setUpClass`` so each
+        test method gets independent, freshly-created fixtures
+        instead of state shared across the whole test class.
         """
         super().setUp()
         self.env.ref("base.USD").sudo().write({"active": True})

@@ -5,7 +5,7 @@
 from odoo import fields, models
 
 
-class LoanCollateralOut(models.Model):
+class LoanOutCollateral(models.Model):
     """Collateral line pledged against a single ``loan.out`` record.
 
     Detail model of ``loan.out``: adds the ``loan_id`` back-reference

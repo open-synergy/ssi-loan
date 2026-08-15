@@ -2,11 +2,11 @@
 # Copyright 2026 PT. Simetri Sinergi Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo.tests import HttpCase, tagged
+from odoo.tests import HttpSavepointCase, tagged
 
 
 @tagged("post_install", "-at_install")
-class TestUiLoanCollateralType(HttpCase):
+class TestUiLoanCollateralType(HttpSavepointCase):
     """Tour tests for the ``loan_collateral_type`` work instructions."""
 
     def setUp(self):
@@ -18,10 +18,9 @@ class TestUiLoanCollateralType(HttpCase):
         IK of ``02-edit.md``/``03-delete.md``/``04-deactivate.md``/
         ``05-activate.md``).
 
-        Overrides ``setUp`` rather than ``setUpClass`` because
-        ``HttpCase``/``TransactionCase`` only expose ``self.env``
-        per-test (set up in ``setUp``); ``cls.env`` is never assigned
-        at the class level.
+        Overrides ``setUp`` rather than ``setUpClass`` so each
+        test method gets independent, freshly-created fixtures
+        instead of state shared across the whole test class.
         """
         super().setUp()
         loan_collateral_type_model = self.env["loan_collateral_type"]

@@ -1,5 +1,11 @@
 # Delete Loan Additional Item
 
+> **Module:** ssi_loan
+> **Model:** `loan.additional_item`
+> **Menu:** Loan > Configuration > Additional Items
+> **Actor:** user in group *Loan Additional Item* (`loan_additional_item_group`)
+> **Requires:** `01-create`
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **Loan Additional Item** access group

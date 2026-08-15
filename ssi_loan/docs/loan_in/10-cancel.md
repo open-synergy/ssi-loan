@@ -1,5 +1,12 @@
 # Cancel Loan In
 
+> **Module:** ssi_loan
+> **Model:** `loan.in`
+> **Menu:** Loan > Loans In
+> **Actor:** user in group *Validator* (`loan_in_validator_group`)
+> **State:** `draft`/`confirm`/`ready` → `cancel`
+> **Requires:** `01-create`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Draft**, **Waiting for Approval**, or **Ready to Process**

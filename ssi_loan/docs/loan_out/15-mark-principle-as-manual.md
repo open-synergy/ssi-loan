@@ -1,5 +1,11 @@
 # Mark Principle as Manual — Loan Out
 
+> **Module:** ssi_loan
+> **Model:** `loan.out`
+> **Menu:** Loan > Loans Out
+> **Actor:** user in group *User* (`loan_out_user_group`)
+> **Requires:** `14-compute-payment-schedule`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Draft** status.

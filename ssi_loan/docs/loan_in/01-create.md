@@ -1,5 +1,11 @@
 # Create Loan In
 
+> **Module:** ssi_loan
+> **Model:** `loan.in`
+> **Menu:** Loan > Loans In
+> **Actor:** user in group *User* (`loan_in_user_group`)
+> **State:** — → `draft`
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **User** access group (`loan_in_user_group`),

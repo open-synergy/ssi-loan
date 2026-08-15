@@ -1,5 +1,11 @@
 # Reset Document Number — Loan In
 
+> **Module:** ssi_loan
+> **Model:** `loan.in`
+> **Menu:** Loan > Loans In
+> **Actor:** user in group *Validator* (`loan_in_validator_group`)
+> **Requires:** `01-create`
+
 ## Pre-Condition
 
 - **Record:** Record is in **Draft** status.

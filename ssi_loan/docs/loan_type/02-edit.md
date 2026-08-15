@@ -1,5 +1,10 @@
 # Edit Loan Type
 
+> **Module:** ssi_loan
+> **Model:** `loan.type`
+> **Menu:** Loan > Configuration > Loan Types
+> **Actor:** user in group *Loan Type* (`loan_type_group`)
+
 ## Pre-Condition
 
 - **Access:** User must belong to the **Loan Type** access group (`loan_type_group`).

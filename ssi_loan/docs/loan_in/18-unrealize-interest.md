@@ -1,5 +1,11 @@
 # Unrealize Interest — Loan In
 
+> **Module:** ssi_loan
+> **Model:** `loan.in`
+> **Menu:** Loan > Loans In
+> **Actor:** user in group *User* (`loan_in_user_group`)
+> **Requires:** `17-realize-interest`
+
 ## Pre-Condition
 
 - **Record:** Record is in **In Progress** status.
