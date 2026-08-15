@@ -1,9 +1,13 @@
 # Create Loan Out
 
 > **Module:** ssi_loan
+>
 > **Model:** `loan.out`
+>
 > **Menu:** Loan > Loans Out
-> **Actor:** user in group *User* (`loan_out_user_group`)
+>
+> **Actor:** user in group _User_ (`loan_out_user_group`)
+>
 > **State:** — → `draft`
 
 ## Pre-Condition

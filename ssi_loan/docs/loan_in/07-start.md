@@ -1,10 +1,16 @@
 # Start Loan In
 
 > **Module:** ssi_loan
+>
 > **Model:** `loan.in`
+>
 > **Menu:** Loan > Loans In
-> **Actor:** system (`base.automation`) — user only needs standard Accounting access to perform the reconciliation described in Flow
+>
+> **Actor:** system (`base.automation`) — user only needs standard Accounting access to
+> perform the reconciliation described in Flow
+>
 > **State:** `ready` → `open`
+>
 > **Requires:** `05-approve`
 
 This transition is not triggered by a button; it is executed automatically by the system

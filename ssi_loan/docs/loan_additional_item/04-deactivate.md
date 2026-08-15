@@ -1,10 +1,15 @@
 # Deactivate Loan Additional Item
 
 > **Module:** ssi_loan
+>
 > **Model:** `loan.additional_item`
+>
 > **Menu:** Loan > Configuration > Additional Items
-> **Actor:** user in group *Loan Additional Item* (`loan_additional_item_group`)
+>
+> **Actor:** user in group _Loan Additional Item_ (`loan_additional_item_group`)
+>
 > **Active:** `true` → `false`
+>
 > **Requires:** `01-create`
 
 ## Pre-Condition

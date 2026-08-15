@@ -1,9 +1,12 @@
 # Edit Loan Type
 
 > **Module:** ssi_loan
+>
 > **Model:** `loan.type`
+>
 > **Menu:** Loan > Configuration > Loan Types
-> **Actor:** user in group *Loan Type* (`loan_type_group`)
+>
+> **Actor:** user in group _Loan Type_ (`loan_type_group`)
 
 ## Pre-Condition
 

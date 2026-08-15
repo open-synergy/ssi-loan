@@ -1,9 +1,13 @@
 # Unmark Principle as Manual — Loan In
 
 > **Module:** ssi_loan
+>
 > **Model:** `loan.in`
+>
 > **Menu:** Loan > Loans In
-> **Actor:** user in group *User* (`loan_in_user_group`)
+>
+> **Actor:** user in group _User_ (`loan_in_user_group`)
+>
 > **Requires:** `15-mark-principle-as-manual`
 
 ## Pre-Condition
