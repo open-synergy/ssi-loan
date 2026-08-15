@@ -19,7 +19,7 @@ Available addons
 addon | version | maintainers | summary
 --- | --- | --- | ---
 [ssi_loan](ssi_loan/) | 14.0.1.13.0 |  | Loan
-[ssi_loan_documenso_signing](ssi_loan_documenso_signing/) | 14.0.1.0.0 |  | Loan - Documenso Signing Integration
+[ssi_loan_documenso_signing](ssi_loan_documenso_signing/) | 14.0.1.0.1 |  | Loan - Documenso Signing Integration
 [ssi_loan_operating_unit](ssi_loan_operating_unit/) | 14.0.1.0.3 |  | Loan + Operating Unit
 
 [//]: # (end addons)
