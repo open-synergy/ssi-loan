@@ -1,0 +1,12 @@
+# Penyimpangan sah untuk models/res_config_settings.py — open-synergy/ssi-loan#85
+#
+# res.config.settings adalah model core Odoo (base) yang di-_inherit modul ini
+# (bersama abstract.config.settings) untuk mendaftarkan panel Settings, bukan
+# wizard aksi SSI. Memindahkannya ke wizards/ atau mengganti _name-nya melanggar
+# larangan mengubah nama model/XML ID yang sudah dipakai data produksi, dan
+# menambah ACL sendiri akan menggandakan/bertabrakan dengan ACL modul base.
+# Preseden: open-synergy/opnsynid-service#103, open-synergy/opnsynid-hr-expense#159.
+
+module name-wizard-tanpa-notasi-titik|models/res_config_settings.py: _name 'res.config.settings' memakai notasi titik -- res.config.settings adalah model core Odoo (base) yang di-_inherit, bukan wizard SSI; _name tidak boleh diubah karena dipakai data produksi
+module berkas-wizard-berada-di-wizards|models/res_config_settings.py: TransientModel di luar wizards/ -- berkas ini meng-_inherit res.config.settings (model core base), bukan wizard aksi SSI, sehingga tetap di models/ sesuai konvensi extend model core
+module acl-wizard-satu-user-access-tanpa-all-access|res.config.settings: tidak ada ACL sama sekali -- ACL res.config.settings sudah disediakan modul base; menambah ACL sendiri akan menggandakan/bertabrakan dengan ACL yang sudah ada
