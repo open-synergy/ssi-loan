@@ -374,6 +374,14 @@ scenarios:
         context:
           bypass_policy_check: true
 
+      - step: "Assert loan.out is confirmed"
+        action: "assert"
+        target: "loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
       - step: "Approve loan.out, auto-staging it to ready"
         action: "call"
         target: "loan"
@@ -464,6 +472,14 @@ scenarios:
         as_user: "base.user_admin"
         context:
           bypass_policy_check: true
+
+      - step: "Assert loan.out is confirmed"
+        action: "assert"
+        target: "loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
 
       - step: "Approve loan.out, auto-staging it to ready"
         action: "call"
