@@ -79,7 +79,7 @@
 
 <record id="loan_in_self_rule" model="ir.rule">
     <field name="name">Loan In - Responsible to own data</field>
-    <field name="model_id" ref="model_loan_out" />
+    <field name="model_id" ref="model_loan_in" />
     <field name="groups" eval="[(4, ref('loan_in_self_group'))]" />
     <field name="domain_force">[('partner_id','child_of',user.partner_id.ids)]</field>
     <field name="perm_unlink" eval="1" />

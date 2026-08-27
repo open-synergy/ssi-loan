@@ -8,7 +8,7 @@ access_loan_additional_item_all,loan.additional_item - all,model_loan_additional
 access_loan_out_all,loan.out - all,model_loan_out,,1,0,0,0
 access_loan_out_viewer,loan.out - viewer,model_loan_out,loan_out_viewer_group,1,0,0,0
 access_loan_out_user,loan.out - user,model_loan_out,loan_out_user_group,1,1,1,1
-access_loan_in_all,loan.in - all,model_loan_out,,1,0,0,0
+access_loan_in_all,loan.in - all,model_loan_in,,1,0,0,0
 access_loan_in_viewer,loan.in - viewer,model_loan_in,loan_in_viewer_group,1,0,0,0
 access_loan_in_user,loan.in - user,model_loan_in,loan_in_user_group,1,1,1,1
 access_loan_payment_schedule_out_all,loan.payment_schedule_out - all,model_loan_payment_schedule_out,,1,0,0,0

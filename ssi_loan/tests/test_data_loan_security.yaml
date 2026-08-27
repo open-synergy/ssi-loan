@@ -1,0 +1,140 @@
+scenarios:
+  - name: "Loan In ACL - plain internal user can search without AccessError"
+    steps:
+      # Internal user with no Loan In group at all -- only the module's
+      # baseline `base.group_user`. Before the fix, `access_loan_in_all`
+      # (the only group-less/"all internal users" ACL row for `loan.in`)
+      # wrongly pointed at `model_loan_out`, so this user had zero
+      # matching `ir.model.access.csv` row for `loan.in` and `search()`
+      # raised `AccessError` before the domain was even evaluated.
+      - step: "Create plain internal user"
+        action: "create"
+        model: "res.users"
+        save_as: "plain_user"
+        values:
+          name: "Loan Security Plain User"
+          login: "loan_security_plain_user@example.com"
+          groups_id: [[6, 0, ["REF: base.group_user"]]]
+
+      - step: "Search loan.in as plain internal user"
+        action: "search"
+        model: "loan.in"
+        domain: []
+        save_as: "plain_user_result"
+        as_user: "plain_user"
+
+  - name: "Loan In Self rule - self group member sees own-partner loan.in"
+    steps:
+      # `loan_in_self_rule` scoped correctly to `model_loan_in` must let a
+      # `loan_in_self_group` member see a `loan.in` document owned by
+      # their own partner, even though the document's `user_id` (defaults
+      # to the creating superuser here) is not theirs -- proving the
+      # "Self" record rule itself works on the right model.
+      - step: "Create partner for self user"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_self_in"
+        values:
+          name: "Loan Security Self Partner In"
+          is_company: false
+
+      - step: "Create self group user for loan.in"
+        action: "create"
+        model: "res.users"
+        save_as: "self_user_in"
+        values:
+          login: "loan_security_self_user_in@example.com"
+          partner_id: "REC: partner_self_in.id"
+          groups_id:
+            [[6, 0, ["REF: base.group_user", "REF: ssi_loan.loan_in_self_group"]]]
+
+      - step: "Create incoming loan type"
+        action: "create"
+        model: "loan.type"
+        save_as: "loan_type_security_in"
+        values:
+          name: "Test Loan Security Type In"
+          code: "/"
+          direction: "in"
+          currency_id: "REF: base.USD"
+          maximum_loan_amount: 6000.0
+
+      - step: "Create loan.in owned by the self user's partner"
+        action: "create"
+        model: "loan.in"
+        save_as: "loan_in_self_doc"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_self_in.id"
+          type_id: "REC: loan_type_security_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 1000.0
+          interest: 3.0
+          manual_loan_period: 12
+          first_payment_date: "2024-02-01"
+
+      - step: "Self user searches their own loan.in document"
+        action: "search"
+        model: "loan.in"
+        domain: [["id", "=", "REC: loan_in_self_doc.id"]]
+        save_as: "self_user_in_result"
+        as_user: "self_user_in"
+        expect_count: 1
+
+  - name: "Loan In Self rule - self group member cannot see loan.out"
+    steps:
+      # The bug (`loan_in_self_rule` pointed at `model_loan_out`) leaked
+      # the "Self" data-ownership right into `loan.out`: a
+      # `loan_in_self_group` member could see a `loan.out` document
+      # belonging to their own partner even without any Loan Out group.
+      # After the fix, that same user must see NONE of it.
+      - step: "Create partner for self user"
+        action: "create"
+        model: "res.partner"
+        save_as: "partner_self_out"
+        values:
+          name: "Loan Security Self Partner Out"
+          is_company: false
+
+      - step: "Create self group user for loan.in"
+        action: "create"
+        model: "res.users"
+        save_as: "self_user_out"
+        values:
+          login: "loan_security_self_user_out@example.com"
+          partner_id: "REC: partner_self_out.id"
+          groups_id:
+            [[6, 0, ["REF: base.group_user", "REF: ssi_loan.loan_in_self_group"]]]
+
+      - step: "Create outgoing loan type"
+        action: "create"
+        model: "loan.type"
+        save_as: "loan_type_security_out"
+        values:
+          name: "Test Loan Security Type Out"
+          code: "/"
+          direction: "out"
+          currency_id: "REF: base.USD"
+          maximum_loan_amount: 6000.0
+
+      - step: "Create loan.out owned by the same partner"
+        action: "create"
+        model: "loan.out"
+        save_as: "loan_out_self_doc"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: partner_self_out.id"
+          type_id: "REC: loan_type_security_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 1000.0
+          interest: 3.0
+          manual_loan_period: 12
+          first_payment_date: "2024-02-01"
+
+      - step: "Self user (loan.in group only) cannot see the loan.out doc"
+        action: "search"
+        model: "loan.out"
+        domain: [["id", "=", "REC: loan_out_self_doc.id"]]
+        save_as: "self_user_out_result"
+        as_user: "self_user_out"
+        expect_count: 0
