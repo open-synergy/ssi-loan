@@ -6,9 +6,11 @@ from odoo import models
 
 
 class LoanPaymentScheduleOut(models.Model):  # pylint: disable=too-few-public-methods
-    # Propagates the operating unit of the parent loan to the journal
-    # entries created from a payment schedule row (principal
-    # receivable/payable and interest realization).
+    """
+    Propagates the operating unit of the parent loan to the journal
+    entries created from a payment schedule row (principal
+    receivable/payable and interest realization).
+    """
 
     _name = "loan.payment_schedule_out"
     _inherit = ["loan.payment_schedule_out"]

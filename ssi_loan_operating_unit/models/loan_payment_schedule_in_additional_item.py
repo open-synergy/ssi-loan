@@ -6,8 +6,10 @@ from odoo import models
 
 
 class LoanPaymentScheduleInAdditionalItem(models.Model):
-    # Propagates the operating unit of the originating loan to the
-    # journal entry booked for an additional item of a schedule row.
+    """
+    Propagates the operating unit of the originating loan to the
+    journal entry booked for an additional item of a schedule row.
+    """
 
     _name = "loan.payment_schedule_in_additional_item"
     _inherit = ["loan.payment_schedule_in_additional_item"]
