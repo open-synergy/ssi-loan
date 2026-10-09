@@ -4,3 +4,7 @@
 
 from . import loan_out
 from . import loan_in
+from . import loan_payment_schedule_out
+from . import loan_payment_schedule_in
+from . import loan_payment_schedule_out_additional_item
+from . import loan_payment_schedule_in_additional_item

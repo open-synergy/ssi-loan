@@ -88,6 +88,46 @@ setup:
         code: "EVAL: 'LOUK%d' % env['account.journal'].search_count([])"
         type: "general"
 
+    - step: "Create out short principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_short_out"
+      values:
+        code: "EVAL: 'LOUPSO%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU out short principle account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
+    - step: "Create out long principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_long_out"
+      values:
+        code: "EVAL: 'LOUPLO%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU out long principle account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
+    - step: "Create in short principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_short_in"
+      values:
+        code: "EVAL: 'LOUPSI%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU in short principle account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create in long principle account"
+      action: "create"
+      model: "account.account"
+      save_as: "account_principle_long_in"
+      values:
+        code: "EVAL: 'LOUPLI%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU in long principle account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
     - step: "Create loan out type"
       action: "create"
       model: "loan.type"
@@ -107,6 +147,8 @@ setup:
         interest_journal_id: "REC: interest_journal_out.id"
         account_interest_id: "REC: account_interest_out.id"
         account_interest_income_id: "REC: account_interest_income_out.id"
+        short_account_principle_id: "REC: account_principle_short_out.id"
+        long_account_principle_id: "REC: account_principle_long_out.id"
 
     - step: "Create loan in realization account"
       action: "create"
@@ -187,6 +229,8 @@ setup:
         interest_journal_id: "REC: interest_journal_in.id"
         account_interest_id: "REC: account_interest_in.id"
         account_interest_income_id: "REC: account_interest_income_in.id"
+        short_account_principle_id: "REC: account_principle_short_in.id"
+        long_account_principle_id: "REC: account_principle_long_in.id"
 
     - step: "Create partner for operating unit A"
       action: "create"
@@ -259,6 +303,83 @@ setup:
           - - 6
             - 0
             - - "REC: ou_b.id"
+
+    # Additional item fixture used by the journal propagation scenarios.
+    - step: "Create additional item receivable account"
+      action: "create"
+      model: "account.account"
+      save_as: "ai_receivable_account"
+      values:
+        code: "EVAL: 'LOUAIR%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU Additional Item Receivable Account"
+        user_type_id: "REC: receivable_acc_type.id"
+        reconcile: true
+
+    - step: "Create additional item contra-receivable account"
+      action: "create"
+      model: "account.account"
+      save_as: "ai_contra_receivable_account"
+      values:
+        code: "EVAL: 'LOUAICR%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU Additional Item Contra-Receivable Account"
+        user_type_id: "REC: revenue_acc_type.id"
+
+    - step: "Create additional item payable account"
+      action: "create"
+      model: "account.account"
+      save_as: "ai_payable_account"
+      values:
+        code: "EVAL: 'LOUAIP%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU Additional Item Payable Account"
+        user_type_id: "REC: payable_acc_type.id"
+        reconcile: true
+
+    - step: "Create additional item contra-payable account"
+      action: "create"
+      model: "account.account"
+      save_as: "ai_contra_payable_account"
+      values:
+        code: "EVAL: 'LOUAICP%d' % env['account.account'].search_count([])"
+        name: "Test Loan OU Additional Item Contra-Payable Account"
+        user_type_id: "REC: expense_acc_type.id"
+
+    - step: "Create additional item receivable journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "ai_receivable_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan OU Additional Item Receivable Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'LOUAJR%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create additional item payable journal"
+      action: "create"
+      model: "account.journal"
+      save_as: "ai_payable_journal"
+      values:
+        name:
+          "EVAL: 'Test Loan OU Additional Item Payable Journal %d' %
+          env['account.journal'].search_count([])"
+        code: "EVAL: 'LOUAJP%d' % env['account.journal'].search_count([])"
+        type: "general"
+
+    - step: "Create additional item usable on both directions"
+      action: "create"
+      model: "loan.additional_item"
+      save_as: "additional_item"
+      values:
+        name: "Test Loan OU Additional Item"
+        code: "/"
+        loan_out_ok: true
+        loan_in_ok: true
+        receivable_journal_id: "REC: ai_receivable_journal.id"
+        receivable_account_id: "REC: ai_receivable_account.id"
+        contra_receivable_account_id: "REC: ai_contra_receivable_account.id"
+        payable_journal_id: "REC: ai_payable_journal.id"
+        payable_account_id: "REC: ai_payable_account.id"
+        contra_payable_account_id: "REC: ai_contra_payable_account.id"
 
 scenarios:
   - name: "Loan Out - Operating Unit propagation"
@@ -450,3 +571,431 @@ scenarios:
           - ["id", "=", "REC: in_rule_loan.id"]
         save_as: "in_seen_by_b"
         expect_count: 1
+
+  - name: "Loan Out - Realization journal carries the loan operating unit"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "out_real_partner"
+        values:
+          name: "Test Loan Out OU Realization Partner"
+          is_company: false
+
+      - step: "Create loan.out in operating unit A (admin default is another unit)"
+        action: "create"
+        model: "loan.out"
+        save_as: "out_real_loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: out_real_partner.id"
+          type_id: "REC: loan_type_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+          operating_unit_id: "REC: ou_a.id"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "out_real_loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "out_real_loan"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is confirmed"
+        action: "assert"
+        refresh: true
+        target: "out_real_loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Approve loan.out, auto-staging it to ready"
+        action: "call"
+        target: "out_real_loan"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out reached ready state"
+        action: "assert"
+        target: "out_real_loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+
+      - step: "Realization move carries the operating unit of the loan"
+        action: "assert"
+        refresh: true
+        target: "out_real_loan"
+        asserts:
+          move_realization_id:
+            type: "value"
+            operator: "is_truthy"
+          move_realization_id.operating_unit_id:
+            type: "m2o"
+            expected: "REC: ou_a"
+
+      - step: "No line of the realization move deviates from the loan unit"
+        action: "search"
+        model: "account.move.line"
+        domain:
+          - ["move_id", "=", "REC: out_real_loan.move_realization_id.id"]
+          - ["operating_unit_id", "!=", "REC: ou_a.id"]
+        save_as: "out_real_deviating_ml"
+        expect_count: 0
+
+  - name:
+      "Loan Out - Interest and additional item journals carry the loan operating unit"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "out_int_partner"
+        values:
+          name: "Test Loan Out OU Interest Partner"
+          is_company: false
+
+      - step: "Create loan.out in operating unit A (admin default is another unit)"
+        action: "create"
+        model: "loan.out"
+        save_as: "out_int_loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: out_int_partner.id"
+          type_id: "REC: loan_type_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+          operating_unit_id: "REC: ou_a.id"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "out_int_loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "out_int_loan"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is confirmed"
+        action: "assert"
+        refresh: true
+        target: "out_int_loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Approve loan.out, auto-staging it to ready"
+        action: "call"
+        target: "out_int_loan"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_out"
+        domain:
+          - ["loan_id", "=", "REC: out_int_loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "out_int_schedule"
+        expect_count: 1
+
+      - step: "Attach an additional item to the installment"
+        action: "create"
+        model: "loan.payment_schedule_out_additional_item"
+        save_as: "out_int_item"
+        values:
+          schedule_id: "REC: out_int_schedule.id"
+          additional_item_id: "REC: additional_item.id"
+          amount: 100.0
+          journal_id: "REC: additional_item.receivable_journal_id.id"
+          reconcilliation_account_id: "REC: additional_item.receivable_account_id.id"
+          contra_reconcilliation_account_id:
+            "REC: additional_item.contra_receivable_account_id.id"
+
+      - step: "Realize interest, which also books the additional item entry"
+        action: "call"
+        target: "out_int_schedule"
+        method: "action_realize_interest"
+        as_user: "base.user_admin"
+
+      - step: "Interest move carries the operating unit of the loan"
+        action: "assert"
+        refresh: true
+        target: "out_int_schedule"
+        asserts:
+          interest_move_id:
+            type: "value"
+            operator: "is_truthy"
+          interest_move_id.operating_unit_id:
+            type: "m2o"
+            expected: "REC: ou_a"
+
+      - step: "No line of the interest move deviates from the loan unit"
+        action: "search"
+        model: "account.move.line"
+        domain:
+          - ["move_id", "=", "REC: out_int_schedule.interest_move_id.id"]
+          - ["operating_unit_id", "!=", "REC: ou_a.id"]
+        save_as: "out_int_deviating_ml"
+        expect_count: 0
+
+      - step: "Additional item move carries the operating unit of the loan"
+        action: "assert"
+        refresh: true
+        target: "out_int_item"
+        asserts:
+          move_id:
+            type: "value"
+            operator: "is_truthy"
+          move_id.operating_unit_id:
+            type: "m2o"
+            expected: "REC: ou_a"
+
+      - step: "No line of the additional item move deviates from the loan unit"
+        action: "search"
+        model: "account.move.line"
+        domain:
+          - ["move_id", "=", "REC: out_int_item.move_id.id"]
+          - ["operating_unit_id", "!=", "REC: ou_a.id"]
+        save_as: "out_item_deviating_ml"
+        expect_count: 0
+
+  - name: "Loan In - Realization journal carries the loan operating unit"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "in_real_partner"
+        values:
+          name: "Test Loan In OU Realization Partner"
+          is_company: false
+
+      - step: "Create loan.in in operating unit A (admin default is another unit)"
+        action: "create"
+        model: "loan.in"
+        save_as: "in_real_loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: in_real_partner.id"
+          type_id: "REC: loan_type_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 2.0
+          manual_loan_period: 12
+          first_payment_date: "2024-02-01"
+          operating_unit_id: "REC: ou_a.id"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "in_real_loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "in_real_loan"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in is confirmed"
+        action: "assert"
+        refresh: true
+        target: "in_real_loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Approve loan.in, auto-staging it to ready"
+        action: "call"
+        target: "in_real_loan"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in reached ready state"
+        action: "assert"
+        target: "in_real_loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+
+      - step: "Realization move carries the operating unit of the loan"
+        action: "assert"
+        refresh: true
+        target: "in_real_loan"
+        asserts:
+          move_realization_id:
+            type: "value"
+            operator: "is_truthy"
+          move_realization_id.operating_unit_id:
+            type: "m2o"
+            expected: "REC: ou_a"
+
+      - step: "No line of the realization move deviates from the loan unit"
+        action: "search"
+        model: "account.move.line"
+        domain:
+          - ["move_id", "=", "REC: in_real_loan.move_realization_id.id"]
+          - ["operating_unit_id", "!=", "REC: ou_a.id"]
+        save_as: "in_real_deviating_ml"
+        expect_count: 0
+
+  - name:
+      "Loan In - Interest and additional item journals carry the loan operating unit"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "in_int_partner"
+        values:
+          name: "Test Loan In OU Interest Partner"
+          is_company: false
+
+      - step: "Create loan.in in operating unit A (admin default is another unit)"
+        action: "create"
+        model: "loan.in"
+        save_as: "in_int_loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: in_int_partner.id"
+          type_id: "REC: loan_type_in.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 2.0
+          manual_loan_period: 12
+          first_payment_date: "2024-02-01"
+          operating_unit_id: "REC: ou_a.id"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "in_int_loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.in"
+        action: "call"
+        target: "in_int_loan"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.in is confirmed"
+        action: "assert"
+        refresh: true
+        target: "in_int_loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Approve loan.in, auto-staging it to ready"
+        action: "call"
+        target: "in_int_loan"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Find the 1st installment by loan_id and schedule_date"
+        action: "search"
+        model: "loan.payment_schedule_in"
+        domain:
+          - ["loan_id", "=", "REC: in_int_loan.id"]
+          - ["schedule_date", "=", "2024-02-01"]
+        save_as: "in_int_schedule"
+        expect_count: 1
+
+      - step: "Attach an additional item to the installment"
+        action: "create"
+        model: "loan.payment_schedule_in_additional_item"
+        save_as: "in_int_item"
+        values:
+          schedule_id: "REC: in_int_schedule.id"
+          additional_item_id: "REC: additional_item.id"
+          amount: 100.0
+          journal_id: "REC: additional_item.payable_journal_id.id"
+          reconcilliation_account_id: "REC: additional_item.payable_account_id.id"
+          contra_reconcilliation_account_id:
+            "REC: additional_item.contra_payable_account_id.id"
+
+      - step: "Realize interest, which also books the additional item entry"
+        action: "call"
+        target: "in_int_schedule"
+        method: "action_realize_interest"
+        as_user: "base.user_admin"
+
+      - step: "Interest move carries the operating unit of the loan"
+        action: "assert"
+        refresh: true
+        target: "in_int_schedule"
+        asserts:
+          interest_move_id:
+            type: "value"
+            operator: "is_truthy"
+          interest_move_id.operating_unit_id:
+            type: "m2o"
+            expected: "REC: ou_a"
+
+      - step: "No line of the interest move deviates from the loan unit"
+        action: "search"
+        model: "account.move.line"
+        domain:
+          - ["move_id", "=", "REC: in_int_schedule.interest_move_id.id"]
+          - ["operating_unit_id", "!=", "REC: ou_a.id"]
+        save_as: "in_int_deviating_ml"
+        expect_count: 0
+
+      - step: "Additional item move carries the operating unit of the loan"
+        action: "assert"
+        refresh: true
+        target: "in_int_item"
+        asserts:
+          move_id:
+            type: "value"
+            operator: "is_truthy"
+          move_id.operating_unit_id:
+            type: "m2o"
+            expected: "REC: ou_a"
+
+      - step: "No line of the additional item move deviates from the loan unit"
+        action: "search"
+        model: "account.move.line"
+        domain:
+          - ["move_id", "=", "REC: in_int_item.move_id.id"]
+          - ["operating_unit_id", "!=", "REC: ou_a.id"]
+        save_as: "in_item_deviating_ml"
+        expect_count: 0

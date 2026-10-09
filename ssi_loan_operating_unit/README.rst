@@ -14,10 +14,11 @@ Loan - Operating Unit
 |badge1|
 
 Glue module that adds Operating Unit support to the Loan module. Extends
-``loan.out``, ``loan.in``, ``loan.payment_schedule_out``, and
-``loan.payment_schedule_in`` with ``mixin.single_operating_unit``. When payment
-schedules are computed via ``action_compute_payment``, the ``operating_unit_id``
-from the parent loan document is propagated to each generated schedule line.
+``loan.out`` and ``loan.in`` with ``mixin.single_operating_unit``. Every
+journal entry created from a loan document (realization, interest
+realization and additional items of a payment schedule row), including all of
+its lines, carries the operating unit of the originating loan, regardless of
+which user triggers it.
 
 **Table of contents**
 
