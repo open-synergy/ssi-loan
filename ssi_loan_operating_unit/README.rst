@@ -38,6 +38,7 @@ This module depends on:
 
 * ``ssi_loan``
 * ``ssi_operating_unit_mixin``
+* ``ssi_financial_accounting_operating_unit``
 
 Bug Tracker
 ===========

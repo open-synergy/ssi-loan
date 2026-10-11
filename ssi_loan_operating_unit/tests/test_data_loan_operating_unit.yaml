@@ -999,3 +999,72 @@ scenarios:
           - ["operating_unit_id", "!=", "REC: ou_a.id"]
         save_as: "in_item_deviating_ml"
         expect_count: 0
+
+  - name: "Loan Out - Realization journal of another operating unit is rejected"
+    steps:
+      - step: "Create partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "neg_partner"
+        values:
+          name: "Test Loan Out OU Negative Partner"
+          is_company: false
+
+      - step: "Restrict the realization journal to operating unit B"
+        action: "write"
+        target: "realization_journal_out"
+        values:
+          operating_unit_ids:
+            - - 6
+              - 0
+              - - "REC: ou_b.id"
+
+      - step: "Create loan.out in operating unit A"
+        action: "create"
+        model: "loan.out"
+        save_as: "neg_loan"
+        values:
+          date: "2024-01-01"
+          partner_id: "REC: neg_partner.id"
+          type_id: "REC: loan_type_out.id"
+          currency_id: "REF: base.USD"
+          loan_amount: 6000.0
+          maximum_loan_amount: 6000.0
+          interest: 3.0
+          manual_loan_period: 6
+          first_payment_date: "2024-02-01"
+          operating_unit_id: "REC: ou_a.id"
+
+      - step: "Compute payment schedules"
+        action: "call"
+        target: "neg_loan"
+        method: "action_compute_payment"
+        as_user: "base.user_admin"
+
+      - step: "Confirm loan.out"
+        action: "call"
+        target: "neg_loan"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+
+      - step: "Assert loan.out is confirmed"
+        action: "assert"
+        refresh: true
+        target: "neg_loan"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Realization journal with another operating unit is rejected"
+        action: "call"
+        target: "neg_loan"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains: "The OU in the Move and in Journal must be the same"
